@@ -310,19 +310,24 @@ static av_cold int dct_init(MpegEncContext *s)
         s->dct_unquantize_mpeg2_intra = dct_unquantize_mpeg2_intra_bitexact;
     s->dct_unquantize_mpeg2_inter = dct_unquantize_mpeg2_inter_c;
 
-    if (HAVE_INTRINSICS_NEON)
+#if HAVE_INTRINSICS_NEON
         ff_mpv_common_init_neon(s);
-
-    if (ARCH_ALPHA)
+#endif
+#if ARCH_ALPHA
         ff_mpv_common_init_axp(s);
-    if (ARCH_ARM)
+#endif
+#if ARCH_ARM
         ff_mpv_common_init_arm(s);
-    if (ARCH_PPC)
+#endif
+#if ARCH_PPC
         ff_mpv_common_init_ppc(s);
-    if (ARCH_X86)
+#endif
+#if ARCH_X86
         ff_mpv_common_init_x86(s);
-    if (ARCH_MIPS)
+#endif
+#if ARCH_MIPS
         ff_mpv_common_init_mips(s);
+#endif
 
     return 0;
 }

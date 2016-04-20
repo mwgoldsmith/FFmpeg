@@ -900,8 +900,9 @@ static av_cold int aac_encode_init(AVCodecContext *avctx)
     s->coder = &ff_aac_coders[s->options.aac_coder];
     ff_lpc_init(&s->lpc, 2*avctx->frame_size, TNS_MAX_ORDER, FF_LPC_TYPE_LEVINSON);
 
-    if (HAVE_MIPSDSPR1)
+#if HAVE_MIPSDSPR1
         ff_aac_coder_init_mips(s);
+#endif
 
     s->lambda = avctx->global_quality > 0 ? avctx->global_quality : 120;
     s->random_state = 0x1f2e3d4c;

@@ -87,8 +87,9 @@ av_cold void ff_v210enc_init(V210EncContext *s)
     s->pack_line_8  = v210_planar_pack_8_c;
     s->pack_line_10 = v210_planar_pack_10_c;
 
-    if (ARCH_X86)
+#if ARCH_X86
         ff_v210enc_init_x86(s);
+#endif
 }
 
 static av_cold int encode_init(AVCodecContext *avctx)

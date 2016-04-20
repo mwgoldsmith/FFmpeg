@@ -74,579 +74,2100 @@ void avcodec_register_all(void)
     initialized = 1;
 
     /* hardware accelerators */
+#if CONFIG_HWACCELS
+#if CONFIG_H263_VAAPI_HWACCEL
     REGISTER_HWACCEL(H263_VAAPI,        h263_vaapi);
+#endif
+#if CONFIG_H263_VDPAU_HWACCEL
     REGISTER_HWACCEL(H263_VDPAU,        h263_vdpau);
+#endif
+#if CONFIG_H263_VIDEOTOOLBOX_HWACCEL
     REGISTER_HWACCEL(H263_VIDEOTOOLBOX, h263_videotoolbox);
+#endif
+#if CONFIG_H264_D3D11VA_HWACCEL
     REGISTER_HWACCEL(H264_D3D11VA,      h264_d3d11va);
+#endif
+#if CONFIG_H264_DXVA2_HWACCEL
     REGISTER_HWACCEL(H264_DXVA2,        h264_dxva2);
+#endif
+#if CONFIG_H264_MMAL_HWACCEL
     REGISTER_HWACCEL(H264_MMAL,         h264_mmal);
+#endif
+#if CONFIG_H264_QSV_HWACCEL
     REGISTER_HWACCEL(H264_QSV,          h264_qsv);
+#endif
+#if CONFIG_H264_VAAPI_HWACCEL
     REGISTER_HWACCEL(H264_VAAPI,        h264_vaapi);
+#endif
+#if CONFIG_H264_VDA_HWACCEL
     REGISTER_HWACCEL(H264_VDA,          h264_vda);
+#endif
+#if CONFIG_H264_VDA_OLD_HWACCEL
     REGISTER_HWACCEL(H264_VDA_OLD,      h264_vda_old);
+#endif
+#if CONFIG_H264_VDPAU_HWACCEL
     REGISTER_HWACCEL(H264_VDPAU,        h264_vdpau);
+#endif
+#if CONFIG_H264_VIDEOTOOLBOX_HWACCEL
     REGISTER_HWACCEL(H264_VIDEOTOOLBOX, h264_videotoolbox);
+#endif
+#if CONFIG_HEVC_D3D11VA_HWACCEL
     REGISTER_HWACCEL(HEVC_D3D11VA,      hevc_d3d11va);
+#endif
+#if CONFIG_HEVC_DXVA2_HWACCEL
     REGISTER_HWACCEL(HEVC_DXVA2,        hevc_dxva2);
+#endif
+#if CONFIG_HEVC_QSV_HWACCEL
     REGISTER_HWACCEL(HEVC_QSV,          hevc_qsv);
+#endif
+#if CONFIG_HEVC_VAAPI_HWACCEL
     REGISTER_HWACCEL(HEVC_VAAPI,        hevc_vaapi);
+#endif
+#if CONFIG_HEVC_VDPAU_HWACCEL
     REGISTER_HWACCEL(HEVC_VDPAU,        hevc_vdpau);
+#endif
+#if CONFIG_MPEG1_XVMC_HWACCEL
     REGISTER_HWACCEL(MPEG1_XVMC,        mpeg1_xvmc);
+#endif
+#if CONFIG_MPEG1_VDPAU_HWACCEL
     REGISTER_HWACCEL(MPEG1_VDPAU,       mpeg1_vdpau);
+#endif
+#if CONFIG_MPEG1_VIDEOTOOLBOX_HWACCEL
     REGISTER_HWACCEL(MPEG1_VIDEOTOOLBOX, mpeg1_videotoolbox);
+#endif
+#if CONFIG_MPEG2_XVMC_HWACCEL
     REGISTER_HWACCEL(MPEG2_XVMC,        mpeg2_xvmc);
+#endif
+#if CONFIG_MPEG2_D3D11VA_HWACCEL
     REGISTER_HWACCEL(MPEG2_D3D11VA,     mpeg2_d3d11va);
+#endif
+#if CONFIG_MPEG2_DXVA2_HWACCEL
     REGISTER_HWACCEL(MPEG2_DXVA2,       mpeg2_dxva2);
+#endif
+#if CONFIG_MPEG2_QSV_HWACCEL
     REGISTER_HWACCEL(MPEG2_QSV,         mpeg2_qsv);
+#endif
+#if CONFIG_MPEG2_VAAPI_HWACCEL
     REGISTER_HWACCEL(MPEG2_VAAPI,       mpeg2_vaapi);
+#endif
+#if CONFIG_MPEG2_VDPAU_HWACCEL
     REGISTER_HWACCEL(MPEG2_VDPAU,       mpeg2_vdpau);
+#endif
+#if CONFIG_MPEG2_VIDEOTOOLBOX_HWACCEL
     REGISTER_HWACCEL(MPEG2_VIDEOTOOLBOX, mpeg2_videotoolbox);
+#endif
+#if CONFIG_MPEG4_VAAPI_HWACCEL
     REGISTER_HWACCEL(MPEG4_VAAPI,       mpeg4_vaapi);
+#endif
+#if CONFIG_MPEG4_VDPAU_HWACCEL
     REGISTER_HWACCEL(MPEG4_VDPAU,       mpeg4_vdpau);
+#endif
+#if CONFIG_MPEG4_VIDEOTOOLBOX_HWACCEL
     REGISTER_HWACCEL(MPEG4_VIDEOTOOLBOX, mpeg4_videotoolbox);
+#endif
+#if CONFIG_VC1_D3D11VA_HWACCEL
     REGISTER_HWACCEL(VC1_D3D11VA,       vc1_d3d11va);
+#endif
+#if CONFIG_VC1_DXVA2_HWACCEL
     REGISTER_HWACCEL(VC1_DXVA2,         vc1_dxva2);
+#endif
+#if CONFIG_VC1_VAAPI_HWACCEL
     REGISTER_HWACCEL(VC1_VAAPI,         vc1_vaapi);
+#endif
+#if CONFIG_VC1_VDPAU_HWACCEL
     REGISTER_HWACCEL(VC1_VDPAU,         vc1_vdpau);
+#endif
+#if CONFIG_VC1_QSV_HWACCEL
     REGISTER_HWACCEL(VC1_QSV,           vc1_qsv);
+#endif
+#if CONFIG_WMV3_D3D11VA_HWACCEL
     REGISTER_HWACCEL(WMV3_D3D11VA,      wmv3_d3d11va);
+#endif
+#if CONFIG_WMV3_DXVA2_HWACCEL
     REGISTER_HWACCEL(WMV3_DXVA2,        wmv3_dxva2);
+#endif
+#if CONFIG_WMV3_VAAPI_HWACCEL
     REGISTER_HWACCEL(WMV3_VAAPI,        wmv3_vaapi);
+#endif
+#if CONFIG_WMV3_VDPAU_HWACCEL
     REGISTER_HWACCEL(WMV3_VDPAU,        wmv3_vdpau);
+#endif
+#endif
 
     /* video codecs */
-    REGISTER_ENCODER(A64MULTI,          a64multi);
-    REGISTER_ENCODER(A64MULTI5,         a64multi5);
-    REGISTER_DECODER(AASC,              aasc);
-    REGISTER_DECODER(AIC,               aic);
-    REGISTER_ENCDEC (ALIAS_PIX,         alias_pix);
-    REGISTER_ENCDEC (AMV,               amv);
-    REGISTER_DECODER(ANM,               anm);
-    REGISTER_DECODER(ANSI,              ansi);
-    REGISTER_ENCDEC (APNG,              apng);
-    REGISTER_ENCDEC (ASV1,              asv1);
-    REGISTER_ENCDEC (ASV2,              asv2);
-    REGISTER_DECODER(AURA,              aura);
-    REGISTER_DECODER(AURA2,             aura2);
-    REGISTER_ENCDEC (AVRP,              avrp);
-    REGISTER_DECODER(AVRN,              avrn);
-    REGISTER_DECODER(AVS,               avs);
-    REGISTER_ENCDEC (AVUI,              avui);
-    REGISTER_ENCDEC (AYUV,              ayuv);
-    REGISTER_DECODER(BETHSOFTVID,       bethsoftvid);
-    REGISTER_DECODER(BFI,               bfi);
-    REGISTER_DECODER(BINK,              bink);
-    REGISTER_ENCDEC (BMP,               bmp);
-    REGISTER_DECODER(BMV_VIDEO,         bmv_video);
-    REGISTER_DECODER(BRENDER_PIX,       brender_pix);
-    REGISTER_DECODER(C93,               c93);
-    REGISTER_DECODER(CAVS,              cavs);
-    REGISTER_DECODER(CDGRAPHICS,        cdgraphics);
-    REGISTER_DECODER(CDXL,              cdxl);
-    REGISTER_ENCDEC (CINEPAK,           cinepak);
-    REGISTER_ENCDEC (CLJR,              cljr);
-    REGISTER_DECODER(CLLC,              cllc);
-    REGISTER_ENCDEC (COMFORTNOISE,      comfortnoise);
-    REGISTER_DECODER(CPIA,              cpia);
-    REGISTER_DECODER(CSCD,              cscd);
-    REGISTER_DECODER(CYUV,              cyuv);
-    REGISTER_DECODER(DDS,               dds);
-    REGISTER_DECODER(DFA,               dfa);
-    REGISTER_DECODER(DIRAC,             dirac);
-    REGISTER_ENCDEC (DNXHD,             dnxhd);
-    REGISTER_ENCDEC (DPX,               dpx);
-    REGISTER_DECODER(DSICINVIDEO,       dsicinvideo);
-    REGISTER_ENCDEC (DVVIDEO,           dvvideo);
-    REGISTER_DECODER(DXA,               dxa);
-    REGISTER_DECODER(DXTORY,            dxtory);
-    REGISTER_DECODER(DXV,               dxv);
-    REGISTER_DECODER(EACMV,             eacmv);
-    REGISTER_DECODER(EAMAD,             eamad);
-    REGISTER_DECODER(EATGQ,             eatgq);
-    REGISTER_DECODER(EATGV,             eatgv);
-    REGISTER_DECODER(EATQI,             eatqi);
-    REGISTER_DECODER(EIGHTBPS,          eightbps);
-    REGISTER_DECODER(EIGHTSVX_EXP,      eightsvx_exp);
-    REGISTER_DECODER(EIGHTSVX_FIB,      eightsvx_fib);
-    REGISTER_DECODER(ESCAPE124,         escape124);
-    REGISTER_DECODER(ESCAPE130,         escape130);
-    REGISTER_DECODER(EXR,               exr);
-    REGISTER_ENCDEC (FFV1,              ffv1);
-    REGISTER_ENCDEC (FFVHUFF,           ffvhuff);
-    REGISTER_DECODER(FIC,               fic);
-    REGISTER_ENCDEC (FLASHSV,           flashsv);
-    REGISTER_ENCDEC (FLASHSV2,          flashsv2);
-    REGISTER_DECODER(FLIC,              flic);
-    REGISTER_ENCDEC (FLV,               flv);
-    REGISTER_DECODER(FOURXM,            fourxm);
-    REGISTER_DECODER(FRAPS,             fraps);
-    REGISTER_DECODER(FRWU,              frwu);
-    REGISTER_DECODER(G2M,               g2m);
-    REGISTER_ENCDEC (GIF,               gif);
-    REGISTER_ENCDEC (H261,              h261);
-    REGISTER_ENCDEC (H263,              h263);
-    REGISTER_DECODER(H263I,             h263i);
-    REGISTER_ENCDEC (H263P,             h263p);
-    REGISTER_DECODER(H264,              h264);
-    REGISTER_DECODER(H264_CRYSTALHD,    h264_crystalhd);
-    REGISTER_DECODER(H264_MMAL,         h264_mmal);
-    REGISTER_DECODER(H264_QSV,          h264_qsv);
-    REGISTER_DECODER(H264_VDA,          h264_vda);
-#if FF_API_VDPAU
-    REGISTER_DECODER(H264_VDPAU,        h264_vdpau);
+#if CONFIG_A64MULTI_ENCODER
+    REGISTER_ENCODER(A64MULTI, a64multi);
 #endif
-    REGISTER_ENCDEC (HAP,               hap);
+#if CONFIG_A64MULTI5_ENCODER
+    REGISTER_ENCODER(A64MULTI5, a64multi5);
+#endif
+#if CONFIG_AASC_DECODER
+    REGISTER_DECODER(AASC, aasc);
+#endif
+#if CONFIG_AIC_DECODER
+    REGISTER_DECODER(AIC, aic);
+#endif
+#if CONFIG_ALIAS_PIX_ENCODER
+    REGISTER_ENCODER(ALIAS_PIX, alias_pix);
+#endif
+#if CONFIG_ALIAS_PIX_DECODER
+    REGISTER_DECODER(ALIAS_PIX, alias_pix);
+#endif
+#if CONFIG_AMV_ENCODER
+    REGISTER_ENCODER(AMV, amv);
+#endif
+#if CONFIG_AMV_DECODER
+    REGISTER_DECODER(AMV, amv);
+#endif
+#if CONFIG_ANM_DECODER
+    REGISTER_DECODER(ANM, anm);
+#endif
+#if CONFIG_ANSI_DECODER
+    REGISTER_DECODER(ANSI, ansi);
+#endif
+#if CONFIG_APNG_ENCODER
+    REGISTER_ENCODER(APNG, apng);
+#endif
+#if CONFIG_APNG_DECODER
+    REGISTER_DECODER(APNG, apng);
+#endif
+#if CONFIG_ASV1_ENCODER
+    REGISTER_ENCODER(ASV1, asv1);
+#endif
+#if CONFIG_ASV1_DECODER
+    REGISTER_DECODER(ASV1, asv1);
+#endif
+#if CONFIG_ASV2_ENCODER
+    REGISTER_ENCODER(ASV2, asv2);
+#endif
+#if CONFIG_ASV2_DECODER
+    REGISTER_DECODER(ASV2, asv2);
+#endif
+#if CONFIG_AURA_DECODER
+    REGISTER_DECODER(AURA, aura);
+#endif
+#if CONFIG_AURA2_DECODER
+    REGISTER_DECODER(AURA2, aura2);
+#endif
+#if CONFIG_AVRP_ENCODER
+    REGISTER_ENCODER(AVRP, avrp);
+#endif
+#if CONFIG_AVRP_DECODER
+    REGISTER_DECODER(AVRP, avrp);
+#endif
+#if CONFIG_AVRN_DECODER
+    REGISTER_DECODER(AVRN, avrn);
+#endif
+#if CONFIG_AVS_DECODER
+    REGISTER_DECODER(AVS, avs);
+#endif
+#if CONFIG_AVUI_ENCODER
+    REGISTER_ENCODER(AVUI, avui);
+#endif
+#if CONFIG_AVUI_DECODER
+    REGISTER_DECODER(AVUI, avui);
+#endif
+#if CONFIG_AYUV_ENCODER
+    REGISTER_ENCODER(AYUV, ayuv);
+#endif
+#if CONFIG_AYUV_DECODER
+    REGISTER_DECODER(AYUV, ayuv);
+#endif
+#if CONFIG_BETHSOFTVID_DECODER
+    REGISTER_DECODER(BETHSOFTVID, bethsoftvid);
+#endif
+#if CONFIG_BFI_DECODER
+    REGISTER_DECODER(BFI, bfi);
+#endif
+#if CONFIG_BINK_DECODER
+    REGISTER_DECODER(BINK, bink);
+#endif
+#if CONFIG_BMP_ENCODER
+    REGISTER_ENCODER(BMP, bmp);
+#endif
+#if CONFIG_BMP_DECODER
+    REGISTER_DECODER(BMP, bmp);
+#endif
+#if CONFIG_BMV_VIDEO_DECODER
+    REGISTER_DECODER(BMV_VIDEO, bmv_video);
+#endif
+#if CONFIG_BRENDER_PIX_DECODER
+    REGISTER_DECODER(BRENDER_PIX, brender_pix);
+#endif
+#if CONFIG_C93_DECODER
+    REGISTER_DECODER(C93, c93);
+#endif
+#if CONFIG_CAVS_DECODER
+    REGISTER_DECODER(CAVS, cavs);
+#endif
+#if CONFIG_CDGRAPHICS_DECODER
+    REGISTER_DECODER(CDGRAPHICS, cdgraphics);
+#endif
+#if CONFIG_CDXL_DECODER
+    REGISTER_DECODER(CDXL, cdxl);
+#endif
+#if CONFIG_CINEPAK_ENCODER
+    REGISTER_ENCODER(CINEPAK, cinepak);
+#endif
+#if CONFIG_CINEPAK_DECODER
+    REGISTER_DECODER(CINEPAK, cinepak);
+#endif
+#if CONFIG_CLJR_ENCODER
+    REGISTER_ENCODER(CLJR, cljr);
+#endif
+#if CONFIG_CLJR_DECODER
+    REGISTER_DECODER(CLJR, cljr);
+#endif
+#if CONFIG_CLLC_DECODER
+    REGISTER_DECODER(CLLC, cllc);
+#endif
+#if CONFIG_COMFORTNOISE_ENCODER
+    REGISTER_ENCODER(COMFORTNOISE, comfortnoise);
+#endif
+#if CONFIG_COMFORTNOISE_DECODER
+    REGISTER_DECODER(COMFORTNOISE, comfortnoise);
+#endif
+#if CONFIG_CPIA_DECODER
+    REGISTER_DECODER(CPIA, cpia);
+#endif
+#if CONFIG_CSCD_DECODER
+    REGISTER_DECODER(CSCD, cscd);
+#endif
+#if CONFIG_CYUV_DECODER
+    REGISTER_DECODER(CYUV, cyuv);
+#endif
+#if CONFIG_DDS_DECODER
+    REGISTER_DECODER(DDS, dds);
+#endif
+#if CONFIG_DFA_DECODER
+    REGISTER_DECODER(DFA, dfa);
+#endif
+#if CONFIG_DIRAC_DECODER
+    REGISTER_DECODER(DIRAC, dirac);
+#endif
+#if CONFIG_DNXHD_ENCODER
+    REGISTER_ENCODER(DNXHD, dnxhd);
+#endif
+#if CONFIG_DNXHD_DECODER
+    REGISTER_DECODER(DNXHD, dnxhd);
+#endif
+#if CONFIG_DPX_ENCODER
+    REGISTER_ENCODER(DPX, dpx);
+#endif
+#if CONFIG_DPX_DECODER
+    REGISTER_DECODER(DPX, dpx);
+#endif
+#if CONFIG_DSICINVIDEO_DECODER
+    REGISTER_DECODER(DSICINVIDEO, dsicinvideo);
+#endif
+#if CONFIG_DVVIDEO_ENCODER
+    REGISTER_ENCODER(DVVIDEO, dvvideo);
+#endif
+#if CONFIG_DVVIDEO_DECODER
+    REGISTER_DECODER(DVVIDEO, dvvideo);
+#endif
+#if CONFIG_DXA_DECODER
+    REGISTER_DECODER(DXA, dxa);
+#endif
+#if CONFIG_DXTORY_DECODER
+    REGISTER_DECODER(DXTORY, dxtory);
+#endif
+#if CONFIG_DXV_DECODER
+    REGISTER_DECODER(DXV, dxv);
+#endif
+#if CONFIG_EACMV_DECODER
+    REGISTER_DECODER(EACMV, eacmv);
+#endif
+#if CONFIG_EAMAD_DECODER
+    REGISTER_DECODER(EAMAD, eamad);
+#endif
+#if CONFIG_EATGQ_DECODER
+    REGISTER_DECODER(EATGQ, eatgq);
+#endif
+#if CONFIG_EATGV_DECODER
+    REGISTER_DECODER(EATGV, eatgv);
+#endif
+#if CONFIG_EATQI_DECODER
+    REGISTER_DECODER(EATQI, eatqi);
+#endif
+#if CONFIG_EIGHTBPS_DECODER
+    REGISTER_DECODER(EIGHTBPS, eightbps);
+#endif
+#if CONFIG_EIGHTSVX_EXP_DECODER
+    REGISTER_DECODER(EIGHTSVX_EXP, eightsvx_exp);
+#endif
+#if CONFIG_EIGHTSVX_FIB_DECODER
+    REGISTER_DECODER(EIGHTSVX_FIB, eightsvx_fib);
+#endif
+#if CONFIG_ESCAPE124_DECODER
+    REGISTER_DECODER(ESCAPE124, escape124);
+#endif
+#if CONFIG_ESCAPE130_DECODER
+    REGISTER_DECODER(ESCAPE130, escape130);
+#endif
+#if CONFIG_EXR_DECODER
+    REGISTER_DECODER(EXR, exr);
+#endif
+#if CONFIG_FFV1_ENCODER
+    REGISTER_ENCODER(FFV1, ffv1);
+#endif
+#if CONFIG_FFV1_DECODER
+    REGISTER_DECODER(FFV1, ffv1);
+#endif
+#if CONFIG_FFVHUFF_ENCODER
+    REGISTER_ENCODER(FFVHUFF, ffvhuff);
+#endif
+#if CONFIG_FFVHUFF_DECODER
+    REGISTER_DECODER(FFVHUFF, ffvhuff);
+#endif
+#if CONFIG_FIC_DECODER
+    REGISTER_DECODER(FIC, fic);
+#endif
+#if CONFIG_FLASHSV_ENCODER
+    REGISTER_ENCODER(FLASHSV, flashsv);
+#endif
+#if CONFIG_FLASHSV_DECODER
+    REGISTER_DECODER(FLASHSV, flashsv);
+#endif
+#if CONFIG_FLASHSV2_ENCODER
+    REGISTER_ENCODER(FLASHSV2, flashsv2);
+#endif
+#if CONFIG_FLASHSV2_DECODER
+    REGISTER_DECODER(FLASHSV2, flashsv2);
+#endif
+#if CONFIG_FLIC_DECODER
+    REGISTER_DECODER(FLIC, flic);
+#endif
+#if CONFIG_FLV_ENCODER
+    REGISTER_ENCODER(FLV, flv);
+#endif
+#if CONFIG_FLV_DECODER
+    REGISTER_DECODER(FLV, flv);
+#endif
+#if CONFIG_FOURXM_DECODER
+    REGISTER_DECODER(FOURXM, fourxm);
+#endif
+#if CONFIG_FRAPS_DECODER
+    REGISTER_DECODER(FRAPS, fraps);
+#endif
+#if CONFIG_FRWU_DECODER
+    REGISTER_DECODER(FRWU, frwu);
+#endif
+#if CONFIG_G2M_DECODER
+    REGISTER_DECODER(G2M, g2m);
+#endif
+#if CONFIG_GIF_ENCODER
+    REGISTER_ENCODER(GIF, gif);
+#endif
+#if CONFIG_GIF_DECODER
+    REGISTER_DECODER(GIF, gif);
+#endif
+#if CONFIG_H261_ENCODER
+    REGISTER_ENCODER(H261, h261);
+#endif
+#if CONFIG_H261_DECODER
+    REGISTER_DECODER(H261, h261);
+#endif
+#if CONFIG_H263_ENCODER
+    REGISTER_ENCODER(H263, h263);
+#endif
+#if CONFIG_H263_DECODER
+    REGISTER_DECODER(H263, h263);
+#endif
+#if CONFIG_H263I_DECODER
+    REGISTER_DECODER(H263I, h263i);
+#endif
+#if CONFIG_H263P_ENCODER
+    REGISTER_ENCODER(H263P, h263p);
+#endif
+#if CONFIG_H263P_DECODER
+    REGISTER_DECODER(H263P, h263p);
+#endif
+#if CONFIG_H264_DECODER
+    REGISTER_DECODER(H264, h264);
+#endif
+#if CONFIG_H264_CRYSTALHD_DECODER
+    REGISTER_DECODER(H264_CRYSTALHD, h264_crystalhd);
+#endif
+#if CONFIG_H264_MMAL_DECODER
+    REGISTER_DECODER(H264_MMAL, h264_mmal);
+#endif
+#if CONFIG_H264_QSV_DECODER
+    REGISTER_DECODER(H264_QSV, h264_qsv);
+#endif
+#if CONFIG_H264_VDA_DECODER
+    REGISTER_DECODER(H264_VDA, h264_vda);
+#endif
+#if FF_API_VDPAU
+#if CONFIG_H264_VDPAU_DECODER
+    REGISTER_DECODER(H264_VDPAU, h264_vdpau);
+#endif
+#endif
+#if CONFIG_HAP_ENCODER
+    REGISTER_ENCODER(HAP, hap);
+#endif
+#if CONFIG_HAP_DECODER
+    REGISTER_DECODER(HAP, hap);
+#endif
+#if CONFIG_HEVC_DECODER
     REGISTER_DECODER(HEVC,              hevc);
+#endif
+#if CONFIG_HEVC_QSV_DECODER
     REGISTER_DECODER(HEVC_QSV,          hevc_qsv);
+#endif
+#if CONFIG_HNM4_VIDEO_DECODER
     REGISTER_DECODER(HNM4_VIDEO,        hnm4_video);
+#endif
+#if CONFIG_HQ_HQA_DECODER
     REGISTER_DECODER(HQ_HQA,            hq_hqa);
+#endif
+#if CONFIG_HQX_DECODER
     REGISTER_DECODER(HQX,               hqx);
-    REGISTER_ENCDEC (HUFFYUV,           huffyuv);
+#endif
+#if CONFIG_HUFFYUV_ENCODER
+    REGISTER_ENCODER(HUFFYUV, huffyuv);
+#endif
+#if CONFIG_HUFFYUV_DECODER
+    REGISTER_DECODER(HUFFYUV, huffyuv);
+#endif
+#if CONFIG_IDCIN_DECODER
     REGISTER_DECODER(IDCIN,             idcin);
+#endif
+#if CONFIG_IFF_BYTERUN1_DECODER
     REGISTER_DECODER(IFF_BYTERUN1,      iff_byterun1);
+#endif
+#if CONFIG_IFF_ILBM_DECODER
     REGISTER_DECODER(IFF_ILBM,          iff_ilbm);
+#endif
+#if CONFIG_INDEO2_DECODER
     REGISTER_DECODER(INDEO2,            indeo2);
+#endif
+#if CONFIG_INDEO3_DECODER
     REGISTER_DECODER(INDEO3,            indeo3);
+#endif
+#if CONFIG_INDEO4_DECODER
     REGISTER_DECODER(INDEO4,            indeo4);
+#endif
+#if CONFIG_INDEO5_DECODER
     REGISTER_DECODER(INDEO5,            indeo5);
+#endif
+#if CONFIG_INTERPLAY_VIDEO_DECODER
     REGISTER_DECODER(INTERPLAY_VIDEO,   interplay_video);
-    REGISTER_ENCDEC (JPEG2000,          jpeg2000);
-    REGISTER_ENCDEC (JPEGLS,            jpegls);
-    REGISTER_DECODER(JV,                jv);
-    REGISTER_DECODER(KGV1,              kgv1);
+#endif
+#if CONFIG_JPEG2000_ENCODER
+    REGISTER_ENCODER(JPEG2000, jpeg2000);
+#endif
+#if CONFIG_JPEG2000_DECODER
+    REGISTER_DECODER(JPEG2000, jpeg2000);
+#endif
+#if CONFIG_JPEGLS_ENCODER
+    REGISTER_ENCODER(JPEGLS, jpegls);
+#endif
+#if CONFIG_JPEGLS_DECODER
+    REGISTER_DECODER(JPEGLS, jpegls);
+#endif
+#if CONFIG_JV_DECODER
+    REGISTER_DECODER(JV, jv);
+#endif
+#if CONFIG_KGV1_DECODER
+    REGISTER_DECODER(KGV1, kgv1);
+#endif
+#if CONFIG_KMVC_DECODER
     REGISTER_DECODER(KMVC,              kmvc);
+#endif
+#if CONFIG_LAGARITH_DECODER
     REGISTER_DECODER(LAGARITH,          lagarith);
-    REGISTER_ENCODER(LJPEG,             ljpeg);
-    REGISTER_DECODER(LOCO,              loco);
+#endif
+#if CONFIG_LJPEG_ENCODER
+    REGISTER_ENCODER(LJPEG, ljpeg);
+#endif
+#if CONFIG_LOCO_DECODER
+    REGISTER_DECODER(LOCO, loco);
+#endif
+#if CONFIG_MDEC_DECODER
     REGISTER_DECODER(MDEC,              mdec);
+#endif
+#if CONFIG_MIMIC_DECODER
     REGISTER_DECODER(MIMIC,             mimic);
-    REGISTER_ENCDEC (MJPEG,             mjpeg);
-    REGISTER_DECODER(MJPEGB,            mjpegb);
-    REGISTER_DECODER(MMVIDEO,           mmvideo);
-    REGISTER_DECODER(MOTIONPIXELS,      motionpixels);
-#if FF_API_XVMC
-    REGISTER_DECODER(MPEG_XVMC,         mpeg_xvmc);
+#endif  
+#if CONFIG_MJPEG_ENCODER
+    REGISTER_ENCODER(MJPEG, mjpeg);
+#endif
+#if CONFIG_MJPEG_DECODER
+    REGISTER_DECODER(MJPEG, mjpeg);
+#endif
+#if CONFIG_MJPEGB_DECODER
+    REGISTER_DECODER(MJPEGB, mjpegb);
+#endif
+#if CONFIG_MMVIDEO_DECODER
+    REGISTER_DECODER(MMVIDEO, mmvideo);
+#endif
+#if CONFIG_MOTIONPIXELS_DECODER
+    REGISTER_DECODER(MOTIONPIXELS, motionpixels);
+#endif
+#if FF_API_XVMC  
+#if CONFIG_MPEG_XVMC_DECODER
+    REGISTER_DECODER(MPEG_XVMC, mpeg_xvmc);
+#endif
 #endif /* FF_API_XVMC */
-    REGISTER_ENCDEC (MPEG1VIDEO,        mpeg1video);
-    REGISTER_ENCDEC (MPEG2VIDEO,        mpeg2video);
-    REGISTER_ENCDEC (MPEG4,             mpeg4);
-    REGISTER_DECODER(MPEG4_CRYSTALHD,   mpeg4_crystalhd);
-#if FF_API_VDPAU
-    REGISTER_DECODER(MPEG4_VDPAU,       mpeg4_vdpau);
+#if CONFIG_MPEG1VIDEO_ENCODER
+    REGISTER_ENCODER(MPEG1VIDEO, mpeg1video);
 #endif
-    REGISTER_DECODER(MPEGVIDEO,         mpegvideo);
-#if FF_API_VDPAU
-    REGISTER_DECODER(MPEG_VDPAU,        mpeg_vdpau);
-    REGISTER_DECODER(MPEG1_VDPAU,       mpeg1_vdpau);
+#if CONFIG_MPEG1VIDEO_DECODER
+    REGISTER_DECODER(MPEG1VIDEO, mpeg1video);
 #endif
-    REGISTER_DECODER(MPEG2_CRYSTALHD,   mpeg2_crystalhd);
-    REGISTER_DECODER(MPEG2_QSV,         mpeg2_qsv);
-    REGISTER_DECODER(MSA1,              msa1);
+#if CONFIG_MPEG2VIDEO_ENCODER
+    REGISTER_ENCODER(MPEG2VIDEO, mpeg2video);
+#endif
+#if CONFIG_MPEG2VIDEO_DECODER
+    REGISTER_DECODER(MPEG2VIDEO, mpeg2video);
+#endif
+#if CONFIG_MPEG4_ENCODER
+    REGISTER_ENCODER(MPEG4, mpeg4);
+#endif
+#if CONFIG_MPEG4_DECODER
+    REGISTER_DECODER(MPEG4, mpeg4);
+#endif
+#if CONFIG_MPEG4_CRYSTALHD_DECODER
+    REGISTER_DECODER(MPEG4_CRYSTALHD, mpeg4_crystalhd);
+#endif
+#if FF_API_VDPAU
+#if CONFIG_MPEG4_VDPAU_DECODER
+    REGISTER_DECODER(MPEG4_VDPAU, mpeg4_vdpau);
+#endif
+#endif
+#if CONFIG_MPEGVIDEO_DECODER
+    REGISTER_DECODER(MPEGVIDEO, mpegvideo);
+#endif
+#if FF_API_VDPAU
+#if CONFIG_MPEG_VDPAU_DECODER
+    REGISTER_DECODER(MPEG_VDPAU, mpeg_vdpau);
+#endif
+#if CONFIG_MPEG1_VDPAU_DECODER
+    REGISTER_DECODER(MPEG1_VDPAU, mpeg1_vdpau);
+#endif
+#endif
+#if CONFIG_MPEG2_CRYSTALHD_DECODER
+    REGISTER_DECODER(MPEG2_CRYSTALHD, mpeg2_crystalhd);
+#endif
+#if CONFIG_MPEG2_QSV_DECODER
+    REGISTER_DECODER(MPEG2_QSV, mpeg2_qsv);
+#endif
+#if CONFIG_MSA1_DECODER
+    REGISTER_DECODER(MSA1, msa1);
+#endif
+#if CONFIG_MSMPEG4_CRYSTALHD_DECODER
     REGISTER_DECODER(MSMPEG4_CRYSTALHD, msmpeg4_crystalhd);
-    REGISTER_DECODER(MSMPEG4V1,         msmpeg4v1);
-    REGISTER_ENCDEC (MSMPEG4V2,         msmpeg4v2);
-    REGISTER_ENCDEC (MSMPEG4V3,         msmpeg4v3);
-    REGISTER_DECODER(MSRLE,             msrle);
-    REGISTER_DECODER(MSS1,              mss1);
-    REGISTER_DECODER(MSS2,              mss2);
-    REGISTER_ENCDEC (MSVIDEO1,          msvideo1);
-    REGISTER_DECODER(MSZH,              mszh);
-    REGISTER_DECODER(MTS2,              mts2);
-    REGISTER_DECODER(MVC1,              mvc1);
-    REGISTER_DECODER(MVC2,              mvc2);
-    REGISTER_DECODER(MXPEG,             mxpeg);
-    REGISTER_DECODER(NUV,               nuv);
-    REGISTER_DECODER(PAF_VIDEO,         paf_video);
-    REGISTER_ENCDEC (PAM,               pam);
-    REGISTER_ENCDEC (PBM,               pbm);
-    REGISTER_ENCDEC (PCX,               pcx);
-    REGISTER_ENCDEC (PGM,               pgm);
-    REGISTER_ENCDEC (PGMYUV,            pgmyuv);
-    REGISTER_DECODER(PICTOR,            pictor);
-    REGISTER_ENCDEC (PNG,               png);
-    REGISTER_ENCDEC (PPM,               ppm);
-    REGISTER_ENCDEC (PRORES,            prores);
-    REGISTER_ENCODER(PRORES_AW,         prores_aw);
-    REGISTER_ENCODER(PRORES_KS,         prores_ks);
-    REGISTER_DECODER(PRORES_LGPL,       prores_lgpl);
-    REGISTER_DECODER(PTX,               ptx);
-    REGISTER_DECODER(QDRAW,             qdraw);
-    REGISTER_DECODER(QPEG,              qpeg);
-    REGISTER_ENCDEC (QTRLE,             qtrle);
-    REGISTER_ENCDEC (R10K,              r10k);
-    REGISTER_ENCDEC (R210,              r210);
-    REGISTER_ENCDEC (RAWVIDEO,          rawvideo);
-    REGISTER_DECODER(RL2,               rl2);
-    REGISTER_ENCDEC (ROQ,               roq);
-    REGISTER_DECODER(RPZA,              rpza);
-    REGISTER_ENCDEC (RV10,              rv10);
-    REGISTER_ENCDEC (RV20,              rv20);
-    REGISTER_DECODER(RV30,              rv30);
-    REGISTER_DECODER(RV40,              rv40);
-    REGISTER_ENCDEC (S302M,             s302m);
-    REGISTER_DECODER(SANM,              sanm);
-    REGISTER_ENCDEC (SGI,               sgi);
-    REGISTER_DECODER(SGIRLE,            sgirle);
-    REGISTER_DECODER(SMACKER,           smacker);
-    REGISTER_DECODER(SMC,               smc);
-    REGISTER_DECODER(SMVJPEG,           smvjpeg);
-    REGISTER_ENCDEC (SNOW,              snow);
-    REGISTER_DECODER(SP5X,              sp5x);
-    REGISTER_ENCDEC (SUNRAST,           sunrast);
-    REGISTER_ENCDEC (SVQ1,              svq1);
-    REGISTER_DECODER(SVQ3,              svq3);
-    REGISTER_ENCDEC (TARGA,             targa);
-    REGISTER_DECODER(TARGA_Y216,        targa_y216);
-    REGISTER_DECODER(TDSC,              tdsc);
-    REGISTER_DECODER(THEORA,            theora);
-    REGISTER_DECODER(THP,               thp);
-    REGISTER_DECODER(TIERTEXSEQVIDEO,   tiertexseqvideo);
-    REGISTER_ENCDEC (TIFF,              tiff);
-    REGISTER_DECODER(TMV,               tmv);
-    REGISTER_DECODER(TRUEMOTION1,       truemotion1);
-    REGISTER_DECODER(TRUEMOTION2,       truemotion2);
-    REGISTER_DECODER(TSCC,              tscc);
-    REGISTER_DECODER(TSCC2,             tscc2);
-    REGISTER_DECODER(TXD,               txd);
-    REGISTER_DECODER(ULTI,              ulti);
-    REGISTER_ENCDEC (UTVIDEO,           utvideo);
-    REGISTER_ENCDEC (V210,              v210);
-    REGISTER_DECODER(V210X,             v210x);
-    REGISTER_ENCDEC (V308,              v308);
-    REGISTER_ENCDEC (V408,              v408);
-    REGISTER_ENCDEC (V410,              v410);
-    REGISTER_DECODER(VB,                vb);
-    REGISTER_DECODER(VBLE,              vble);
-    REGISTER_DECODER(VC1,               vc1);
-    REGISTER_DECODER(VC1_CRYSTALHD,     vc1_crystalhd);
-#if FF_API_VDPAU
-    REGISTER_DECODER(VC1_VDPAU,         vc1_vdpau);
 #endif
-    REGISTER_DECODER(VC1IMAGE,          vc1image);
-    REGISTER_DECODER(VC1_QSV,           vc1_qsv);
-    REGISTER_DECODER(VCR1,              vcr1);
-    REGISTER_DECODER(VMDVIDEO,          vmdvideo);
-    REGISTER_DECODER(VMNC,              vmnc);
-    REGISTER_DECODER(VP3,               vp3);
-    REGISTER_DECODER(VP5,               vp5);
-    REGISTER_DECODER(VP6,               vp6);
-    REGISTER_DECODER(VP6A,              vp6a);
-    REGISTER_DECODER(VP6F,              vp6f);
-    REGISTER_DECODER(VP7,               vp7);
-    REGISTER_DECODER(VP8,               vp8);
-    REGISTER_DECODER(VP9,               vp9);
-    REGISTER_DECODER(VQA,               vqa);
-    REGISTER_DECODER(WEBP,              webp);
-    REGISTER_ENCDEC (WMV1,              wmv1);
-    REGISTER_ENCDEC (WMV2,              wmv2);
-    REGISTER_DECODER(WMV3,              wmv3);
-    REGISTER_DECODER(WMV3_CRYSTALHD,    wmv3_crystalhd);
-#if FF_API_VDPAU
-    REGISTER_DECODER(WMV3_VDPAU,        wmv3_vdpau);
+#if CONFIG_MSMPEG4V1_DECODER
+    REGISTER_DECODER(MSMPEG4V1, msmpeg4v1);
 #endif
-    REGISTER_DECODER(WMV3IMAGE,         wmv3image);
-    REGISTER_DECODER(WNV1,              wnv1);
-    REGISTER_DECODER(XAN_WC3,           xan_wc3);
-    REGISTER_DECODER(XAN_WC4,           xan_wc4);
-    REGISTER_ENCDEC (XBM,               xbm);
-    REGISTER_ENCDEC (XFACE,             xface);
-    REGISTER_DECODER(XL,                xl);
-    REGISTER_ENCDEC (XWD,               xwd);
-    REGISTER_ENCDEC (Y41P,              y41p);
-    REGISTER_DECODER(YOP,               yop);
-    REGISTER_ENCDEC (YUV4,              yuv4);
-    REGISTER_DECODER(ZERO12V,           zero12v);
-    REGISTER_DECODER(ZEROCODEC,         zerocodec);
-    REGISTER_ENCDEC (ZLIB,              zlib);
-    REGISTER_ENCDEC (ZMBV,              zmbv);
+#if CONFIG_MSMPEG4V2_ENCODER
+    REGISTER_ENCODER(MSMPEG4V2, msmpeg4v2);
+#endif
+#if CONFIG_MSMPEG4V2_DECODER
+    REGISTER_DECODER(MSMPEG4V2, msmpeg4v2);
+#endif
+#if CONFIG_MSMPEG4V3_ENCODER
+    REGISTER_ENCODER(MSMPEG4V3, msmpeg4v3);
+#endif
+#if CONFIG_MSMPEG4V3_DECODER
+    REGISTER_DECODER(MSMPEG4V3, msmpeg4v3);
+#endif
+#if CONFIG_MSRLE_DECODER
+    REGISTER_DECODER(MSRLE, msrle);
+#endif
+#if CONFIG_MSS1_DECODER
+    REGISTER_DECODER(MSS1, mss1);
+#endif
+#if CONFIG_MSS2_DECODER
+    REGISTER_DECODER(MSS2, mss2);
+#endif
+#if CONFIG_MSVIDEO1_ENCODER
+    REGISTER_ENCODER(MSVIDEO1, msvideo1);
+#endif
+#if CONFIG_MSVIDEO1_DECODER
+    REGISTER_DECODER(MSVIDEO1, msvideo1);
+#endif
+#if CONFIG_MSZH_DECODER
+    REGISTER_DECODER(MSZH, mszh);
+#endif
+#if CONFIG_MTS2_DECODER
+    REGISTER_DECODER(MTS2, mts2);
+#endif
+#if CONFIG_MVC1_DECODER
+    REGISTER_DECODER(MVC1, mvc1);
+#endif
+#if CONFIG_MVC2_DECODER
+    REGISTER_DECODER(MVC2, mvc2);
+#endif
+#if CONFIG_MXPEG_DECODER
+    REGISTER_DECODER(MXPEG, mxpeg);
+#endif
+#if CONFIG_NUV_DECODER
+    REGISTER_DECODER(NUV, nuv);
+#endif
+#if CONFIG_PAF_VIDEO_DECODER
+    REGISTER_DECODER(PAF_VIDEO, paf_video);
+#endif
+#if CONFIG_PAM_ENCODER
+    REGISTER_ENCODER(PAM, pam);
+#endif
+#if CONFIG_PAM_DECODER
+    REGISTER_DECODER(PAM, pam);
+#endif
+#if CONFIG_PBM_ENCODER
+    REGISTER_ENCODER(PBM, pbm);
+#endif
+#if CONFIG_PBM_DECODER
+    REGISTER_DECODER(PBM, pbm);
+#endif
+#if CONFIG_PCX_ENCODER
+    REGISTER_ENCODER(PCX, pcx);
+#endif
+#if CONFIG_PCX_DECODER
+    REGISTER_DECODER(PCX, pcx);
+#endif
+#if CONFIG_PGM_ENCODER
+    REGISTER_ENCODER(PGM, pgm);
+#endif
+#if CONFIG_PGM_DECODER
+    REGISTER_DECODER(PGM, pgm);
+#endif
+#if CONFIG_PGMYUV_ENCODER
+    REGISTER_ENCODER(PGMYUV, pgmyuv);
+#endif
+#if CONFIG_PGMYUV_DECODER
+    REGISTER_DECODER(PGMYUV, pgmyuv);
+#endif
+#if CONFIG_PICTOR_DECODER
+    REGISTER_DECODER(PICTOR, pictor);
+#endif
+#if CONFIG_PNG_ENCODER
+    REGISTER_ENCODER(PNG, png);
+#endif
+#if CONFIG_PNG_DECODER
+    REGISTER_DECODER(PNG, png);
+#endif
+#if CONFIG_PPM_ENCODER
+    REGISTER_ENCODER(PPM, ppm);
+#endif
+#if CONFIG_PPM_DECODER
+    REGISTER_DECODER(PPM, ppm);
+#endif
+#if CONFIG_PRORES_ENCODER
+    REGISTER_ENCODER(PRORES, prores);
+#endif
+#if CONFIG_PRORES_DECODER
+    REGISTER_DECODER(PRORES, prores);
+#endif
+#if CONFIG_PRORES_AW_ENCODER
+    REGISTER_ENCODER(PRORES_AW, prores_aw);
+#endif
+#if CONFIG_PRORES_KS_ENCODER
+    REGISTER_ENCODER(PRORES_KS, prores_ks);
+#endif
+#if CONFIG_PRORES_LGPL_DECODER
+    REGISTER_DECODER(PRORES_LGPL, prores_lgpl);
+#endif
+#if CONFIG_PTX_DECODER
+    REGISTER_DECODER(PTX, ptx);
+#endif
+#if CONFIG_QDRAW_DECODER
+    REGISTER_DECODER(QDRAW, qdraw);
+#endif
+#if CONFIG_QPEG_DECODER
+    REGISTER_DECODER(QPEG, qpeg);
+#endif
+#if CONFIG_QTRLE_ENCODER
+    REGISTER_ENCODER(QTRLE, qtrle);
+#endif
+#if CONFIG_QTRLE_DECODER
+    REGISTER_DECODER(QTRLE, qtrle);
+#endif
+#if CONFIG_R10K_ENCODER
+    REGISTER_ENCODER(R10K, r10k);
+#endif
+#if CONFIG_R10K_DECODER
+    REGISTER_DECODER(R10K, r10k);
+#endif
+#if CONFIG_R210_ENCODER
+    REGISTER_ENCODER(R210, r210);
+#endif
+#if CONFIG_R210_DECODER
+    REGISTER_DECODER(R210, r210);
+#endif
+#if CONFIG_RAWVIDEO_ENCODER
+    REGISTER_ENCODER(RAWVIDEO, rawvideo);
+#endif
+#if CONFIG_RAWVIDEO_DECODER
+    REGISTER_DECODER(RAWVIDEO, rawvideo);
+#endif
+#if CONFIG_RL2_DECODER
+    REGISTER_DECODER(RL2, rl2);
+#endif
+#if CONFIG_ROQ_ENCODER
+    REGISTER_ENCODER(ROQ, roq);
+#endif
+#if CONFIG_ROQ_DECODER
+    REGISTER_DECODER(ROQ, roq);
+#endif
+#if CONFIG_RPZA_DECODER
+    REGISTER_DECODER(RPZA, rpza);
+#endif
+#if CONFIG_RV10_ENCODER
+    REGISTER_ENCODER(RV10, rv10);
+#endif
+#if CONFIG_RV10_DECODER
+    REGISTER_DECODER(RV10, rv10);
+#endif
+#if CONFIG_RV20_ENCODER
+    REGISTER_ENCODER(RV20, rv20);
+#endif
+#if CONFIG_RV20_DECODER
+    REGISTER_DECODER(RV20, rv20);
+#endif
+#if CONFIG_RV30_DECODER
+    REGISTER_DECODER(RV30, rv30);
+#endif
+#if CONFIG_RV40_DECODER
+    REGISTER_DECODER(RV40, rv40);
+#endif
+#if CONFIG_S302M_ENCODER
+    REGISTER_ENCODER(S302M, s302m);
+#endif
+#if CONFIG_S302M_DECODER
+    REGISTER_DECODER(S302M, s302m);
+#endif
+#if CONFIG_SANM_DECODER
+    REGISTER_DECODER(SANM, sanm);
+#endif
+#if CONFIG_SGI_ENCODER
+    REGISTER_ENCODER(SGI, sgi);
+#endif
+#if CONFIG_SGI_DECODER
+    REGISTER_DECODER(SGI, sgi);
+#endif
+#if CONFIG_SGIRLE_DECODER
+    REGISTER_DECODER(SGIRLE, sgirle);
+#endif
+#if CONFIG_SMACKER_DECODER
+    REGISTER_DECODER(SMACKER, smacker);
+#endif
+#if CONFIG_SMC_DECODER
+    REGISTER_DECODER(SMC, smc);
+#endif
+#if CONFIG_SMVJPEG_DECODER
+    REGISTER_DECODER(SMVJPEG, smvjpeg);
+#endif
+#if CONFIG_SNOW_ENCODER
+    REGISTER_ENCODER(SNOW, snow);
+#endif
+#if CONFIG_SNOW_DECODER
+    REGISTER_DECODER(SNOW, snow);
+#endif
+#if CONFIG_SP5X_DECODER
+    REGISTER_DECODER(SP5X, sp5x);
+#endif
+#if CONFIG_SUNRAST_ENCODER
+    REGISTER_ENCODER(SUNRAST, sunrast);
+#endif
+#if CONFIG_SUNRAST_DECODER
+    REGISTER_DECODER(SUNRAST, sunrast);
+#endif
+#if CONFIG_SVQ1_ENCODER
+    REGISTER_ENCODER(SVQ1, svq1);
+#endif
+#if CONFIG_SVQ1_DECODER
+    REGISTER_DECODER(SVQ1, svq1);
+#endif
+#if CONFIG_SVQ3_DECODER
+    REGISTER_DECODER(SVQ3, svq3);
+#endif
+#if CONFIG_TARGA_ENCODER
+    REGISTER_ENCODER(TARGA, targa);
+#endif
+#if CONFIG_TARGA_DECODER
+    REGISTER_DECODER(TARGA, targa);
+#endif
+#if CONFIG_TARGA_Y216_DECODER
+    REGISTER_DECODER(TARGA_Y216, targa_y216);
+#endif
+#if CONFIG_TDSC_DECODER
+    REGISTER_DECODER(TDSC, tdsc);
+#endif
+#if CONFIG_THEORA_DECODER
+    REGISTER_DECODER(THEORA, theora);
+#endif
+#if CONFIG_THP_DECODER
+    REGISTER_DECODER(THP, thp);
+#endif
+#if CONFIG_TIERTEXSEQVIDEO_DECODER
+    REGISTER_DECODER(TIERTEXSEQVIDEO, tiertexseqvideo);
+#endif
+#if CONFIG_TIFF_ENCODER
+    REGISTER_ENCODER(TIFF, tiff);
+#endif
+#if CONFIG_TIFF_DECODER
+    REGISTER_DECODER(TIFF, tiff);
+#endif
+#if CONFIG_TMV_DECODER
+    REGISTER_DECODER(TMV, tmv);
+#endif
+#if CONFIG_TRUEMOTION1_DECODER
+    REGISTER_DECODER(TRUEMOTION1, truemotion1);
+#endif
+#if CONFIG_TRUEMOTION2_DECODER
+    REGISTER_DECODER(TRUEMOTION2, truemotion2);
+#endif
+#if CONFIG_TSCC_DECODER
+    REGISTER_DECODER(TSCC, tscc);
+#endif
+#if CONFIG_TSCC2_DECODER
+    REGISTER_DECODER(TSCC2, tscc2);
+#endif
+#if CONFIG_TXD_DECODER
+    REGISTER_DECODER(TXD, txd);
+#endif
+#if CONFIG_ULTI_DECODER
+    REGISTER_DECODER(ULTI, ulti);
+#endif
+#if CONFIG_UTVIDEO_ENCODER
+    REGISTER_ENCODER(UTVIDEO, utvideo);
+#endif
+#if CONFIG_UTVIDEO_DECODER
+    REGISTER_DECODER(UTVIDEO, utvideo);
+#endif
+#if CONFIG_V210_ENCODER
+    REGISTER_ENCODER(V210, v210);
+#endif
+#if CONFIG_V210_DECODER
+    REGISTER_DECODER(V210, v210);
+#endif
+#if CONFIG_V210X_DECODER
+    REGISTER_DECODER(V210X, v210x);
+#endif
+#if CONFIG_V308_ENCODER
+    REGISTER_ENCODER(V308, v308);
+#endif
+#if CONFIG_V308_DECODER
+    REGISTER_DECODER(V308, v308);
+#endif
+#if CONFIG_V408_ENCODER
+    REGISTER_ENCODER(V408, v408);
+#endif
+#if CONFIG_V408_DECODER
+    REGISTER_DECODER(V408, v408);
+#endif
+#if CONFIG_V410_ENCODER
+    REGISTER_ENCODER(V410, v410);
+#endif
+#if CONFIG_V410_DECODER
+    REGISTER_DECODER(V410, v410);
+#endif
+#if CONFIG_VB_DECODER
+    REGISTER_DECODER(VB, vb);
+#endif
+#if CONFIG_VBLE_DECODER
+    REGISTER_DECODER(VBLE, vble);
+#endif
+#if CONFIG_VC1_DECODER
+    REGISTER_DECODER(VC1, vc1);
+#endif
+#if CONFIG_VC1_CRYSTALHD_DECODER
+    REGISTER_DECODER(VC1_CRYSTALHD, vc1_crystalhd);
+#endif
+#if FF_API_VDPAU  
+#if CONFIG_VC1_VDPAU_DECODER
+    REGISTER_DECODER(VC1_VDPAU, vc1_vdpau);
+#endif
+#endif
+#if CONFIG_VC1IMAGE_DECODER
+    REGISTER_DECODER(VC1IMAGE, vc1image);
+#endif
+#if CONFIG_VC1_QSV_DECODER
+    REGISTER_DECODER(VC1_QSV, vc1_qsv);
+#endif
+#if CONFIG_VCR1_DECODER
+    REGISTER_DECODER(VCR1, vcr1);
+#endif
+#if CONFIG_VMDVIDEO_DECODER
+    REGISTER_DECODER(VMDVIDEO, vmdvideo);
+#endif
+#if CONFIG_VMNC_DECODER
+    REGISTER_DECODER(VMNC, vmnc);
+#endif
+#if CONFIG_VP3_DECODER
+    REGISTER_DECODER(VP3, vp3);
+#endif
+#if CONFIG_VP5_DECODER
+    REGISTER_DECODER(VP5, vp5);
+#endif
+#if CONFIG_VP6_DECODER
+    REGISTER_DECODER(VP6, vp6);
+#endif
+#if CONFIG_VP6A_DECODER
+    REGISTER_DECODER(VP6A, vp6a);
+#endif
+#if CONFIG_VP6F_DECODER
+    REGISTER_DECODER(VP6F, vp6f);
+#endif
+#if CONFIG_VP7_DECODER
+    REGISTER_DECODER(VP7, vp7);
+#endif
+#if CONFIG_VP8_DECODER
+    REGISTER_DECODER(VP8, vp8);
+#endif
+#if CONFIG_VP9_DECODER
+    REGISTER_DECODER(VP9, vp9);
+#endif
+#if CONFIG_VQA_DECODER
+    REGISTER_DECODER(VQA, vqa);
+#endif
+#if CONFIG_WEBP_DECODER
+    REGISTER_DECODER(WEBP, webp);
+#endif
+#if CONFIG_WMV1_ENCODER
+    REGISTER_ENCODER(WMV1, wmv1);
+#endif
+#if CONFIG_WMV1_DECODER
+    REGISTER_DECODER(WMV1, wmv1);
+#endif
+#if CONFIG_WMV2_ENCODER
+    REGISTER_ENCODER(WMV2, wmv2);
+#endif
+#if CONFIG_WMV2_DECODER
+    REGISTER_DECODER(WMV2, wmv2);
+#endif
+#if CONFIG_WMV3_DECODER
+    REGISTER_DECODER(WMV3, wmv3);
+#endif
+#if CONFIG_WMV3_CRYSTALHD_DECODER
+    REGISTER_DECODER(WMV3_CRYSTALHD, wmv3_crystalhd);
+#endif
+#if FF_API_VDPAU
+#if CONFIG_WMV3_VDPAU_DECODER
+    REGISTER_DECODER(WMV3_VDPAU, wmv3_vdpau);
+#endif
+#endif
+#if CONFIG_WMV3IMAGE_DECODER
+    REGISTER_DECODER(WMV3IMAGE, wmv3image);
+#endif
+#if CONFIG_WNV1_DECODER
+    REGISTER_DECODER(WNV1, wnv1);
+#endif
+#if CONFIG_XAN_WC3_DECODER
+    REGISTER_DECODER(XAN_WC3, xan_wc3);
+#endif
+#if CONFIG_XAN_WC4_DECODER
+    REGISTER_DECODER(XAN_WC4, xan_wc4);
+#endif
+#if CONFIG_XBM_ENCODER
+    REGISTER_ENCODER(XBM, xbm);
+#endif
+#if CONFIG_XBM_DECODER
+    REGISTER_DECODER(XBM, xbm);
+#endif
+#if CONFIG_XFACE_ENCODER
+    REGISTER_ENCODER(XFACE, xface);
+#endif
+#if CONFIG_XFACE_DECODER
+    REGISTER_DECODER(XFACE, xface);
+#endif
+#if CONFIG_XL_DECODER
+    REGISTER_DECODER(XL, xl);
+#endif
+#if CONFIG_XWD_ENCODER
+    REGISTER_ENCODER(XWD, xwd);
+#endif
+#if CONFIG_XWD_DECODER
+    REGISTER_DECODER(XWD, xwd);
+#endif
+#if CONFIG_Y41P_ENCODER
+    REGISTER_ENCODER(Y41P, y41p);
+#endif
+#if CONFIG_Y41P_DECODER
+    REGISTER_DECODER(Y41P, y41p);
+#endif
+#if CONFIG_YOP_DECODER
+    REGISTER_DECODER(YOP, yop);
+#endif
+#if CONFIG_YUV4_ENCODER
+    REGISTER_ENCODER(YUV4, yuv4);
+#endif
+#if CONFIG_YUV4_DECODER
+    REGISTER_DECODER(YUV4, yuv4);
+#endif
+#if CONFIG_ZERO12V_DECODER
+    REGISTER_DECODER(ZERO12V, zero12v);
+#endif
+#if CONFIG_ZEROCODEC_DECODER
+    REGISTER_DECODER(ZEROCODEC, zerocodec);
+#endif
+#if CONFIG_ZLIB_ENCODER
+    REGISTER_ENCODER(ZLIB, zlib);
+#endif
+#if CONFIG_ZLIB_DECODER
+    REGISTER_DECODER(ZLIB, zlib);
+#endif
+#if CONFIG_ZMBV_ENCODER
+    REGISTER_ENCODER(ZMBV, zmbv);
+#endif
+#if CONFIG_ZMBV_DECODER
+    REGISTER_DECODER(ZMBV, zmbv);
+#endif
 
     /* audio codecs */
-    REGISTER_ENCDEC (AAC,               aac);
-    REGISTER_DECODER(AAC_FIXED,         aac_fixed);
-    REGISTER_DECODER(AAC_LATM,          aac_latm);
-    REGISTER_ENCDEC (AC3,               ac3);
-    REGISTER_ENCDEC (AC3_FIXED,         ac3_fixed);
-    REGISTER_ENCDEC (ALAC,              alac);
-    REGISTER_DECODER(ALS,               als);
-    REGISTER_DECODER(AMRNB,             amrnb);
-    REGISTER_DECODER(AMRWB,             amrwb);
-    REGISTER_DECODER(APE,               ape);
-    REGISTER_DECODER(ATRAC1,            atrac1);
-    REGISTER_DECODER(ATRAC3,            atrac3);
-    REGISTER_DECODER(ATRAC3P,           atrac3p);
-    REGISTER_DECODER(BINKAUDIO_DCT,     binkaudio_dct);
-    REGISTER_DECODER(BINKAUDIO_RDFT,    binkaudio_rdft);
-    REGISTER_DECODER(BMV_AUDIO,         bmv_audio);
-    REGISTER_DECODER(COOK,              cook);
-    REGISTER_ENCDEC (DCA,               dca);
-    REGISTER_DECODER(DSD_LSBF,          dsd_lsbf);
-    REGISTER_DECODER(DSD_MSBF,          dsd_msbf);
-    REGISTER_DECODER(DSD_LSBF_PLANAR,   dsd_lsbf_planar);
-    REGISTER_DECODER(DSD_MSBF_PLANAR,   dsd_msbf_planar);
-    REGISTER_DECODER(DSICINAUDIO,       dsicinaudio);
-    REGISTER_DECODER(DSS_SP,            dss_sp);
-    REGISTER_ENCDEC (EAC3,              eac3);
-    REGISTER_DECODER(EVRC,              evrc);
-    REGISTER_DECODER(FFWAVESYNTH,       ffwavesynth);
-    REGISTER_ENCDEC (FLAC,              flac);
-    REGISTER_ENCDEC (G723_1,            g723_1);
-    REGISTER_DECODER(G729,              g729);
-    REGISTER_DECODER(GSM,               gsm);
-    REGISTER_DECODER(GSM_MS,            gsm_ms);
-    REGISTER_DECODER(IAC,               iac);
-    REGISTER_DECODER(IMC,               imc);
-    REGISTER_DECODER(MACE3,             mace3);
-    REGISTER_DECODER(MACE6,             mace6);
-    REGISTER_DECODER(METASOUND,         metasound);
-    REGISTER_DECODER(MLP,               mlp);
-    REGISTER_DECODER(MP1,               mp1);
-    REGISTER_DECODER(MP1FLOAT,          mp1float);
-    REGISTER_ENCDEC (MP2,               mp2);
-    REGISTER_DECODER(MP2FLOAT,          mp2float);
-    REGISTER_ENCODER(MP2FIXED,          mp2fixed);
-    REGISTER_DECODER(MP3,               mp3);
-    REGISTER_DECODER(MP3FLOAT,          mp3float);
-    REGISTER_DECODER(MP3ADU,            mp3adu);
-    REGISTER_DECODER(MP3ADUFLOAT,       mp3adufloat);
-    REGISTER_DECODER(MP3ON4,            mp3on4);
-    REGISTER_DECODER(MP3ON4FLOAT,       mp3on4float);
-    REGISTER_DECODER(MPC7,              mpc7);
-    REGISTER_DECODER(MPC8,              mpc8);
-    REGISTER_ENCDEC (NELLYMOSER,        nellymoser);
-    REGISTER_DECODER(ON2AVC,            on2avc);
-    REGISTER_DECODER(OPUS,              opus);
-    REGISTER_DECODER(PAF_AUDIO,         paf_audio);
-    REGISTER_DECODER(QCELP,             qcelp);
-    REGISTER_DECODER(QDM2,              qdm2);
-    REGISTER_ENCDEC (RA_144,            ra_144);
-    REGISTER_DECODER(RA_288,            ra_288);
-    REGISTER_DECODER(RALF,              ralf);
-    REGISTER_DECODER(SHORTEN,           shorten);
-    REGISTER_DECODER(SIPR,              sipr);
-    REGISTER_DECODER(SMACKAUD,          smackaud);
-    REGISTER_ENCDEC (SONIC,             sonic);
-    REGISTER_ENCODER(SONIC_LS,          sonic_ls);
-    REGISTER_DECODER(TAK,               tak);
-    REGISTER_DECODER(TRUEHD,            truehd);
-    REGISTER_DECODER(TRUESPEECH,        truespeech);
-    REGISTER_ENCDEC (TTA,               tta);
-    REGISTER_DECODER(TWINVQ,            twinvq);
-    REGISTER_DECODER(VMDAUDIO,          vmdaudio);
-    REGISTER_ENCDEC (VORBIS,            vorbis);
-    REGISTER_ENCDEC (WAVPACK,           wavpack);
-    REGISTER_DECODER(WMALOSSLESS,       wmalossless);
-    REGISTER_DECODER(WMAPRO,            wmapro);
-    REGISTER_ENCDEC (WMAV1,             wmav1);
-    REGISTER_ENCDEC (WMAV2,             wmav2);
-    REGISTER_DECODER(WMAVOICE,          wmavoice);
-    REGISTER_DECODER(WS_SND1,           ws_snd1);
+#if CONFIG_AAC_ENCODER
+    REGISTER_ENCODER(AAC, aac);
+#endif
+#if CONFIG_AAC_DECODER
+    REGISTER_DECODER(AAC, aac);
+#endif
+#if CONFIG_AAC_FIXED_DECODER
+    REGISTER_DECODER(AAC_FIXED, aac_fixed);
+#endif
+#if CONFIG_AAC_LATM_DECODER
+    REGISTER_DECODER(AAC_LATM, aac_latm);
+#endif
+#if CONFIG_AC3_ENCODER
+    REGISTER_ENCODER(AC3, ac3);
+#endif
+#if CONFIG_AC3_DECODER
+    REGISTER_DECODER(AC3, ac3);
+#endif
+#if CONFIG_AC3_FIXED_ENCODER
+    REGISTER_ENCODER(AC3_FIXED, ac3_fixed);
+#endif
+#if CONFIG_AC3_FIXED_DECODER
+    REGISTER_DECODER(AC3_FIXED, ac3_fixed);
+#endif
+#if CONFIG_ALAC_ENCODER
+    REGISTER_ENCODER(ALAC, alac);
+#endif
+#if CONFIG_ALAC_DECODER
+    REGISTER_DECODER(ALAC, alac);
+#endif
+#if CONFIG_ALS_DECODER
+    REGISTER_DECODER(ALS, als);
+#endif
+#if CONFIG_AMRNB_DECODER
+    REGISTER_DECODER(AMRNB, amrnb);
+#endif
+#if CONFIG_AMRWB_DECODER
+    REGISTER_DECODER(AMRWB, amrwb);
+#endif
+#if CONFIG_APE_DECODER
+    REGISTER_DECODER(APE, ape);
+#endif
+#if CONFIG_ATRAC1_DECODER
+    REGISTER_DECODER(ATRAC1, atrac1);
+#endif
+#if CONFIG_ATRAC3_DECODER
+    REGISTER_DECODER(ATRAC3, atrac3);
+#endif
+#if CONFIG_ATRAC3P_DECODER
+    REGISTER_DECODER(ATRAC3P, atrac3p);
+#endif
+#if CONFIG_BINKAUDIO_DCT_DECODER
+    REGISTER_DECODER(BINKAUDIO_DCT, binkaudio_dct);
+#endif
+#if CONFIG_BINKAUDIO_RDFT_DECODER
+    REGISTER_DECODER(BINKAUDIO_RDFT, binkaudio_rdft);
+#endif
+#if CONFIG_BMV_AUDIO_DECODER
+    REGISTER_DECODER(BMV_AUDIO, bmv_audio);
+#endif
+#if CONFIG_COOK_DECODER
+    REGISTER_DECODER(COOK, cook);
+#endif
+#if CONFIG_DCA_ENCODER
+    REGISTER_ENCODER(DCA, dca);
+#endif
+#if CONFIG_DCA_DECODER
+    REGISTER_DECODER(DCA, dca);
+#endif
+#if CONFIG_DSD_LSBF_DECODER
+    REGISTER_DECODER(DSD_LSBF, dsd_lsbf);
+#endif
+#if CONFIG_DSD_MSBF_DECODER
+    REGISTER_DECODER(DSD_MSBF, dsd_msbf);
+#endif
+#if CONFIG_DSD_LSBF_PLANAR_DECODER
+    REGISTER_DECODER(DSD_LSBF_PLANAR, dsd_lsbf_planar);
+#endif
+#if CONFIG_DSD_MSBF_PLANAR_DECODER
+    REGISTER_DECODER(DSD_MSBF_PLANAR, dsd_msbf_planar);
+#endif
+#if CONFIG_DSICINAUDIO_DECODER
+    REGISTER_DECODER(DSICINAUDIO, dsicinaudio);
+#endif
+#if CONFIG_DSS_SP_DECODER
+    REGISTER_DECODER(DSS_SP, dss_sp);
+#endif
+#if CONFIG_EAC3_ENCODER
+    REGISTER_ENCODER(EAC3, eac3);
+#endif
+#if CONFIG_EAC3_DECODER
+    REGISTER_DECODER(EAC3, eac3);
+#endif
+#if CONFIG_EVRC_DECODER
+    REGISTER_DECODER(EVRC, evrc);
+#endif
+#if CONFIG_FFWAVESYNTH_DECODER
+    REGISTER_DECODER(FFWAVESYNTH, ffwavesynth);
+#endif
+#if CONFIG_FLAC_ENCODER
+    REGISTER_ENCODER(FLAC, flac);
+#endif
+#if CONFIG_FLAC_DECODER
+    REGISTER_DECODER(FLAC, flac);
+#endif
+#if CONFIG_G723_1_ENCODER
+    REGISTER_ENCODER(G723_1, g723_1);
+#endif
+#if CONFIG_G723_1_DECODER
+    REGISTER_DECODER(G723_1, g723_1);
+#endif
+#if CONFIG_G729_DECODER
+    REGISTER_DECODER(G729, g729);
+#endif
+#if CONFIG_GSM_DECODER
+    REGISTER_DECODER(GSM, gsm);
+#endif
+#if CONFIG_GSM_MS_DECODER
+    REGISTER_DECODER(GSM_MS, gsm_ms);
+#endif
+#if CONFIG_IAC_DECODER
+    REGISTER_DECODER(IAC, iac);
+#endif
+#if CONFIG_IMC_DECODER
+    REGISTER_DECODER(IMC, imc);
+#endif
+#if CONFIG_MACE3_DECODER
+    REGISTER_DECODER(MACE3, mace3);
+#endif
+#if CONFIG_MACE6_DECODER
+    REGISTER_DECODER(MACE6, mace6);
+#endif
+#if CONFIG_METASOUND_DECODER
+    REGISTER_DECODER(METASOUND, metasound);
+#endif
+#if CONFIG_MLP_DECODER
+    REGISTER_DECODER(MLP, mlp);
+#endif
+#if CONFIG_MP1_DECODER
+    REGISTER_DECODER(MP1, mp1);
+#endif
+#if CONFIG_MP1FLOAT_DECODER
+    REGISTER_DECODER(MP1FLOAT, mp1float);
+#endif
+#if CONFIG_MP2_ENCODER
+    REGISTER_ENCODER(MP2, mp2);
+#endif
+#if CONFIG_MP2_DECODER
+    REGISTER_DECODER(MP2, mp2);
+#endif
+#if CONFIG_MP2FLOAT_DECODER
+    REGISTER_DECODER(MP2FLOAT, mp2float);
+#endif
+#if CONFIG_MP2FIXED_ENCODER
+    REGISTER_ENCODER(MP2FIXED, mp2fixed);
+#endif
+#if CONFIG_MP3_DECODER
+    REGISTER_DECODER(MP3, mp3);
+#endif
+#if CONFIG_MP3FLOAT_DECODER
+    REGISTER_DECODER(MP3FLOAT, mp3float);
+#endif
+#if CONFIG_MP3ADU_DECODER
+    REGISTER_DECODER(MP3ADU, mp3adu);
+#endif
+#if CONFIG_MP3ADUFLOAT_DECODER
+    REGISTER_DECODER(MP3ADUFLOAT, mp3adufloat);
+#endif
+#if CONFIG_MP3ON4_DECODER
+    REGISTER_DECODER(MP3ON4, mp3on4);
+#endif
+#if CONFIG_MP3ON4FLOAT_DECODER
+    REGISTER_DECODER(MP3ON4FLOAT, mp3on4float);
+#endif
+#if CONFIG_MPC7_DECODER
+    REGISTER_DECODER(MPC7, mpc7);
+#endif
+#if CONFIG_MPC8_DECODER
+    REGISTER_DECODER(MPC8, mpc8);
+#endif
+#if CONFIG_NELLYMOSER_ENCODER
+    REGISTER_ENCODER(NELLYMOSER, nellymoser);
+#endif
+#if CONFIG_NELLYMOSER_DECODER
+    REGISTER_DECODER(NELLYMOSER, nellymoser);
+#endif
+#if CONFIG_ON2AVC_DECODER
+    REGISTER_DECODER(ON2AVC, on2avc);
+#endif
+#if CONFIG_OPUS_DECODER
+    REGISTER_DECODER(OPUS, opus);
+#endif
+#if CONFIG_PAF_AUDIO_DECODER
+    REGISTER_DECODER(PAF_AUDIO, paf_audio);
+#endif
+#if CONFIG_QCELP_DECODER
+    REGISTER_DECODER(QCELP, qcelp);
+#endif
+#if CONFIG_QDM2_DECODER
+    REGISTER_DECODER(QDM2, qdm2);
+#endif
+#if CONFIG_RA_144_ENCODER
+    REGISTER_ENCODER(RA_144, ra_144);
+#endif
+#if CONFIG_RA_144_DECODER
+    REGISTER_DECODER(RA_144, ra_144);
+#endif
+#if CONFIG_RA_288_DECODER
+    REGISTER_DECODER(RA_288, ra_288);
+#endif
+#if CONFIG_RALF_DECODER
+    REGISTER_DECODER(RALF, ralf);
+#endif
+#if CONFIG_SHORTEN_DECODER
+    REGISTER_DECODER(SHORTEN, shorten);
+#endif
+#if CONFIG_SIPR_DECODER
+    REGISTER_DECODER(SIPR, sipr);
+#endif
+#if CONFIG_SMACKAUD_DECODER
+    REGISTER_DECODER(SMACKAUD, smackaud);
+#endif
+#if CONFIG_SONIC_ENCODER
+    REGISTER_ENCODER(SONIC, sonic);
+#endif
+#if CONFIG_SONIC_DECODER
+    REGISTER_DECODER(SONIC, sonic);
+#endif
+#if CONFIG_SONIC_LS_ENCODER
+    REGISTER_ENCODER(SONIC_LS, sonic_ls);
+#endif
+#if CONFIG_TAK_DECODER
+    REGISTER_DECODER(TAK, tak);
+#endif
+#if CONFIG_TRUEHD_DECODER
+    REGISTER_DECODER(TRUEHD, truehd);
+#endif
+#if CONFIG_TRUESPEECH_DECODER
+    REGISTER_DECODER(TRUESPEECH, truespeech);
+#endif
+#if CONFIG_TTA_ENCODER
+    REGISTER_ENCODER(TTA, tta);
+#endif
+#if CONFIG_TTA_DECODER
+    REGISTER_DECODER(TTA, tta);
+#endif
+#if CONFIG_TWINVQ_DECODER
+    REGISTER_DECODER(TWINVQ, twinvq);
+#endif
+#if CONFIG_VMDAUDIO_DECODER
+    REGISTER_DECODER(VMDAUDIO, vmdaudio);
+#endif
+#if CONFIG_VORBIS_ENCODER
+    REGISTER_ENCODER(VORBIS, vorbis);
+#endif
+#if CONFIG_VORBIS_DECODER
+    REGISTER_DECODER(VORBIS, vorbis);
+#endif
+#if CONFIG_WAVPACK_ENCODER
+    REGISTER_ENCODER(WAVPACK, wavpack);
+#endif
+#if CONFIG_WAVPACK_DECODER
+    REGISTER_DECODER(WAVPACK, wavpack);
+#endif
+#if CONFIG_WMALOSSLESS_DECODER
+    REGISTER_DECODER(WMALOSSLESS, wmalossless);
+#endif
+#if CONFIG_WMAPRO_DECODER
+    REGISTER_DECODER(WMAPRO, wmapro);
+#endif
+#if CONFIG_WMAV1_ENCODER
+    REGISTER_ENCODER(WMAV1, wmav1);
+#endif
+#if CONFIG_WMAV1_DECODER
+    REGISTER_DECODER(WMAV1, wmav1);
+#endif
+#if CONFIG_WMAV2_ENCODER
+    REGISTER_ENCODER(WMAV2, wmav2);
+#endif
+#if CONFIG_WMAV2_DECODER
+    REGISTER_DECODER(WMAV2, wmav2);
+#endif
+#if CONFIG_WMAVOICE_DECODER
+    REGISTER_DECODER(WMAVOICE, wmavoice);
+#endif
+#if CONFIG_WS_SND1_DECODER
+    REGISTER_DECODER(WS_SND1, ws_snd1);
+#endif
+
 
     /* PCM codecs */
-    REGISTER_ENCDEC (PCM_ALAW,          pcm_alaw);
+#if CONFIG_PCM_ALAW_ENCODER
+    REGISTER_ENCODER(PCM_ALAW, pcm_alaw);
+#endif
+#if CONFIG_PCM_ALAW_DECODER
+    REGISTER_DECODER(PCM_ALAW, pcm_alaw);
+#endif
+#if CONFIG_PCM_BLURAY_DECODER
     REGISTER_DECODER(PCM_BLURAY,        pcm_bluray);
+#endif
+#if CONFIG_PCM_DVD_DECODER
     REGISTER_DECODER(PCM_DVD,           pcm_dvd);
-    REGISTER_ENCDEC (PCM_F32BE,         pcm_f32be);
-    REGISTER_ENCDEC (PCM_F32LE,         pcm_f32le);
-    REGISTER_ENCDEC (PCM_F64BE,         pcm_f64be);
-    REGISTER_ENCDEC (PCM_F64LE,         pcm_f64le);
+#endif
+#if CONFIG_PCM_F32BE_ENCODER
+    REGISTER_ENCODER(PCM_F32BE, pcm_f32be);
+#endif
+#if CONFIG_PCM_F32BE_DECODER
+    REGISTER_DECODER(PCM_F32BE, pcm_f32be);
+#endif
+#if CONFIG_PCM_F32LE_ENCODER
+    REGISTER_ENCODER(PCM_F32LE, pcm_f32le);
+#endif
+#if CONFIG_PCM_F32LE_DECODER
+    REGISTER_DECODER(PCM_F32LE, pcm_f32le);
+#endif
+#if CONFIG_PCM_F64BE_ENCODER
+    REGISTER_ENCODER(PCM_F64BE, pcm_f64be);
+#endif
+#if CONFIG_PCM_F64BE_DECODER
+    REGISTER_DECODER(PCM_F64BE, pcm_f64be);
+#endif
+#if CONFIG_PCM_F64LE_ENCODER
+    REGISTER_ENCODER(PCM_F64LE, pcm_f64le);
+#endif
+#if CONFIG_PCM_F64LE_DECODER
+    REGISTER_DECODER(PCM_F64LE, pcm_f64le);
+#endif
+#if CONFIG_PCM_LXF_DECODER
     REGISTER_DECODER(PCM_LXF,           pcm_lxf);
-    REGISTER_ENCDEC (PCM_MULAW,         pcm_mulaw);
-    REGISTER_ENCDEC (PCM_S8,            pcm_s8);
-    REGISTER_ENCDEC (PCM_S8_PLANAR,     pcm_s8_planar);
-    REGISTER_ENCDEC (PCM_S16BE,         pcm_s16be);
-    REGISTER_ENCDEC (PCM_S16BE_PLANAR,  pcm_s16be_planar);
-    REGISTER_ENCDEC (PCM_S16LE,         pcm_s16le);
-    REGISTER_ENCDEC (PCM_S16LE_PLANAR,  pcm_s16le_planar);
-    REGISTER_ENCDEC (PCM_S24BE,         pcm_s24be);
-    REGISTER_ENCDEC (PCM_S24DAUD,       pcm_s24daud);
-    REGISTER_ENCDEC (PCM_S24LE,         pcm_s24le);
-    REGISTER_ENCDEC (PCM_S24LE_PLANAR,  pcm_s24le_planar);
-    REGISTER_ENCDEC (PCM_S32BE,         pcm_s32be);
-    REGISTER_ENCDEC (PCM_S32LE,         pcm_s32le);
-    REGISTER_ENCDEC (PCM_S32LE_PLANAR,  pcm_s32le_planar);
-    REGISTER_ENCDEC (PCM_U8,            pcm_u8);
-    REGISTER_ENCDEC (PCM_U16BE,         pcm_u16be);
-    REGISTER_ENCDEC (PCM_U16LE,         pcm_u16le);
-    REGISTER_ENCDEC (PCM_U24BE,         pcm_u24be);
-    REGISTER_ENCDEC (PCM_U24LE,         pcm_u24le);
-    REGISTER_ENCDEC (PCM_U32BE,         pcm_u32be);
-    REGISTER_ENCDEC (PCM_U32LE,         pcm_u32le);
+#endif
+#if CONFIG_PCM_MULAW_ENCODER
+    REGISTER_ENCODER(PCM_MULAW, pcm_mulaw);
+#endif
+#if CONFIG_PCM_MULAW_DECODER
+    REGISTER_DECODER(PCM_MULAW, pcm_mulaw);
+#endif
+#if CONFIG_PCM_S8_ENCODER
+    REGISTER_ENCODER(PCM_S8, pcm_s8);
+#endif
+#if CONFIG_PCM_S8_DECODER
+    REGISTER_DECODER(PCM_S8, pcm_s8);
+#endif
+#if CONFIG_PCM_S8_PLANAR_ENCODER
+    REGISTER_ENCODER(PCM_S8_PLANAR, pcm_s8_planar);
+#endif
+#if CONFIG_PCM_S8_PLANAR_DECODER
+    REGISTER_DECODER(PCM_S8_PLANAR, pcm_s8_planar);
+#endif
+#if CONFIG_PCM_S16BE_ENCODER
+    REGISTER_ENCODER(PCM_S16BE, pcm_s16be);
+#endif
+#if CONFIG_PCM_S16BE_DECODER
+    REGISTER_DECODER(PCM_S16BE, pcm_s16be);
+#endif
+#if CONFIG_PCM_S16BE_PLANAR_ENCODER
+    REGISTER_ENCODER(PCM_S16BE_PLANAR, pcm_s16be_planar);
+#endif
+#if CONFIG_PCM_S16BE_PLANAR_DECODER
+    REGISTER_DECODER(PCM_S16BE_PLANAR, pcm_s16be_planar);
+#endif
+#if CONFIG_PCM_S16LE_ENCODER
+    REGISTER_ENCODER(PCM_S16LE, pcm_s16le);
+#endif
+#if CONFIG_PCM_S16LE_DECODER
+    REGISTER_DECODER(PCM_S16LE, pcm_s16le);
+#endif
+#if CONFIG_PCM_S16LE_PLANAR_ENCODER
+    REGISTER_ENCODER(PCM_S16LE_PLANAR, pcm_s16le_planar);
+#endif
+#if CONFIG_PCM_S16LE_PLANAR_DECODER
+    REGISTER_DECODER(PCM_S16LE_PLANAR, pcm_s16le_planar);
+#endif
+#if CONFIG_PCM_S24BE_ENCODER
+    REGISTER_ENCODER(PCM_S24BE, pcm_s24be);
+#endif
+#if CONFIG_PCM_S24BE_DECODER
+    REGISTER_DECODER(PCM_S24BE, pcm_s24be);
+#endif
+#if CONFIG_PCM_S24DAUD_ENCODER
+    REGISTER_ENCODER(PCM_S24DAUD, pcm_s24daud);
+#endif
+#if CONFIG_PCM_S24DAUD_DECODER
+    REGISTER_DECODER(PCM_S24DAUD, pcm_s24daud);
+#endif
+#if CONFIG_PCM_S24LE_ENCODER
+    REGISTER_ENCODER(PCM_S24LE, pcm_s24le);
+#endif
+#if CONFIG_PCM_S24LE_DECODER
+    REGISTER_DECODER(PCM_S24LE, pcm_s24le);
+#endif
+#if CONFIG_PCM_S24LE_PLANAR_ENCODER
+    REGISTER_ENCODER(PCM_S24LE_PLANAR, pcm_s24le_planar);
+#endif
+#if CONFIG_PCM_S24LE_PLANAR_DECODER
+    REGISTER_DECODER(PCM_S24LE_PLANAR, pcm_s24le_planar);
+#endif
+#if CONFIG_PCM_S32BE_ENCODER
+    REGISTER_ENCODER(PCM_S32BE, pcm_s32be);
+#endif
+#if CONFIG_PCM_S32BE_DECODER
+    REGISTER_DECODER(PCM_S32BE, pcm_s32be);
+#endif
+#if CONFIG_PCM_S32LE_ENCODER
+    REGISTER_ENCODER(PCM_S32LE, pcm_s32le);
+#endif
+#if CONFIG_PCM_S32LE_DECODER
+    REGISTER_DECODER(PCM_S32LE, pcm_s32le);
+#endif
+#if CONFIG_PCM_S32LE_PLANAR_ENCODER
+    REGISTER_ENCODER(PCM_S32LE_PLANAR, pcm_s32le_planar);
+#endif
+#if CONFIG_PCM_S32LE_PLANAR_DECODER
+    REGISTER_DECODER(PCM_S32LE_PLANAR, pcm_s32le_planar);
+#endif
+#if CONFIG_PCM_U8_ENCODER
+    REGISTER_ENCODER(PCM_U8, pcm_u8);
+#endif
+#if CONFIG_PCM_U8_DECODER
+    REGISTER_DECODER(PCM_U8, pcm_u8);
+#endif
+#if CONFIG_PCM_U16BE_ENCODER
+    REGISTER_ENCODER(PCM_U16BE, pcm_u16be);
+#endif
+#if CONFIG_PCM_U16BE_DECODER
+    REGISTER_DECODER(PCM_U16BE, pcm_u16be);
+#endif
+#if CONFIG_PCM_U16LE_ENCODER
+    REGISTER_ENCODER(PCM_U16LE, pcm_u16le);
+#endif
+#if CONFIG_PCM_U16LE_DECODER
+    REGISTER_DECODER(PCM_U16LE, pcm_u16le);
+#endif
+#if CONFIG_PCM_U24BE_ENCODER
+    REGISTER_ENCODER(PCM_U24BE, pcm_u24be);
+#endif
+#if CONFIG_PCM_U24BE_DECODER
+    REGISTER_DECODER(PCM_U24BE, pcm_u24be);
+#endif
+#if CONFIG_PCM_U24LE_ENCODER
+    REGISTER_ENCODER(PCM_U24LE, pcm_u24le);
+#endif
+#if CONFIG_PCM_U24LE_DECODER
+    REGISTER_DECODER(PCM_U24LE, pcm_u24le);
+#endif
+#if CONFIG_PCM_U32BE_ENCODER
+    REGISTER_ENCODER(PCM_U32BE, pcm_u32be);
+#endif
+#if CONFIG_PCM_U32BE_DECODER
+    REGISTER_DECODER(PCM_U32BE, pcm_u32be);
+#endif
+#if CONFIG_PCM_U32LE_ENCODER
+    REGISTER_ENCODER(PCM_U32LE, pcm_u32le);
+#endif
+#if CONFIG_PCM_U32LE_DECODER
+    REGISTER_DECODER(PCM_U32LE, pcm_u32le);
+#endif
+#if CONFIG_PCM_ZORK_DECODER
     REGISTER_DECODER(PCM_ZORK,          pcm_zork);
+#endif
 
     /* DPCM codecs */
-    REGISTER_DECODER(INTERPLAY_DPCM,    interplay_dpcm);
-    REGISTER_ENCDEC (ROQ_DPCM,          roq_dpcm);
-    REGISTER_DECODER(SOL_DPCM,          sol_dpcm);
-    REGISTER_DECODER(XAN_DPCM,          xan_dpcm);
+#if CONFIG_INTERPLAY_DPCM_DECODER
+    REGISTER_DECODER(INTERPLAY_DPCM, interplay_dpcm);
+#endif
+#if CONFIG_ROQ_DPCM_ENCODER
+    REGISTER_ENCODER(ROQ_DPCM, roq_dpcm);
+#endif
+#if CONFIG_ROQ_DPCM_DECODER
+    REGISTER_DECODER(ROQ_DPCM, roq_dpcm);
+#endif
+#if CONFIG_SOL_DPCM_DECODER
+    REGISTER_DECODER(SOL_DPCM, sol_dpcm);
+#endif
+#if CONFIG_XAN_DPCM_DECODER
+    REGISTER_DECODER(XAN_DPCM, xan_dpcm);
+#endif
 
     /* ADPCM codecs */
-    REGISTER_DECODER(ADPCM_4XM,         adpcm_4xm);
-    REGISTER_ENCDEC (ADPCM_ADX,         adpcm_adx);
-    REGISTER_DECODER(ADPCM_AFC,         adpcm_afc);
-    REGISTER_DECODER(ADPCM_CT,          adpcm_ct);
-    REGISTER_DECODER(ADPCM_DTK,         adpcm_dtk);
-    REGISTER_DECODER(ADPCM_EA,          adpcm_ea);
+#if CONFIG_ADPCM_4XM_DECODER
+    REGISTER_DECODER(ADPCM_4XM, adpcm_4xm);
+#endif
+#if CONFIG_ADPCM_ADX_ENCODER
+    REGISTER_ENCODER(ADPCM_ADX, adpcm_adx);
+#endif
+#if CONFIG_ADPCM_ADX_DECODER
+    REGISTER_DECODER(ADPCM_ADX, adpcm_adx);
+#endif
+#if CONFIG_ADPCM_AFC_DECODER
+    REGISTER_DECODER(ADPCM_AFC, adpcm_afc);
+#endif
+#if CONFIG_ADPCM_CT_DECODER
+    REGISTER_DECODER(ADPCM_CT, adpcm_ct);
+#endif
+#if CONFIG_ADPCM_DTK_DECODER
+    REGISTER_DECODER(ADPCM_DTK, adpcm_dtk);
+#endif
+#if CONFIG_ADPCM_EA_DECODER
+    REGISTER_DECODER(ADPCM_EA, adpcm_ea);
+#endif
+#if CONFIG_ADPCM_EA_MAXIS_XA_DECODER
     REGISTER_DECODER(ADPCM_EA_MAXIS_XA, adpcm_ea_maxis_xa);
-    REGISTER_DECODER(ADPCM_EA_R1,       adpcm_ea_r1);
-    REGISTER_DECODER(ADPCM_EA_R2,       adpcm_ea_r2);
-    REGISTER_DECODER(ADPCM_EA_R3,       adpcm_ea_r3);
-    REGISTER_DECODER(ADPCM_EA_XAS,      adpcm_ea_xas);
-    REGISTER_ENCDEC (ADPCM_G722,        adpcm_g722);
-    REGISTER_ENCDEC (ADPCM_G726,        adpcm_g726);
-    REGISTER_DECODER(ADPCM_G726LE,      adpcm_g726le);
-    REGISTER_DECODER(ADPCM_IMA_AMV,     adpcm_ima_amv);
-    REGISTER_DECODER(ADPCM_IMA_APC,     adpcm_ima_apc);
-    REGISTER_DECODER(ADPCM_IMA_DK3,     adpcm_ima_dk3);
-    REGISTER_DECODER(ADPCM_IMA_DK4,     adpcm_ima_dk4);
+#endif
+#if CONFIG_ADPCM_EA_R1_DECODER
+    REGISTER_DECODER(ADPCM_EA_R1, adpcm_ea_r1);
+#endif
+#if CONFIG_ADPCM_EA_R2_DECODER
+    REGISTER_DECODER(ADPCM_EA_R2, adpcm_ea_r2);
+#endif
+#if CONFIG_ADPCM_EA_R3_DECODER
+    REGISTER_DECODER(ADPCM_EA_R3, adpcm_ea_r3);
+#endif
+#if CONFIG_ADPCM_EA_XAS_DECODER
+    REGISTER_DECODER(ADPCM_EA_XAS, adpcm_ea_xas);
+#endif
+#if CONFIG_ADPCM_G722_ENCODER
+    REGISTER_ENCODER(ADPCM_G722, adpcm_g722);
+#endif
+#if CONFIG_ADPCM_G722_DECODER
+    REGISTER_DECODER(ADPCM_G722, adpcm_g722);
+#endif
+#if CONFIG_ADPCM_G726_ENCODER
+    REGISTER_ENCODER(ADPCM_G726, adpcm_g726);
+#endif
+#if CONFIG_ADPCM_G726_DECODER
+    REGISTER_DECODER(ADPCM_G726, adpcm_g726);
+#endif
+#if CONFIG_ADPCM_G726LE_DECODER
+    REGISTER_DECODER(ADPCM_G726LE, adpcm_g726le);
+#endif
+#if CONFIG_ADPCM_IMA_AMV_DECODER
+    REGISTER_DECODER(ADPCM_IMA_AMV, adpcm_ima_amv);
+#endif
+#if CONFIG_ADPCM_IMA_APC_DECODER
+    REGISTER_DECODER(ADPCM_IMA_APC, adpcm_ima_apc);
+#endif
+#if CONFIG_ADPCM_IMA_DK3_DECODER
+    REGISTER_DECODER(ADPCM_IMA_DK3, adpcm_ima_dk3);
+#endif
+#if CONFIG_ADPCM_IMA_DK4_DECODER
+    REGISTER_DECODER(ADPCM_IMA_DK4, adpcm_ima_dk4);
+#endif
+#if CONFIG_ADPCM_IMA_EA_EACS_DECODER
     REGISTER_DECODER(ADPCM_IMA_EA_EACS, adpcm_ima_ea_eacs);
+#endif
+#if CONFIG_ADPCM_IMA_EA_SEAD_DECODER
     REGISTER_DECODER(ADPCM_IMA_EA_SEAD, adpcm_ima_ea_sead);
-    REGISTER_DECODER(ADPCM_IMA_ISS,     adpcm_ima_iss);
-    REGISTER_DECODER(ADPCM_IMA_OKI,     adpcm_ima_oki);
-    REGISTER_ENCDEC (ADPCM_IMA_QT,      adpcm_ima_qt);
-    REGISTER_DECODER(ADPCM_IMA_RAD,     adpcm_ima_rad);
-    REGISTER_DECODER(ADPCM_IMA_SMJPEG,  adpcm_ima_smjpeg);
-    REGISTER_ENCDEC (ADPCM_IMA_WAV,     adpcm_ima_wav);
-    REGISTER_DECODER(ADPCM_IMA_WS,      adpcm_ima_ws);
-    REGISTER_ENCDEC (ADPCM_MS,          adpcm_ms);
-    REGISTER_DECODER(ADPCM_SBPRO_2,     adpcm_sbpro_2);
-    REGISTER_DECODER(ADPCM_SBPRO_3,     adpcm_sbpro_3);
-    REGISTER_DECODER(ADPCM_SBPRO_4,     adpcm_sbpro_4);
-    REGISTER_ENCDEC (ADPCM_SWF,         adpcm_swf);
-    REGISTER_DECODER(ADPCM_THP,         adpcm_thp);
-    REGISTER_DECODER(ADPCM_THP_LE,      adpcm_thp_le);
-    REGISTER_DECODER(ADPCM_VIMA,        adpcm_vima);
-    REGISTER_DECODER(ADPCM_XA,          adpcm_xa);
-    REGISTER_ENCDEC (ADPCM_YAMAHA,      adpcm_yamaha);
+#endif
+#if CONFIG_ADPCM_IMA_ISS_DECODER
+    REGISTER_DECODER(ADPCM_IMA_ISS, adpcm_ima_iss);
+#endif
+#if CONFIG_ADPCM_IMA_OKI_DECODER
+    REGISTER_DECODER(ADPCM_IMA_OKI, adpcm_ima_oki);
+#endif
+#if CONFIG_ADPCM_IMA_QT_ENCODER
+    REGISTER_ENCODER(ADPCM_IMA_QT, adpcm_ima_qt);
+#endif
+#if CONFIG_ADPCM_IMA_QT_DECODER
+    REGISTER_DECODER(ADPCM_IMA_QT, adpcm_ima_qt);
+#endif
+#if CONFIG_ADPCM_IMA_RAD_DECODER
+    REGISTER_DECODER(ADPCM_IMA_RAD, adpcm_ima_rad);
+#endif
+#if CONFIG_ADPCM_IMA_SMJPEG_DECODER
+    REGISTER_DECODER(ADPCM_IMA_SMJPEG, adpcm_ima_smjpeg);
+#endif
+#if CONFIG_ADPCM_IMA_WAV_ENCODER
+    REGISTER_ENCODER(ADPCM_IMA_WAV, adpcm_ima_wav);
+#endif
+#if CONFIG_ADPCM_IMA_WAV_DECODER
+    REGISTER_DECODER(ADPCM_IMA_WAV, adpcm_ima_wav);
+#endif
+#if CONFIG_ADPCM_IMA_WS_DECODER
+    REGISTER_DECODER(ADPCM_IMA_WS, adpcm_ima_ws);
+#endif
+#if CONFIG_ADPCM_MS_ENCODER
+    REGISTER_ENCODER(ADPCM_MS, adpcm_ms);
+#endif
+#if CONFIG_ADPCM_MS_DECODER
+    REGISTER_DECODER(ADPCM_MS, adpcm_ms);
+#endif
+#if CONFIG_ADPCM_SBPRO_2_DECODER
+    REGISTER_DECODER(ADPCM_SBPRO_2, adpcm_sbpro_2);
+#endif
+#if CONFIG_ADPCM_SBPRO_3_DECODER
+    REGISTER_DECODER(ADPCM_SBPRO_3, adpcm_sbpro_3);
+#endif
+#if CONFIG_ADPCM_SBPRO_4_DECODER
+    REGISTER_DECODER(ADPCM_SBPRO_4, adpcm_sbpro_4);
+#endif
+#if CONFIG_ADPCM_SWF_ENCODER
+    REGISTER_ENCODER(ADPCM_SWF, adpcm_swf);
+#endif
+#if CONFIG_ADPCM_SWF_DECODER
+    REGISTER_DECODER(ADPCM_SWF, adpcm_swf);
+#endif
+#if CONFIG_ADPCM_THP_DECODER
+    REGISTER_DECODER(ADPCM_THP, adpcm_thp);
+#endif
+#if CONFIG_ADPCM_THP_LE_DECODER
+    REGISTER_DECODER(ADPCM_THP_LE, adpcm_thp_le);
+#endif
+#if CONFIG_ADPCM_VIMA_DECODER
+    REGISTER_DECODER(ADPCM_VIMA, adpcm_vima);
+#endif
+#if CONFIG_ADPCM_XA_DECODER
+    REGISTER_DECODER(ADPCM_XA, adpcm_xa);
+#endif
+#if CONFIG_ADPCM_YAMAHA_ENCODER
+    REGISTER_ENCODER(ADPCM_YAMAHA, adpcm_yamaha);
+#endif
+#if CONFIG_ADPCM_YAMAHA_DECODER
+    REGISTER_DECODER(ADPCM_YAMAHA, adpcm_yamaha);
+#endif
 
     /* subtitles */
-    REGISTER_ENCDEC (SSA,               ssa);
-    REGISTER_ENCDEC (ASS,               ass);
-    REGISTER_DECODER(CCAPTION,          ccaption);
-    REGISTER_ENCDEC (DVBSUB,            dvbsub);
-    REGISTER_ENCDEC (DVDSUB,            dvdsub);
-    REGISTER_DECODER(JACOSUB,           jacosub);
-    REGISTER_DECODER(MICRODVD,          microdvd);
-    REGISTER_ENCDEC (MOVTEXT,           movtext);
-    REGISTER_DECODER(MPL2,              mpl2);
-    REGISTER_DECODER(PGSSUB,            pgssub);
-    REGISTER_DECODER(PJS,               pjs);
-    REGISTER_DECODER(REALTEXT,          realtext);
-    REGISTER_DECODER(SAMI,              sami);
-    REGISTER_ENCDEC (SRT,               srt);
-    REGISTER_DECODER(STL,               stl);
-    REGISTER_ENCDEC (SUBRIP,            subrip);
-    REGISTER_DECODER(SUBVIEWER,         subviewer);
-    REGISTER_DECODER(SUBVIEWER1,        subviewer1);
-    REGISTER_DECODER(TEXT,              text);
-    REGISTER_DECODER(VPLAYER,           vplayer);
-    REGISTER_ENCDEC (WEBVTT,            webvtt);
-    REGISTER_ENCDEC (XSUB,              xsub);
+#if CONFIG_SSA_ENCODER
+    REGISTER_ENCODER(SSA, ssa);
+#endif
+#if CONFIG_SSA_DECODER
+    REGISTER_DECODER(SSA, ssa);
+#endif
+#if CONFIG_ASS_ENCODER
+    REGISTER_ENCODER(ASS, ass);
+#endif
+#if CONFIG_ASS_DECODER
+    REGISTER_DECODER(ASS, ass);
+#endif
+#if CONFIG_CCAPTION_DECODER
+    REGISTER_DECODER(CCAPTION, ccaption);
+#endif
+#if CONFIG_DVBSUB_ENCODER
+    REGISTER_ENCODER(DVBSUB, dvbsub);
+#endif
+#if CONFIG_DVBSUB_DECODER
+    REGISTER_DECODER(DVBSUB, dvbsub);
+#endif
+#if CONFIG_DVDSUB_ENCODER
+    REGISTER_ENCODER(DVDSUB, dvdsub);
+#endif
+#if CONFIG_DVDSUB_DECODER
+    REGISTER_DECODER(DVDSUB, dvdsub);
+#endif
+#if CONFIG_JACOSUB_DECODER
+    REGISTER_DECODER(JACOSUB, jacosub);
+#endif
+#if CONFIG_MICRODVD_DECODER
+    REGISTER_DECODER(MICRODVD, microdvd);
+#endif
+#if CONFIG_MOVTEXT_ENCODER
+    REGISTER_ENCODER(MOVTEXT, movtext);
+#endif
+#if CONFIG_MOVTEXT_DECODER
+    REGISTER_DECODER(MOVTEXT, movtext);
+#endif
+#if CONFIG_MPL2_DECODER
+    REGISTER_DECODER(MPL2, mpl2);
+#endif
+#if CONFIG_PGSSUB_DECODER
+    REGISTER_DECODER(PGSSUB, pgssub);
+#endif
+#if CONFIG_PJS_DECODER
+    REGISTER_DECODER(PJS, pjs);
+#endif
+#if CONFIG_REALTEXT_DECODER
+    REGISTER_DECODER(REALTEXT, realtext);
+#endif
+#if CONFIG_SAMI_DECODER
+    REGISTER_DECODER(SAMI, sami);
+#endif
+#if CONFIG_SRT_ENCODER
+    REGISTER_ENCODER(SRT, srt);
+#endif
+#if CONFIG_SRT_DECODER
+    REGISTER_DECODER(SRT, srt);
+#endif
+#if CONFIG_STL_DECODER
+    REGISTER_DECODER(STL, stl);
+#endif
+#if CONFIG_SUBRIP_ENCODER
+    REGISTER_ENCODER(SUBRIP, subrip);
+#endif
+#if CONFIG_SUBRIP_DECODER
+    REGISTER_DECODER(SUBRIP, subrip);
+#endif
+#if CONFIG_SUBVIEWER_DECODER
+    REGISTER_DECODER(SUBVIEWER, subviewer);
+#endif
+#if CONFIG_SUBVIEWER1_DECODER
+    REGISTER_DECODER(SUBVIEWER1, subviewer1);
+#endif
+#if CONFIG_TEXT_DECODER
+    REGISTER_DECODER(TEXT, text);
+#endif
+#if CONFIG_VPLAYER_DECODER
+    REGISTER_DECODER(VPLAYER, vplayer);
+#endif
+#if CONFIG_WEBVTT_ENCODER
+    REGISTER_ENCODER(WEBVTT, webvtt);
+#endif
+#if CONFIG_WEBVTT_DECODER
+    REGISTER_DECODER(WEBVTT, webvtt);
+#endif
+#if CONFIG_XSUB_ENCODER
+    REGISTER_ENCODER(XSUB, xsub);
+#endif
+#if CONFIG_XSUB_DECODER
+    REGISTER_DECODER(XSUB, xsub);
+#endif
 
     /* external libraries */
+#if CONFIG_LIBCELT_DECODER
     REGISTER_DECODER(LIBCELT,           libcelt);
+#endif
+#if CONFIG_LIBDCADEC_DECODER
     REGISTER_DECODER(LIBDCADEC,         libdcadec)
+#endif
+#if CONFIG_LIBFAAC_ENCODER
     REGISTER_ENCODER(LIBFAAC,           libfaac);
-    REGISTER_ENCDEC (LIBFDK_AAC,        libfdk_aac);
-    REGISTER_ENCDEC (LIBGSM,            libgsm);
-    REGISTER_ENCDEC (LIBGSM_MS,         libgsm_ms);
-    REGISTER_ENCDEC (LIBILBC,           libilbc);
+#endif
+#if CONFIG_LIBFDK_AAC_ENCODER
+    REGISTER_ENCODER(LIBFDK_AAC, libfdk_aac);
+#endif
+#if CONFIG_LIBFDK_AAC_DECODER
+    REGISTER_DECODER(LIBFDK_AAC, libfdk_aac);
+#endif
+#if CONFIG_LIBGSM_ENCODER
+    REGISTER_ENCODER(LIBGSM, libgsm);
+#endif
+#if CONFIG_LIBGSM_DECODER
+    REGISTER_DECODER(LIBGSM, libgsm);
+#endif
+#if CONFIG_LIBGSM_MS_ENCODER
+    REGISTER_ENCODER(LIBGSM_MS, libgsm_ms);
+#endif
+#if CONFIG_LIBGSM_MS_DECODER
+    REGISTER_DECODER(LIBGSM_MS, libgsm_ms);
+#endif
+#if CONFIG_LIBILBC_ENCODER
+    REGISTER_ENCODER(LIBILBC, libilbc);
+#endif
+#if CONFIG_LIBILBC_DECODER
+    REGISTER_DECODER(LIBILBC, libilbc);
+#endif
+#if CONFIG_LIBMP3LAME_ENCODER
     REGISTER_ENCODER(LIBMP3LAME,        libmp3lame);
-    REGISTER_ENCDEC (LIBOPENCORE_AMRNB, libopencore_amrnb);
-    REGISTER_DECODER(LIBOPENCORE_AMRWB, libopencore_amrwb);
-    REGISTER_ENCDEC (LIBOPENJPEG,       libopenjpeg);
-    REGISTER_ENCDEC (LIBOPUS,           libopus);
-    REGISTER_ENCDEC (LIBSCHROEDINGER,   libschroedinger);
+#endif
+#if CONFIG_LIBOPENCORE_AMRNB_ENCODER
+    REGISTER_ENCODER(LIBOPENCORE_AMRNB, libopencore_amrnb);
+#endif
+#if CONFIG_LIBOPENCORE_AMRNB_DECODER
+    REGISTER_DECODER(LIBOPENCORE_AMRNB, libopencore_amrnb);
+#endif
+#if CONFIG_LIBOPENJPEG_ENCODER
+    REGISTER_ENCODER(LIBOPENJPEG, libopenjpeg);
+#endif
+#if CONFIG_LIBOPENJPEG_DECODER
+    REGISTER_DECODER(LIBOPENJPEG, libopenjpeg);
+#endif
+#if CONFIG_LIBOPUS_ENCODER
+    REGISTER_ENCODER(LIBOPUS, libopus);
+#endif
+#if CONFIG_LIBOPUS_DECODER
+    REGISTER_DECODER(LIBOPUS, libopus);
+#endif
+#if CONFIG_LIBSCHROEDINGER_ENCODER
+    REGISTER_ENCODER(LIBSCHROEDINGER, libschroedinger);
+#endif
+#if CONFIG_LIBSCHROEDINGER_DECODER
+    REGISTER_DECODER(LIBSCHROEDINGER, libschroedinger);
+#endif
+#if CONFIG_LIBSHINE_ENCODER
     REGISTER_ENCODER(LIBSHINE,          libshine);
-    REGISTER_ENCDEC (LIBSPEEX,          libspeex);
+#endif
+#if CONFIG_LIBSPEEX_ENCODER
+    REGISTER_ENCODER(LIBSPEEX, libspeex);
+#endif
+#if CONFIG_LIBSPEEX_DECODER
+    REGISTER_DECODER(LIBSPEEX, libspeex);
+#endif
+#if CONFIG_LIBSTAGEFRIGHT_H264_DECODER
     REGISTER_DECODER(LIBSTAGEFRIGHT_H264, libstagefright_h264);
+#endif
+#if CONFIG_LIBTHEORA_ENCODER
     REGISTER_ENCODER(LIBTHEORA,         libtheora);
+#endif
+#if CONFIG_LIBTWOLAME_ENCODER
     REGISTER_ENCODER(LIBTWOLAME,        libtwolame);
-    REGISTER_ENCDEC (LIBUTVIDEO,        libutvideo);
+#endif
+#if CONFIG_LIBUTVIDEO_ENCODER
+    REGISTER_ENCODER(LIBUTVIDEO, libutvideo);
+#endif
+#if CONFIG_LIBUTVIDEO_DECODER
+    REGISTER_DECODER(LIBUTVIDEO, libutvideo);
+#endif
+#if CONFIG_LIBVO_AACENC_ENCODER
     REGISTER_ENCODER(LIBVO_AACENC,      libvo_aacenc);
+#endif
+#if CONFIG_LIBVO_AMRWBENC_ENCODER
     REGISTER_ENCODER(LIBVO_AMRWBENC,    libvo_amrwbenc);
-    REGISTER_ENCDEC (LIBVORBIS,         libvorbis);
-    REGISTER_ENCDEC (LIBVPX_VP8,        libvpx_vp8);
-    REGISTER_ENCDEC (LIBVPX_VP9,        libvpx_vp9);
+#endif
+#if CONFIG_LIBVORBIS_ENCODER
+    REGISTER_ENCODER(LIBVORBIS, libvorbis);
+#endif
+#if CONFIG_LIBVORBIS_DECODER
+    REGISTER_DECODER(LIBVORBIS, libvorbis);
+#endif
+#if CONFIG_LIBVPX_VP8_ENCODER
+    REGISTER_ENCODER(LIBVPX_VP8, libvpx_vp8);
+#endif
+#if CONFIG_LIBVPX_VP8_DECODER
+    REGISTER_DECODER(LIBVPX_VP8, libvpx_vp8);
+#endif
+#if CONFIG_LIBVPX_VP9_ENCODER
+    REGISTER_ENCODER(LIBVPX_VP9, libvpx_vp9);
+#endif
+#if CONFIG_LIBVPX_VP9_DECODER
+    REGISTER_DECODER(LIBVPX_VP9, libvpx_vp9);
+#endif
+#if CONFIG_LIBWAVPACK_ENCODER
     REGISTER_ENCODER(LIBWAVPACK,        libwavpack);
+#endif
+#if CONFIG_LIBWEBP_ANIM_ENCODER
     REGISTER_ENCODER(LIBWEBP_ANIM,      libwebp_anim);  /* preferred over libwebp */
+#endif
+#if CONFIG_LIBWEBP_ENCODER
     REGISTER_ENCODER(LIBWEBP,           libwebp);
+#endif
+#if CONFIG_LIBX262_ENCODER
     REGISTER_ENCODER(LIBX262,           libx262);
+#endif
+#if CONFIG_LIBX264_ENCODER
     REGISTER_ENCODER(LIBX264,           libx264);
+#endif
+#if CONFIG_LIBX264RGB_ENCODER
     REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
+#endif
+#if CONFIG_LIBX265_ENCODER
     REGISTER_ENCODER(LIBX265,           libx265);
+#endif
+#if CONFIG_LIBXAVS_ENCODER
     REGISTER_ENCODER(LIBXAVS,           libxavs);
+#endif
+#if CONFIG_LIBXVID_ENCODER
     REGISTER_ENCODER(LIBXVID,           libxvid);
+#endif
+#if CONFIG_LIBZVBI_TELETEXT_DECODER
     REGISTER_DECODER(LIBZVBI_TELETEXT,  libzvbi_teletext);
+#endif
+#if CONFIG_LIBAACPLUS_ENCODER
     REGISTER_ENCODER(LIBAACPLUS,        libaacplus);
+#endif
 
     /* text */
+#if CONFIG_BINTEXT_DECODER
     REGISTER_DECODER(BINTEXT,           bintext);
+#endif
+#if CONFIG_XBIN_DECODER
     REGISTER_DECODER(XBIN,              xbin);
+#endif
+#if CONFIG_IDF_DECODER
     REGISTER_DECODER(IDF,               idf);
+#endif
 
     /* external libraries, that shouldn't be used by default if one of the
      * above is available */
+#if CONFIG_ENCODERS
+#if CONFIG_LIBOPENH264_ENCODER
     REGISTER_ENCODER(LIBOPENH264,       libopenh264);
+#endif
+#if CONFIG_H264_QSV_ENCODER
     REGISTER_ENCODER(H264_QSV,          h264_qsv);
+#endif
+#if CONFIG_NVENC_ENCODER
     REGISTER_ENCODER(NVENC,             nvenc);
+#endif
+#if CONFIG_NVENC_H264_ENCODER
     REGISTER_ENCODER(NVENC_H264,        nvenc_h264);
+#endif
+#if CONFIG_NVENC_HEVC_ENCODER
     REGISTER_ENCODER(NVENC_HEVC,        nvenc_hevc);
+#endif
+#if CONFIG_NVENC_ENCODER
     REGISTER_ENCODER(HEVC_QSV,          hevc_qsv);
+#endif
+#if CONFIG_LIBKVAZAAR_ENCODER
     REGISTER_ENCODER(LIBKVAZAAR,        libkvazaar);
+#endif
+#if CONFIG_MPEG2_QSV_ENCODER
     REGISTER_ENCODER(MPEG2_QSV,         mpeg2_qsv);
+#endif
+#endif
 
     /* parsers */
-    REGISTER_PARSER(AAC,                aac);
-    REGISTER_PARSER(AAC_LATM,           aac_latm);
-    REGISTER_PARSER(AC3,                ac3);
-    REGISTER_PARSER(ADX,                adx);
-    REGISTER_PARSER(BMP,                bmp);
-    REGISTER_PARSER(CAVSVIDEO,          cavsvideo);
-    REGISTER_PARSER(COOK,               cook);
-    REGISTER_PARSER(DCA,                dca);
-    REGISTER_PARSER(DIRAC,              dirac);
-    REGISTER_PARSER(DNXHD,              dnxhd);
-    REGISTER_PARSER(DPX,                dpx);
-    REGISTER_PARSER(DVBSUB,             dvbsub);
-    REGISTER_PARSER(DVDSUB,             dvdsub);
-    REGISTER_PARSER(DVD_NAV,            dvd_nav);
-    REGISTER_PARSER(FLAC,               flac);
-    REGISTER_PARSER(G729,               g729);
-    REGISTER_PARSER(GSM,                gsm);
-    REGISTER_PARSER(H261,               h261);
-    REGISTER_PARSER(H263,               h263);
-    REGISTER_PARSER(H264,               h264);
-    REGISTER_PARSER(HEVC,               hevc);
-    REGISTER_PARSER(MJPEG,              mjpeg);
-    REGISTER_PARSER(MLP,                mlp);
-    REGISTER_PARSER(MPEG4VIDEO,         mpeg4video);
-    REGISTER_PARSER(MPEGAUDIO,          mpegaudio);
-    REGISTER_PARSER(MPEGVIDEO,          mpegvideo);
-    REGISTER_PARSER(OPUS,               opus);
-    REGISTER_PARSER(PNG,                png);
-    REGISTER_PARSER(PNM,                pnm);
-    REGISTER_PARSER(RV30,               rv30);
-    REGISTER_PARSER(RV40,               rv40);
-    REGISTER_PARSER(TAK,                tak);
-    REGISTER_PARSER(VC1,                vc1);
-    REGISTER_PARSER(VORBIS,             vorbis);
-    REGISTER_PARSER(VP3,                vp3);
-    REGISTER_PARSER(VP8,                vp8);
-    REGISTER_PARSER(VP9,                vp9);
+#if CONFIG_PARSERS
+#if CONFIG_AAC_PARSER
+    REGISTER_PARSER(AAC, aac);
+#endif
+#if CONFIG_AAC_LATM_PARSER
+    REGISTER_PARSER(AAC_LATM, aac_latm);
+#endif
+#if CONFIG_AC3_PARSER
+    REGISTER_PARSER(AC3, ac3);
+#endif
+#if CONFIG_ADX_PARSER
+    REGISTER_PARSER(ADX, adx);
+#endif
+#if CONFIG_BMP_PARSER
+    REGISTER_PARSER(BMP, bmp);
+#endif
+#if CONFIG_CAVSVIDEO_PARSER
+    REGISTER_PARSER(CAVSVIDEO, cavsvideo);
+#endif
+#if CONFIG_COOK_PARSER
+    REGISTER_PARSER(COOK, cook);
+#endif
+#if CONFIG_DCA_PARSER
+    REGISTER_PARSER(DCA, dca);
+#endif
+#if CONFIG_DIRAC_PARSER
+    REGISTER_PARSER(DIRAC, dirac);
+#endif
+#if CONFIG_DNXHD_PARSER
+    REGISTER_PARSER(DNXHD, dnxhd);
+#endif
+#if CONFIG_DPX_PARSER
+    REGISTER_PARSER(DPX, dpx);
+#endif
+#if CONFIG_DVBSUB_PARSER
+    REGISTER_PARSER(DVBSUB, dvbsub);
+#endif
+#if CONFIG_DVDSUB_PARSER
+    REGISTER_PARSER(DVDSUB, dvdsub);
+#endif
+#if CONFIG_DVD_NAV_PARSER
+    REGISTER_PARSER(DVD_NAV, dvd_nav);
+#endif
+#if CONFIG_FLAC_PARSER
+    REGISTER_PARSER(FLAC, flac);
+#endif
+#if CONFIG_G729_PARSER
+    REGISTER_PARSER(G729, g729);
+#endif
+#if CONFIG_GSM_PARSER
+    REGISTER_PARSER(GSM, gsm);
+#endif
+#if CONFIG_H261_PARSER
+    REGISTER_PARSER(H261, h261);
+#endif
+#if CONFIG_H263_PARSER
+    REGISTER_PARSER(H263, h263);
+#endif
+#if CONFIG_H264_PARSER
+    REGISTER_PARSER(H264, h264);
+#endif
+#if CONFIG_HEVC_PARSER
+    REGISTER_PARSER(HEVC, hevc);
+#endif
+#if CONFIG_MJPEG_PARSER
+    REGISTER_PARSER(MJPEG, mjpeg);
+#endif
+#if CONFIG_MLP_PARSER
+    REGISTER_PARSER(MLP, mlp);
+#endif
+#if CONFIG_MPEG4VIDEO_PARSER
+    REGISTER_PARSER(MPEG4VIDEO, mpeg4video);
+#endif
+#if CONFIG_MPEGAUDIO_PARSER
+    REGISTER_PARSER(MPEGAUDIO, mpegaudio);
+#endif
+#if CONFIG_MPEGVIDEO_PARSER
+    REGISTER_PARSER(MPEGVIDEO, mpegvideo);
+#endif
+#if CONFIG_OPUS_PARSER
+    REGISTER_PARSER(OPUS, opus);
+#endif
+#if CONFIG_PNG_PARSER
+    REGISTER_PARSER(PNG, png);
+#endif
+#if CONFIG_PNM_PARSER
+    REGISTER_PARSER(PNM, pnm);
+#endif
+#if CONFIG_RV30_PARSER
+    REGISTER_PARSER(RV30, rv30);
+#endif
+#if CONFIG_RV40_PARSER
+    REGISTER_PARSER(RV40, rv40);
+#endif
+#if CONFIG_TAK_PARSER
+    REGISTER_PARSER(TAK, tak);
+#endif
+#if CONFIG_VC1_PARSER
+    REGISTER_PARSER(VC1, vc1);
+#endif
+#if CONFIG_VORBIS_PARSER
+    REGISTER_PARSER(VORBIS, vorbis);
+#endif
+#if CONFIG_VP3_PARSER
+    REGISTER_PARSER(VP3, vp3);
+#endif
+#if CONFIG_VP8_PARSER
+    REGISTER_PARSER(VP8, vp8);
+#endif
+#if CONFIG_VP9_PARSER
+    REGISTER_PARSER(VP9, vp9);
+#endif
+#endif
 
     /* bitstream filters */
-    REGISTER_BSF(AAC_ADTSTOASC,         aac_adtstoasc);
-    REGISTER_BSF(CHOMP,                 chomp);
-    REGISTER_BSF(DUMP_EXTRADATA,        dump_extradata);
-    REGISTER_BSF(H264_MP4TOANNEXB,      h264_mp4toannexb);
-    REGISTER_BSF(HEVC_MP4TOANNEXB,      hevc_mp4toannexb);
-    REGISTER_BSF(IMX_DUMP_HEADER,       imx_dump_header);
-    REGISTER_BSF(MJPEG2JPEG,            mjpeg2jpeg);
-    REGISTER_BSF(MJPEGA_DUMP_HEADER,    mjpega_dump_header);
+#if CONFIG_BSFS
+#if CONFIG_AAC_ADTSTOASC_BSF
+    REGISTER_BSF(AAC_ADTSTOASC, aac_adtstoasc);
+#endif
+#if CONFIG_CHOMP_BSF
+    REGISTER_BSF(CHOMP, chomp);
+#endif
+#if CONFIG_DUMP_EXTRADATA_BSF
+    REGISTER_BSF(DUMP_EXTRADATA, dump_extradata);
+#endif
+#if CONFIG_H264_MP4TOANNEXB_BSF
+    REGISTER_BSF(H264_MP4TOANNEXB, h264_mp4toannexb);
+#endif
+#if CONFIG_HEVC_MP4TOANNEXB_BSF
+    REGISTER_BSF(HEVC_MP4TOANNEXB, hevc_mp4toannexb);
+#endif
+#if CONFIG_IMX_DUMP_HEADER_BSF
+    REGISTER_BSF(IMX_DUMP_HEADER, imx_dump_header);
+#endif
+#if CONFIG_MJPEG2JPEG_BSF
+    REGISTER_BSF(MJPEG2JPEG, mjpeg2jpeg);
+#endif
+#if CONFIG_MJPEGA_DUMP_HEADER_BSF
+    REGISTER_BSF(MJPEGA_DUMP_HEADER, mjpega_dump_header);
+#endif
+#if CONFIG_MP3_HEADER_DECOMPRESS_BSF
     REGISTER_BSF(MP3_HEADER_DECOMPRESS, mp3_header_decompress);
-    REGISTER_BSF(MPEG4_UNPACK_BFRAMES,  mpeg4_unpack_bframes);
-    REGISTER_BSF(MOV2TEXTSUB,           mov2textsub);
-    REGISTER_BSF(NOISE,                 noise);
-    REGISTER_BSF(REMOVE_EXTRADATA,      remove_extradata);
-    REGISTER_BSF(TEXT2MOVSUB,           text2movsub);
+#endif
+#if CONFIG_MPEG4_UNPACK_BFRAMES_BSF
+    REGISTER_BSF(MPEG4_UNPACK_BFRAMES, mpeg4_unpack_bframes);
+#endif
+#if CONFIG_MOV2TEXTSUB_BSF
+    REGISTER_BSF(MOV2TEXTSUB, mov2textsub);
+#endif
+#if CONFIG_NOISE_BSF
+    REGISTER_BSF(NOISE, noise);
+#endif
+#if CONFIG_REMOVE_EXTRADATA_BSF
+    REGISTER_BSF(REMOVE_EXTRADATA, remove_extradata);
+#endif
+#if CONFIG_TEXT2MOVSUB_BSF
+    REGISTER_BSF(TEXT2MOVSUB, text2movsub);
+#endif
+#endif
 }

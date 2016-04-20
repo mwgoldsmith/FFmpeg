@@ -294,10 +294,13 @@ av_cold void ff_ac3dsp_init(AC3DSPContext *c, int bit_exact)
     c->downmix_fixed = ac3_downmix_c_fixed;
     c->apply_window_int16 = apply_window_int16_c;
 
-    if (ARCH_ARM)
+#if ARCH_ARM
         ff_ac3dsp_init_arm(c, bit_exact);
-    if (ARCH_X86)
+#endif
+#if ARCH_X86
         ff_ac3dsp_init_x86(c, bit_exact);
-    if (ARCH_MIPS)
+#endif
+#if ARCH_MIPS
         ff_ac3dsp_init_mips(c, bit_exact);
+#endif
 }
