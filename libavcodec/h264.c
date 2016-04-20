@@ -1565,7 +1565,7 @@ again:
                     if (h->avctx->hwaccel &&
                         (ret = h->avctx->hwaccel->start_frame(h->avctx, buf, buf_size)) < 0)
                         goto end;
-#if FF_API_CAP_VDPAU
+#if FF_API_CAP_VDPAU && CONFIG_H264_VDPAU_DECODER
                     if (CONFIG_H264_VDPAU_DECODER &&
                         h->avctx->codec->capabilities & AV_CODEC_CAP_HWACCEL_VDPAU)
                         ff_vdpau_h264_picture_start(h);
@@ -1582,12 +1582,14 @@ again:
 #if FF_API_CAP_VDPAU
                     } else if (CONFIG_H264_VDPAU_DECODER &&
                                h->avctx->codec->capabilities & AV_CODEC_CAP_HWACCEL_VDPAU) {
+#if CONFIG_H264_VDPAU_DECODER
                         ff_vdpau_add_data_chunk(h->cur_pic_ptr->f->data[0],
                                                 start_code,
                                                 sizeof(start_code));
                         ff_vdpau_add_data_chunk(h->cur_pic_ptr->f->data[0],
                                                 &buf[buf_index - consumed],
                                                 consumed);
+#endif
 #endif
                     } else
                         context_count++;
