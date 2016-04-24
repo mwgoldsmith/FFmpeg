@@ -693,6 +693,7 @@ ENDLOCAL
   <ItemGroup>
     <ClCompile Include="..\..\libavutil\adler32.c" />
     <ClCompile Include="..\..\libavutil\aes.c" />
+    <ClCompile Include="..\..\libavutil\atomic.c" />
     <ClCompile Include="..\..\libavutil\audio_fifo.c" />
     <ClCompile Include="..\..\libavutil\avstring.c" />
     <ClCompile Include="..\..\libavutil\base64.c" />
@@ -741,7 +742,6 @@ ENDLOCAL
     </ClCompile>
     <ClCompile Include="..\..\libavutil\random_seed.c" />
     <ClCompile Include="..\..\libavutil\rational.c" />
-    <ClCompile Include="..\..\libavutil\reverse.c" />
     <ClCompile Include="..\..\libavutil\rc4.c" />
     <ClCompile Include="..\..\libavutil\ripemd.c" />
     <ClCompile Include="..\..\libavutil\samplefmt.c" />
@@ -756,11 +756,10 @@ ENDLOCAL
     <ClCompile Include="..\..\libavutil\utils.c" />
     <ClCompile Include="..\..\libavutil\xga_font_data.c" />
     <ClCompile Include="..\..\libavutil\xtea.c" />
-    <ClCompile Include="..\..\libavutil\tea.c" />
     <ClCompile Include="..\..\libavutil\lzo.c" />
-    <ClCompile Include="..\..\libavutil\..\compat\msvcrt\snprintf.c" />
-    <ClCompile Include="..\..\libavutil\..\compat\strtod.c" />
-    <ClCompile Include="..\..\libavutil\..\compat\getopt.c" />
+    <ClCompile Include="..\..\compat\msvcrt\snprintf.c" />
+    <ClCompile Include="..\..\compat\strtod.c" />
+    <ClCompile Include="..\..\compat\getopt.c" />
     <ClCompile Include="..\..\libavutil\x86\cpu.c">
       <ObjectFileName>$(IntDir)\libavutil_x86_cpu.obj</ObjectFileName>
     </ClCompile>
@@ -773,6 +772,7 @@ ENDLOCAL
     <ClInclude Include="..\..\libavutil\aes.h" />
     <ClInclude Include="..\..\libavutil\attributes.h" />
     <ClInclude Include="..\..\libavutil\audio_fifo.h" />
+    <ClInclude Include="..\..\libavutil\audioconvert.h" />
     <ClInclude Include="..\..\libavutil\avassert.h" />
     <ClInclude Include="..\..\libavutil\avstring.h" />
     <ClInclude Include="..\..\libavutil\avutil.h" />
@@ -808,6 +808,7 @@ ENDLOCAL
     <ClInclude Include="..\..\libavutil\motion_vector.h" />
     <ClInclude Include="..\..\libavutil\murmur3.h" />
     <ClInclude Include="..\..\libavutil\dict.h" />
+    <ClInclude Include="..\..\libavutil\old_pix_fmts.h" />
     <ClInclude Include="..\..\libavutil\opt.h" />
     <ClInclude Include="..\..\libavutil\parseutils.h" />
     <ClInclude Include="..\..\libavutil\pixdesc.h" />
@@ -828,7 +829,6 @@ ENDLOCAL
     <ClInclude Include="..\..\libavutil\twofish.h" />
     <ClInclude Include="..\..\libavutil\version.h" />
     <ClInclude Include="..\..\libavutil\xtea.h" />
-    <ClInclude Include="..\..\libavutil\tea.h" />
     <ClInclude Include="..\..\libavutil\lzo.h" />
   </ItemGroup>
   <ItemGroup>

@@ -203,7 +203,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libgsmd.lib;libmp3lamed.lib;libopenjpegd.lib;liblzmad.lib;libzlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libgsmd.lib;libmp3lamed.lib;libopenjpegd.lib;libvpxd.lib;liblzmad.lib;libzlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <YASM>
@@ -245,7 +245,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -279,7 +279,7 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libgsmd.lib;libmp3lamed.lib;libopenjpegd.lib;liblzmad.lib;libzlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libgsmd.lib;libmp3lamed.lib;libopenjpegd.lib;libvpxd.lib;liblzmad.lib;libzlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <YASM>
@@ -321,7 +321,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -356,7 +356,7 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libgsm.lib;libmp3lame.lib;libopenjpeg.lib;liblzma.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libgsm.lib;libmp3lame.lib;libopenjpeg.lib;libvpx.lib;liblzma.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <YASM>
@@ -398,7 +398,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -432,7 +432,7 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libgsm.lib;libmp3lame.lib;libopenjpeg.lib;liblzma.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libgsm.lib;libmp3lame.lib;libopenjpeg.lib;libvpx.lib;liblzma.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <YASM>
@@ -474,7 +474,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -508,7 +508,7 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avutild.lib;gsmd.lib;mp3lamed.lib;openjpegd.lib;lzmad.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avutild.lib;gsmd.lib;mp3lamed.lib;openjpegd.lib;vpxd.lib;lzmad.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <ImportLibrary>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
@@ -516,7 +516,6 @@ ENDLOCAL
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
       <LargeAddressAware>true</LargeAddressAware>
-      <ForceFileOutput>UndefinedSymbolOnly</ForceFileOutput>
     </Link>
     <YASM>
       <IncludePaths>$(ProjectDir)..\..;$(ProjectDir);$(ProjectDir)..\..\libavcodec;%(IncludePaths)</IncludePaths>
@@ -561,7 +560,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -595,14 +594,13 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avutild.lib;gsmd.lib;mp3lamed.lib;openjpegd.lib;lzmad.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avutild.lib;gsmd.lib;mp3lamed.lib;openjpegd.lib;vpxd.lib;lzmad.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <ImportLibrary>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>avcodec.def</ModuleDefinitionFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
-      <ForceFileOutput>UndefinedSymbolOnly</ForceFileOutput>
     </Link>
     <YASM>
       <IncludePaths>$(ProjectDir)..\..;$(ProjectDir);$(ProjectDir)..\..\libavcodec;%(IncludePaths)</IncludePaths>
@@ -647,7 +645,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -681,7 +679,7 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avutil.lib;gsm.lib;mp3lame.lib;openjpeg.lib;lzma.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avutil.lib;gsm.lib;mp3lame.lib;openjpeg.lib;vpx.lib;lzma.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
       <ImportLibrary>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
       <ModuleDefinitionFile>avcodec.def</ModuleDefinitionFile>
@@ -691,7 +689,6 @@ ENDLOCAL
       <LargeAddressAware>true</LargeAddressAware>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ForceFileOutput>UndefinedSymbolOnly</ForceFileOutput>
     </Link>
     <YASM>
       <IncludePaths>$(ProjectDir)..\..;$(ProjectDir);$(ProjectDir)..\..\libavcodec;%(IncludePaths)</IncludePaths>
@@ -736,7 +733,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -770,7 +767,7 @@ ENDLOCAL
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>$(OutDir)..\..\lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avutil.lib;gsm.lib;mp3lame.lib;openjpeg.lib;lzma.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avutil.lib;gsm.lib;mp3lame.lib;openjpeg.lib;vpx.lib;lzma.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/IGNORE:4006,4221,4049,4217,4197,4099 %(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <ImportLibrary>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
@@ -779,7 +776,6 @@ ENDLOCAL
       <ProgramDatabaseFile>$(OutDir)..\..\lib\$(PlatformTarget)\$(TargetName).pdb</ProgramDatabaseFile>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ForceFileOutput>UndefinedSymbolOnly</ForceFileOutput>
     </Link>
     <YASM>
       <IncludePaths>$(ProjectDir)..\..;$(ProjectDir);$(ProjectDir)..\..\libavcodec;%(IncludePaths)</IncludePaths>
@@ -824,7 +820,7 @@ SETLOCAL EnableDelayedExpansion EnableExtensions
 MKDIR "$(OutDir)..\..\include"
 MKDIR "$(OutDir)..\..\include\libavcodec"
 
-FOR %%H IN (avcodec.h avfft.h dv_profile.h d3d11va.h dxva2.h qsv.h vaapi.h vda.h vdpau.h version.h videotoolbox.h vorbis_parser.h xvmc.h) DO (
+FOR %%H IN (avcodec.h avfft.h dv_profile.h dxva2.h old_codec_ids.h qsv.h vaapi.h vda.h vdpau.h version.h vorbis_parser.h xvmc.h) DO (
   SET "_HEADER=%%H"
   COPY "$(ProjectDir)..\..\libavcodec\!_HEADER!" "$(OutDir)..\..\include\libavcodec"
 )
@@ -837,6 +833,7 @@ ENDLOCAL
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <YASM Include="..\..\libavcodec\x86\deinterlace.asm" />
     <YASM Include="..\..\libavcodec\x86\ac3dsp.asm" />
     <YASM Include="..\..\libavcodec\x86\audiodsp.asm" />
     <YASM Include="..\..\libavcodec\x86\blockdsp.asm" />
@@ -874,12 +871,8 @@ ENDLOCAL
     <YASM Include="..\..\libavcodec\x86\mpegvideoencdsp.asm" />
     <YASM Include="..\..\libavcodec\x86\pixblockdsp.asm" />
     <YASM Include="..\..\libavcodec\x86\qpeldsp.asm" />
-    <YASM Include="..\..\libavcodec\x86\rv34dsp.asm" />
     <YASM Include="..\..\libavcodec\x86\videodsp.asm" />
     <YASM Include="..\..\libavcodec\x86\vp3dsp.asm" />
-    <YASM Include="..\..\libavcodec\x86\vp8dsp.asm" />
-    <YASM Include="..\..\libavcodec\x86\vp8dsp_loopfilter.asm" />
-    <YASM Include="..\..\libavcodec\x86\aacpsdsp.asm" />
     <YASM Include="..\..\libavcodec\x86\sbrdsp.asm" />
     <YASM Include="..\..\libavcodec\x86\g722dsp.asm" />
     <YASM Include="..\..\libavcodec\x86\pngdsp.asm" />
@@ -891,6 +884,7 @@ ENDLOCAL
     <YASM Include="..\..\libavcodec\x86\mlpdsp.asm" />
     <YASM Include="..\..\libavcodec\x86\xvididct.asm" />
     <YASM Include="..\..\libavcodec\x86\proresdsp.asm" />
+    <YASM Include="..\..\libavcodec\x86\rv34dsp.asm" />
     <YASM Include="..\..\libavcodec\x86\rv40dsp.asm" />
     <YASM Include="..\..\libavcodec\x86\svq1enc.asm" />
     <YASM Include="..\..\libavcodec\x86\ttadsp.asm" />
@@ -899,11 +893,12 @@ ENDLOCAL
     <YASM Include="..\..\libavcodec\x86\vc1dsp.asm" />
     <YASM Include="..\..\libavcodec\x86\vorbisdsp.asm" />
     <YASM Include="..\..\libavcodec\x86\vp6dsp.asm" />
+    <YASM Include="..\..\libavcodec\x86\vp8dsp.asm" />
+    <YASM Include="..\..\libavcodec\x86\vp8dsp_loopfilter.asm" />
     <YASM Include="..\..\libavcodec\x86\vp9intrapred.asm" />
     <YASM Include="..\..\libavcodec\x86\vp9itxfm.asm" />
     <YASM Include="..\..\libavcodec\x86\vp9lpf.asm" />
     <YASM Include="..\..\libavcodec\x86\vp9mc.asm" />
-    <YASM Include="..\..\libavcodec\x86\vp9mc_16bpp.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libavcodec\allcodecs.c" />
@@ -957,9 +952,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\fft_float.c" />
     <ClCompile Include="..\..\libavcodec\fft_fixed_32.c" />
     <ClCompile Include="..\..\libavcodec\fft_init_table.c" />
-    <ClCompile Include="..\..\libavcodec\flacdsp.c">
-      <ObjectFileName>$(IntDir)\libavcodec_flacdsp.obj</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\libavcodec\fmtconvert.c">
       <ObjectFileName>$(IntDir)\libavcodec_fmtconvert.obj</ObjectFileName>
     </ClCompile>
@@ -987,7 +979,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\imdct15.c" />
     <ClCompile Include="..\..\libavcodec\intrax8.c" />
     <ClCompile Include="..\..\libavcodec\intrax8dsp.c" />
-    <ClCompile Include="..\..\libavcodec\ivi_dsp.c" />
     <ClCompile Include="..\..\libavcodec\jpegtables.c" />
     <ClCompile Include="..\..\libavcodec\lossless_audiodsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_lossless_audiodsp.obj</ObjectFileName>
@@ -997,7 +988,6 @@ ENDLOCAL
     </ClCompile>
     <ClCompile Include="..\..\libavcodec\lpc.c" />
     <ClCompile Include="..\..\libavcodec\lsp.c" />
-    <ClCompile Include="..\..\libavcodec\lzf.c" />
     <ClCompile Include="..\..\libavcodec\mdct_fixed.c" />
     <ClCompile Include="..\..\libavcodec\mdct_float.c" />
     <ClCompile Include="..\..\libavcodec\mdct_fixed_32.c" />
@@ -1014,11 +1004,8 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\mpegaudiodsp_float.c" />
     <ClCompile Include="..\..\libavcodec\mpegvideo.c" />
     <ClCompile Include="..\..\libavcodec\mpegvideodsp.c" />
-    <ClCompile Include="..\..\libavcodec\rl.c" />
     <ClCompile Include="..\..\libavcodec\mpegvideo_motion.c" />
     <ClCompile Include="..\..\libavcodec\mpegutils.c" />
-    <ClCompile Include="..\..\libavcodec\mpegvideodata.c" />
-    <ClCompile Include="..\..\libavcodec\mpegpicture.c" />
     <ClCompile Include="..\..\libavcodec\mpegvideo_enc.c" />
     <ClCompile Include="..\..\libavcodec\mpeg12data.c" />
     <ClCompile Include="..\..\libavcodec\motion_est.c" />
@@ -1026,7 +1013,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\mpegvideoencdsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_mpegvideoencdsp.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\libavcodec\mss34dsp.c" />
     <ClCompile Include="..\..\libavcodec\pixblockdsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_pixblockdsp.obj</ObjectFileName>
     </ClCompile>
@@ -1035,17 +1021,9 @@ ENDLOCAL
     </ClCompile>
     <ClCompile Include="..\..\libavcodec\rangecoder.c" />
     <ClCompile Include="..\..\libavcodec\rdft.c" />
-    <ClCompile Include="..\..\libavcodec\rv34dsp.c">
-      <ObjectFileName>$(IntDir)\libavcodec_rv34dsp.obj</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\libavcodec\log2_tab.c" />
-    <ClCompile Include="..\..\libavcodec\reverse.c" />
     <ClCompile Include="..\..\libavcodec\sinewin.c" />
-    <ClCompile Include="..\..\libavcodec\sinewin_fixed.c" />
-    <ClCompile Include="..\..\libavcodec\snappy.c" />
     <ClCompile Include="..\..\libavcodec\startcode.c" />
-    <ClCompile Include="..\..\libavcodec\texturedsp.c" />
-    <ClCompile Include="..\..\libavcodec\texturedspenc.c" />
     <ClCompile Include="..\..\libavcodec\tpeldsp.c" />
     <ClCompile Include="..\..\libavcodec\videodsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_videodsp.obj</ObjectFileName>
@@ -1053,38 +1031,24 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\vp3dsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_vp3dsp.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\libavcodec\vp56dsp.c" />
-    <ClCompile Include="..\..\libavcodec\vp8dsp.c">
-      <ObjectFileName>$(IntDir)\libavcodec_vp8dsp.obj</ObjectFileName>
-    </ClCompile>
     <ClCompile Include="..\..\libavcodec\wma_freqs.c" />
-    <ClCompile Include="..\..\libavcodec\wmv2dsp.c" />
     <ClCompile Include="..\..\libavcodec\012v.c" />
     <ClCompile Include="..\..\libavcodec\a64multienc.c" />
     <ClCompile Include="..\..\libavcodec\elbg.c" />
     <ClCompile Include="..\..\libavcodec\aacdec.c" />
     <ClCompile Include="..\..\libavcodec\aactab.c" />
     <ClCompile Include="..\..\libavcodec\aacsbr.c" />
-    <ClCompile Include="..\..\libavcodec\aacps_float.c" />
+    <ClCompile Include="..\..\libavcodec\aacps.c" />
     <ClCompile Include="..\..\libavcodec\aacadtsdec.c" />
     <ClCompile Include="..\..\libavcodec\mpeg4audio.c" />
     <ClCompile Include="..\..\libavcodec\kbdwin.c" />
     <ClCompile Include="..\..\libavcodec\sbrdsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_sbrdsp.obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\libavcodec\aacpsdsp_float.c" />
-    <ClCompile Include="..\..\libavcodec\aacdec_fixed.c" />
-    <ClCompile Include="..\..\libavcodec\aacsbr_fixed.c" />
-    <ClCompile Include="..\..\libavcodec\aacps_fixed.c" />
-    <ClCompile Include="..\..\libavcodec\sbrdsp_fixed.c" />
-    <ClCompile Include="..\..\libavcodec\aacpsdsp_fixed.c" />
+    <ClCompile Include="..\..\libavcodec\aacpsdsp.c" />
     <ClCompile Include="..\..\libavcodec\aacenc.c" />
     <ClCompile Include="..\..\libavcodec\aaccoder.c" />
-    <ClCompile Include="..\..\libavcodec\aacenctab.c" />
     <ClCompile Include="..\..\libavcodec\aacpsy.c" />
-    <ClCompile Include="..\..\libavcodec\aacenc_is.c" />
-    <ClCompile Include="..\..\libavcodec\aacenc_tns.c" />
-    <ClCompile Include="..\..\libavcodec\aacenc_pred.c" />
     <ClCompile Include="..\..\libavcodec\psymodel.c" />
     <ClCompile Include="..\..\libavcodec\aasc.c" />
     <ClCompile Include="..\..\libavcodec\msrledec.c" />
@@ -1171,7 +1135,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\cljrdec.c" />
     <ClCompile Include="..\..\libavcodec\cljrenc.c" />
     <ClCompile Include="..\..\libavcodec\cllc.c" />
-    <ClCompile Include="..\..\libavcodec\canopus.c" />
     <ClCompile Include="..\..\libavcodec\cook.c" />
     <ClCompile Include="..\..\libavcodec\cngdec.c" />
     <ClCompile Include="..\..\libavcodec\cngenc.c" />
@@ -1180,7 +1143,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\dcaenc.c" />
     <ClCompile Include="..\..\libavcodec\dca.c" />
     <ClCompile Include="..\..\libavcodec\dcadata.c" />
-    <ClCompile Include="..\..\libavcodec\dds.c" />
     <ClCompile Include="..\..\libavcodec\diracdec.c" />
     <ClCompile Include="..\..\libavcodec\dirac.c" />
     <ClCompile Include="..\..\libavcodec\diracdsp.c" />
@@ -1208,7 +1170,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\dvenc.c" />
     <ClCompile Include="..\..\libavcodec\dxa.c" />
     <ClCompile Include="..\..\libavcodec\dxtory.c" />
-    <ClCompile Include="..\..\libavcodec\dxv.c" />
     <ClCompile Include="..\..\libavcodec\eac3_data.c" />
     <ClCompile Include="..\..\libavcodec\eac3enc.c" />
     <ClCompile Include="..\..\libavcodec\eacmv.c" />
@@ -1232,6 +1193,9 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\flacdec.c" />
     <ClCompile Include="..\..\libavcodec\flacdata.c" />
     <ClCompile Include="..\..\libavcodec\flac.c" />
+    <ClCompile Include="..\..\libavcodec\flacdsp.c">
+      <ObjectFileName>$(IntDir)\libavcodec_flacdsp.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\libavcodec\flacenc.c" />
     <ClCompile Include="..\..\libavcodec\vorbis_data.c" />
     <ClCompile Include="..\..\libavcodec\flashsv.c" />
@@ -1242,7 +1206,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\fraps.c" />
     <ClCompile Include="..\..\libavcodec\frwu.c" />
     <ClCompile Include="..\..\libavcodec\g2meet.c" />
-    <ClCompile Include="..\..\libavcodec\elsdec.c" />
     <ClCompile Include="..\..\libavcodec\g723_1.c" />
     <ClCompile Include="..\..\libavcodec\g729dec.c" />
     <ClCompile Include="..\..\libavcodec\g729postfilter.c" />
@@ -1261,7 +1224,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\mpeg4videodec.c" />
     <ClCompile Include="..\..\libavcodec\flvdec.c" />
     <ClCompile Include="..\..\libavcodec\intelh263dec.c" />
-    <ClCompile Include="..\..\libavcodec\h263data.c" />
     <ClCompile Include="..\..\libavcodec\mpeg4videoenc.c" />
     <ClCompile Include="..\..\libavcodec\ituh263enc.c" />
     <ClCompile Include="..\..\libavcodec\flvenc.c" />
@@ -1276,8 +1238,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\h264_refs.c" />
     <ClCompile Include="..\..\libavcodec\h264_sei.c" />
     <ClCompile Include="..\..\libavcodec\h264_slice.c" />
-    <ClCompile Include="..\..\libavcodec\hapdec.c" />
-    <ClCompile Include="..\..\libavcodec\hap.c" />
     <ClCompile Include="..\..\libavcodec\hevc.c" />
     <ClCompile Include="..\..\libavcodec\hevc_mvs.c" />
     <ClCompile Include="..\..\libavcodec\hevc_ps.c" />
@@ -1287,15 +1247,9 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\hevcpred.c" />
     <ClCompile Include="..\..\libavcodec\hevcdsp.c" />
     <ClCompile Include="..\..\libavcodec\hevc_filter.c" />
-    <ClCompile Include="..\..\libavcodec\hevc_parse.c" />
-    <ClCompile Include="..\..\libavcodec\hevc_data.c" />
     <ClCompile Include="..\..\libavcodec\hnm4video.c" />
-    <ClCompile Include="..\..\libavcodec\hq_hqa.c" />
-    <ClCompile Include="..\..\libavcodec\hq_hqadata.c" />
-    <ClCompile Include="..\..\libavcodec\hq_hqadsp.c" />
     <ClCompile Include="..\..\libavcodec\hqx.c" />
     <ClCompile Include="..\..\libavcodec\hqxvlc.c" />
-    <ClCompile Include="..\..\libavcodec\hqxdsp.c" />
     <ClCompile Include="..\..\libavcodec\huffyuv.c" />
     <ClCompile Include="..\..\libavcodec\huffyuvdec.c" />
     <ClCompile Include="..\..\libavcodec\huffyuvenc.c" />
@@ -1306,6 +1260,7 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\indeo3.c" />
     <ClCompile Include="..\..\libavcodec\indeo4.c" />
     <ClCompile Include="..\..\libavcodec\ivi.c" />
+    <ClCompile Include="..\..\libavcodec\ivi_dsp.c" />
     <ClCompile Include="..\..\libavcodec\indeo5.c" />
     <ClCompile Include="..\..\libavcodec\dpcm.c" />
     <ClCompile Include="..\..\libavcodec\interplayvideo.c" />
@@ -1360,6 +1315,7 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\msmpeg4enc.c" />
     <ClCompile Include="..\..\libavcodec\msrle.c" />
     <ClCompile Include="..\..\libavcodec\mss3.c" />
+    <ClCompile Include="..\..\libavcodec\mss34dsp.c" />
     <ClCompile Include="..\..\libavcodec\mss1.c" />
     <ClCompile Include="..\..\libavcodec\mss12.c" />
     <ClCompile Include="..\..\libavcodec\mss2.c" />
@@ -1377,6 +1333,9 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\rtjpeg.c" />
     <ClCompile Include="..\..\libavcodec\on2avc.c" />
     <ClCompile Include="..\..\libavcodec\on2avcdata.c" />
+    <ClCompile Include="..\..\libavcodec\opus.c" />
+    <ClCompile Include="..\..\libavcodec\opus_celt.c" />
+    <ClCompile Include="..\..\libavcodec\opus_silk.c" />
     <ClCompile Include="..\..\libavcodec\pafaudio.c" />
     <ClCompile Include="..\..\libavcodec\pafvideo.c" />
     <ClCompile Include="..\..\libavcodec\pnmdec.c" />
@@ -1423,12 +1382,14 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\rv30.c" />
     <ClCompile Include="..\..\libavcodec\rv34.c" />
     <ClCompile Include="..\..\libavcodec\rv30dsp.c" />
+    <ClCompile Include="..\..\libavcodec\rv34dsp.c">
+      <ObjectFileName>$(IntDir)\libavcodec_rv34dsp.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\libavcodec\rv40.c" />
     <ClCompile Include="..\..\libavcodec\rv40dsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_rv40dsp.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\libavcodec\samidec.c" />
-    <ClCompile Include="..\..\libavcodec\htmlsubtitles.c" />
     <ClCompile Include="..\..\libavcodec\s302m.c" />
     <ClCompile Include="..\..\libavcodec\s302menc.c" />
     <ClCompile Include="..\..\libavcodec\sanm.c" />
@@ -1485,6 +1446,7 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\ttaenc.c" />
     <ClCompile Include="..\..\libavcodec\twinvqdec.c" />
     <ClCompile Include="..\..\libavcodec\txd.c" />
+    <ClCompile Include="..\..\libavcodec\s3tc.c" />
     <ClCompile Include="..\..\libavcodec\ulti.c" />
     <ClCompile Include="..\..\libavcodec\utvideodec.c" />
     <ClCompile Include="..\..\libavcodec\utvideo.c" />
@@ -1510,6 +1472,7 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\vc1dsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_vc1dsp.obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\..\libavcodec\wmv2dsp.c" />
     <ClCompile Include="..\..\libavcodec\vcr1.c" />
     <ClCompile Include="..\..\libavcodec\vmdaudio.c" />
     <ClCompile Include="..\..\libavcodec\vmdvideo.c" />
@@ -1523,17 +1486,18 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\vp5.c" />
     <ClCompile Include="..\..\libavcodec\vp56.c" />
     <ClCompile Include="..\..\libavcodec\vp56data.c" />
+    <ClCompile Include="..\..\libavcodec\vp56dsp.c" />
     <ClCompile Include="..\..\libavcodec\vp56rac.c" />
     <ClCompile Include="..\..\libavcodec\vp6.c" />
     <ClCompile Include="..\..\libavcodec\vp6dsp.c">
       <ObjectFileName>$(IntDir)\libavcodec_vp6dsp.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\..\libavcodec\vp8.c" />
+    <ClCompile Include="..\..\libavcodec\vp8dsp.c">
+      <ObjectFileName>$(IntDir)\libavcodec_vp8dsp.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\libavcodec\vp9.c" />
     <ClCompile Include="..\..\libavcodec\vp9dsp.c" />
-    <ClCompile Include="..\..\libavcodec\vp9dsp_8bpp.c" />
-    <ClCompile Include="..\..\libavcodec\vp9dsp_10bpp.c" />
-    <ClCompile Include="..\..\libavcodec\vp9dsp_12bpp.c" />
     <ClCompile Include="..\..\libavcodec\vqavideo.c" />
     <ClCompile Include="..\..\libavcodec\wavpack.c" />
     <ClCompile Include="..\..\libavcodec\wavpackenc.c" />
@@ -1590,10 +1554,8 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\g726.c" />
     <ClCompile Include="..\..\libavcodec\adpcmenc.c" />
     <ClCompile Include="..\..\libavcodec\vima.c" />
-    <ClCompile Include="..\..\libavcodec\d3d11va.c" />
     <ClCompile Include="..\..\libavcodec\dxva2.c" />
     <ClCompile Include="..\..\libavcodec\dxva2_h264.c" />
-    <ClCompile Include="..\..\libavcodec\dxva2_hevc.c" />
     <ClCompile Include="..\..\libavcodec\dxva2_mpeg2.c" />
     <ClCompile Include="..\..\libavcodec\dxva2_vc1.c" />
     <ClCompile Include="..\..\libavcodec\libgsmdec.c" />
@@ -1601,6 +1563,8 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\libmp3lame.c" />
     <ClCompile Include="..\..\libavcodec\libopenjpegdec.c" />
     <ClCompile Include="..\..\libavcodec\libopenjpegenc.c" />
+    <ClCompile Include="..\..\libavcodec\libvpxenc.c" />
+    <ClCompile Include="..\..\libavcodec\libvpx.c" />
     <ClCompile Include="..\..\libavcodec\aac_parser.c" />
     <ClCompile Include="..\..\libavcodec\aac_ac3_parser.c" />
     <ClCompile Include="..\..\libavcodec\latm_parser.c" />
@@ -1617,7 +1581,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\dvd_nav_parser.c" />
     <ClCompile Include="..\..\libavcodec\dvdsub_parser.c" />
     <ClCompile Include="..\..\libavcodec\flac_parser.c" />
-    <ClCompile Include="..\..\libavcodec\g729_parser.c" />
     <ClCompile Include="..\..\libavcodec\gsm_parser.c" />
     <ClCompile Include="..\..\libavcodec\h261_parser.c" />
     <ClCompile Include="..\..\libavcodec\h263_parser.c" />
@@ -1631,7 +1594,6 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\mpegaudio_parser.c" />
     <ClCompile Include="..\..\libavcodec\mpegvideo_parser.c" />
     <ClCompile Include="..\..\libavcodec\opus_parser.c" />
-    <ClCompile Include="..\..\libavcodec\opus.c" />
     <ClCompile Include="..\..\libavcodec\pnm_parser.c" />
     <ClCompile Include="..\..\libavcodec\rv34_parser.c" />
     <ClCompile Include="..\..\libavcodec\tak_parser.c" />
@@ -1682,11 +1644,8 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\x86\mpegvideoencdsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\pixblockdsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\qpeldsp_init.c" />
-    <ClCompile Include="..\..\libavcodec\x86\rv34dsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\videodsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\vp3dsp_init.c" />
-    <ClCompile Include="..\..\libavcodec\x86\vp8dsp_init.c" />
-    <ClCompile Include="..\..\libavcodec\x86\aacpsdsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\sbrdsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\g722dsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\pngdsp_init.c" />
@@ -1698,6 +1657,7 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\x86\mlpdsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\xvididct_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\proresdsp_init.c" />
+    <ClCompile Include="..\..\libavcodec\x86\rv34dsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\rv40dsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\svq1enc_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\ttadsp_init.c" />
@@ -1706,10 +1666,8 @@ ENDLOCAL
     <ClCompile Include="..\..\libavcodec\x86\vc1dsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\vorbisdsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\vp6dsp_init.c" />
+    <ClCompile Include="..\..\libavcodec\x86\vp8dsp_init.c" />
     <ClCompile Include="..\..\libavcodec\x86\vp9dsp_init.c" />
-    <ClCompile Include="..\..\libavcodec\x86\vp9dsp_init_10bpp.c" />
-    <ClCompile Include="..\..\libavcodec\x86\vp9dsp_init_12bpp.c" />
-    <ClCompile Include="..\..\libavcodec\x86\vp9dsp_init_16bpp.c" />
     <ClCompile Include="..\..\libavcodec\x86\dirac_dwt.c">
       <ObjectFileName>$(IntDir)\libavcodec_x86_dirac_dwt.obj</ObjectFileName>
     </ClCompile>
@@ -1725,14 +1683,13 @@ ENDLOCAL
     <ClInclude Include="..\..\libavcodec\avcodec.h" />
     <ClInclude Include="..\..\libavcodec\avfft.h" />
     <ClInclude Include="..\..\libavcodec\dv_profile.h" />
-    <ClInclude Include="..\..\libavcodec\d3d11va.h" />
     <ClInclude Include="..\..\libavcodec\dxva2.h" />
+    <ClInclude Include="..\..\libavcodec\old_codec_ids.h" />
     <ClInclude Include="..\..\libavcodec\qsv.h" />
     <ClInclude Include="..\..\libavcodec\vaapi.h" />
     <ClInclude Include="..\..\libavcodec\vda.h" />
     <ClInclude Include="..\..\libavcodec\vdpau.h" />
     <ClInclude Include="..\..\libavcodec\version.h" />
-    <ClInclude Include="..\..\libavcodec\videotoolbox.h" />
     <ClInclude Include="..\..\libavcodec\vorbis_parser.h" />
     <ClInclude Include="..\..\libavcodec\xvmc.h" />
   </ItemGroup>

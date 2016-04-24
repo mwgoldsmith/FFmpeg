@@ -10,7 +10,6 @@ EXPORTS
     av_audio_fifo_alloc
     av_audio_fifo_drain
     av_audio_fifo_free
-    av_audio_fifo_peek
     av_audio_fifo_read
     av_audio_fifo_realloc
     av_audio_fifo_reset
@@ -20,7 +19,6 @@ EXPORTS
     av_base64_decode
     av_base64_encode
     av_basename
-    av_blowfish_alloc
     av_blowfish_crypt
     av_blowfish_crypt_ecb
     av_blowfish_init
@@ -75,7 +73,6 @@ EXPORTS
     av_d2str
     av_default_get_category
     av_default_item_name
-    av_des_alloc
     av_des_crypt
     av_des_init
     av_des_mac
@@ -108,7 +105,6 @@ EXPORTS
     av_fifo_drain
     av_fifo_free
     av_fifo_freep
-    av_fifo_generic_peek
     av_fifo_generic_read
     av_fifo_generic_write
     av_fifo_grow
@@ -178,6 +174,8 @@ EXPORTS
     av_get_colorspace_name
     av_get_cpu_flags
     av_get_default_channel_layout
+    av_get_double
+    av_get_int
     av_get_known_color_name
     av_get_media_type_string
     av_get_packed_sample_fmt
@@ -188,11 +186,13 @@ EXPORTS
     av_get_pix_fmt_name
     av_get_pix_fmt_string
     av_get_planar_sample_fmt
+    av_get_q
     av_get_random_seed
     av_get_sample_fmt
     av_get_sample_fmt_name
     av_get_sample_fmt_string
     av_get_standard_channel_layout
+    av_get_string
     av_get_time_base_q
     av_get_token
     av_gettime
@@ -228,6 +228,10 @@ EXPORTS
     av_image_get_buffer_size
     av_image_get_linesize
     av_int_list_length_for_size
+    av_isdigit
+    av_isgraph
+    av_isspace
+    av_isxdigit
     av_lfg_init
     av_log
     av_log2
@@ -259,6 +263,7 @@ EXPORTS
     av_murmur3_init_seeded
     av_murmur3_update
     av_nearer_q
+    av_next_option
     av_opt_child_class_next
     av_opt_child_next
     av_opt_copy
@@ -322,8 +327,6 @@ EXPORTS
     av_pix_fmt_get_chroma_sub_sample
     av_pix_fmt_swap_endianness
     av_pixelutils_get_sad_fn
-    av_q2intfloat
-    av_rc4_alloc
     av_rc4_crypt
     av_rc4_init
     av_read_image_line
@@ -350,7 +353,11 @@ EXPORTS
     av_samples_get_buffer_size
     av_samples_set_silence
     av_set_cpu_flags_mask
+    av_set_double
+    av_set_int
     av_set_options_string
+    av_set_q
+    av_set_string3
     av_sha512_alloc
     av_sha512_final
     av_sha512_init
@@ -377,9 +384,6 @@ EXPORTS
     av_strtod
     av_strtok
     av_sub_q
-    av_tea_alloc
-    av_tea_crypt
-    av_tea_init
     av_tempfile
     av_thread_message_queue_alloc
     av_thread_message_queue_free
@@ -407,10 +411,8 @@ EXPORTS
     av_usleep
     av_utf8_decode
     av_vbprintf
-    av_version_info
     av_vlog
     av_write_image_line
-    av_xtea_alloc
     av_xtea_crypt
     av_xtea_init
     avpriv_alloc_fixed_dsp
@@ -419,7 +421,6 @@ EXPORTS
     avpriv_float_dsp_init
     avpriv_frame_get_metadatap
     avpriv_get_gamma_from_trc
-    avpriv_get_trc_function_from_trc
     avpriv_init_lls
     avpriv_report_missing_feature
     avpriv_request_sample
@@ -436,10 +437,11 @@ EXPORTS
     av_camellia_size DATA
     av_cast5_size DATA
     av_md5_size DATA
+    av_pix_fmt_descriptors DATA
+    av_reverse DATA
     av_ripemd_size DATA
     av_sha512_size DATA
     av_sha_size DATA
-    av_tea_size DATA
     av_tree_node_size DATA
     av_twofish_size DATA
     av_util_ffversion DATA
