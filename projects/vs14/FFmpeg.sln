@@ -13,12 +13,19 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avfilter", "avfilter.vcxproj", "{685D4438-4C48-4E8C-8ACE-A7D37E32DFC2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avformat", "avformat.vcxproj", "{BC6052AA-8E29-4580-AE34-C0BF2012DF05}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C7BA199-980B-4178-B0A8-1FBE3AAE64E3} = {6C7BA199-980B-4178-B0A8-1FBE3AAE64E3}
+		{9F051EBC-8D94-44B1-B9F5-1F00645DC589} = {9F051EBC-8D94-44B1-B9F5-1F00645DC589}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avutil", "avutil.vcxproj", "{6C7BA199-980B-4178-B0A8-1FBE3AAE64E3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "postproc", "postproc.vcxproj", "{3BB72ED5-18C2-4406-9854-A4B1387DE59A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "swscale", "swscale.vcxproj", "{2EB72C9F-BBF8-4740-ADDF-E6291EA6F54F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C7BA199-980B-4178-B0A8-1FBE3AAE64E3} = {6C7BA199-980B-4178-B0A8-1FBE3AAE64E3}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "swresample", "swresample.vcxproj", "{F7F1769C-8238-48E8-BFFD-487D6821FF1C}"
 	ProjectSection(ProjectDependencies) = postProject
