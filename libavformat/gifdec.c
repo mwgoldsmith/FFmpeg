@@ -52,9 +52,6 @@ typedef struct GIFDemuxContext {
     int total_iter;
     int iter_count;
     int ignore_loop;
-
-    int nb_frames;
-    int last_duration;
 } GIFDemuxContext;
 
 /**
@@ -282,9 +279,6 @@ parse_keyframe:
             pkt->stream_index = 0;
             pkt->duration = gdc->delay;
 
-            gdc->nb_frames ++;
-            gdc->last_duration = pkt->duration;
-
             /* Graphic Control Extension's scope is single frame.
              * Remove its influence. */
             gdc->delay = gdc->default_delay;
@@ -305,9 +299,6 @@ resync:
     }
 
     if ((ret >= 0 && !frame_parsed) || ret == AVERROR_EOF) {
-        if (gdc->nb_frames == 1) {
-            s->streams[0]->r_frame_rate = (AVRational) {100, gdc->last_duration};
-        }
         /* This might happen when there is no image block
          * between extension blocks and GIF_TRAILER or EOF */
         if (!gdc->ignore_loop && (block_label == GIF_TRAILER || avio_feof(pb))

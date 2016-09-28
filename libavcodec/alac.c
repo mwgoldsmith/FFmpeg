@@ -316,12 +316,6 @@ static int decode_element(AVCodecContext *avctx, AVFrame *frame, int ch_index,
         int lpc_quant[2];
         int rice_history_mult[2];
 
-        if (!alac->rice_limit) {
-            avpriv_request_sample(alac->avctx,
-                                  "Compression with rice limit 0");
-            return AVERROR(ENOSYS);
-        }
-
         decorr_shift       = get_bits(&alac->gb, 8);
         decorr_left_weight = get_bits(&alac->gb, 8);
 
@@ -404,6 +398,7 @@ static int decode_element(AVCodecContext *avctx, AVFrame *frame, int ch_index,
                           alac->extra_bits, channels, alac->nb_samples);
     }
 
+    if(av_sample_fmt_is_planar(avctx->sample_fmt)) {
     switch(alac->sample_size) {
     case 16: {
         for (ch = 0; ch < channels; ch++) {
@@ -418,6 +413,37 @@ static int decode_element(AVCodecContext *avctx, AVFrame *frame, int ch_index,
                 alac->output_samples_buffer[ch][i] <<= 8;
         }}
         break;
+    }
+    }else{
+        switch(alac->sample_size) {
+        case 16: {
+            int16_t *outbuffer = ((int16_t *)frame->extended_data[0]) + ch_index;
+            for (i = 0; i < alac->nb_samples; i++) {
+                for (ch = 0; ch < channels; ch++)
+                    *outbuffer++ = alac->output_samples_buffer[ch][i];
+                outbuffer += alac->channels - channels;
+            }
+            }
+            break;
+        case 24: {
+            int32_t *outbuffer = ((int32_t *)frame->extended_data[0]) + ch_index;
+            for (i = 0; i < alac->nb_samples; i++) {
+                for (ch = 0; ch < channels; ch++)
+                    *outbuffer++ = alac->output_samples_buffer[ch][i] << 8;
+                outbuffer += alac->channels - channels;
+            }
+            }
+            break;
+        case 32: {
+            int32_t *outbuffer = ((int32_t *)frame->extended_data[0]) + ch_index;
+            for (i = 0; i < alac->nb_samples; i++) {
+                for (ch = 0; ch < channels; ch++)
+                    *outbuffer++ = alac->output_samples_buffer[ch][i];
+                outbuffer += alac->channels - channels;
+            }
+            }
+            break;
+        }
     }
 
     return 0;
@@ -502,17 +528,11 @@ static int allocate_buffers(ALACContext *alac)
     int ch;
     int buf_size = alac->max_samples_per_frame * sizeof(int32_t);
 
-    for (ch = 0; ch < 2; ch++) {
-        alac->predict_error_buffer[ch]  = NULL;
-        alac->output_samples_buffer[ch] = NULL;
-        alac->extra_bits_buffer[ch]     = NULL;
-    }
-
     for (ch = 0; ch < FFMIN(alac->channels, 2); ch++) {
         FF_ALLOC_OR_GOTO(alac->avctx, alac->predict_error_buffer[ch],
                          buf_size, buf_alloc_fail);
 
-        alac->direct_output = alac->sample_size > 16;
+        alac->direct_output = alac->sample_size > 16 && av_sample_fmt_is_planar(alac->avctx->sample_fmt);
         if (!alac->direct_output) {
             FF_ALLOC_OR_GOTO(alac->avctx, alac->output_samples_buffer[ch],
                              buf_size, buf_alloc_fail);
@@ -561,6 +581,7 @@ static int alac_set_info(ALACContext *alac)
 static av_cold int alac_decode_init(AVCodecContext * avctx)
 {
     int ret;
+    int req_packed;
     ALACContext *alac = avctx->priv_data;
     alac->avctx = avctx;
 
@@ -574,11 +595,12 @@ static av_cold int alac_decode_init(AVCodecContext * avctx)
         return -1;
     }
 
+    req_packed = LIBAVCODEC_VERSION_MAJOR < 55 && !av_sample_fmt_is_planar(avctx->request_sample_fmt);
     switch (alac->sample_size) {
-    case 16: avctx->sample_fmt = AV_SAMPLE_FMT_S16P;
+    case 16: avctx->sample_fmt = req_packed ? AV_SAMPLE_FMT_S16 : AV_SAMPLE_FMT_S16P;
              break;
     case 24:
-    case 32: avctx->sample_fmt = AV_SAMPLE_FMT_S32P;
+    case 32: avctx->sample_fmt = req_packed ? AV_SAMPLE_FMT_S32 : AV_SAMPLE_FMT_S32P;
              break;
     default: avpriv_request_sample(avctx, "Sample depth %d", alac->sample_size);
              return AVERROR_PATCHWELCOME;
@@ -640,6 +662,6 @@ AVCodec ff_alac_decoder = {
     .close          = alac_decode_close,
     .decode         = alac_decode_frame,
     .init_thread_copy = ONLY_IF_THREADS_ENABLED(init_thread_copy),
-    .capabilities   = AV_CODEC_CAP_DR1 | AV_CODEC_CAP_FRAME_THREADS,
+    .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_FRAME_THREADS,
     .priv_class     = &alac_class
 };

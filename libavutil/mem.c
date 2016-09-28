@@ -59,8 +59,6 @@ void  free(void *ptr);
 
 #endif /* MALLOC_PREFIX */
 
-#include "mem_internal.h"
-
 #define ALIGN (HAVE_AVX ? 32 : 16)
 
 /* NOTE: if you want to override these functions with your own
@@ -268,7 +266,7 @@ char *av_strdup(const char *s)
 {
     char *ptr = NULL;
     if (s) {
-        size_t len = strlen(s) + 1;
+        int len = strlen(s) + 1;
         ptr = av_realloc(NULL, len);
         if (ptr)
             memcpy(ptr, s, len);
@@ -482,7 +480,7 @@ void *av_fast_realloc(void *ptr, unsigned int *size, size_t min_size)
     if (min_size < *size)
         return ptr;
 
-    min_size = FFMAX(min_size + min_size / 16 + 32, min_size);
+    min_size = FFMAX(17 * min_size / 16 + 32, min_size);
 
     ptr = av_realloc(ptr, min_size);
     /* we could set this to the unmodified min_size but this is safer
@@ -494,6 +492,22 @@ void *av_fast_realloc(void *ptr, unsigned int *size, size_t min_size)
     *size = min_size;
 
     return ptr;
+}
+
+static inline int ff_fast_malloc(void *ptr, unsigned int *size, size_t min_size, int zero_realloc)
+{
+    void *val;
+
+    if (min_size < *size)
+        return 0;
+    min_size = FFMAX(17 * min_size / 16 + 32, min_size);
+    av_freep(ptr);
+    val = zero_realloc ? av_mallocz(min_size) : av_malloc(min_size);
+    memcpy(ptr, &val, sizeof(val));
+    if (!val)
+        min_size = 0;
+    *size = min_size;
+    return 1;
 }
 
 void av_fast_malloc(void *ptr, unsigned int *size, size_t min_size)

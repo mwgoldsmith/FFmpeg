@@ -124,7 +124,7 @@ static int read_packet(AVFormatContext *s, AVPacket *pkt)
     int ret;
 
     if (ico->current_image >= ico->nb_images)
-        return AVERROR_EOF;
+        return AVERROR(EIO);
 
     image = &ico->images[ico->current_image];
 

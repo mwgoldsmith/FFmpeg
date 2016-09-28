@@ -63,41 +63,28 @@ static int libquvi_read_header(AVFormatContext *s)
     char *media_url, *pagetitle;
 
     rc = quvi_init(&q);
-    if (rc != QUVI_OK) {
-        av_log(s, AV_LOG_ERROR, "%s\n", quvi_strerror(q, rc));
-        return AVERROR_EXTERNAL;
-    }
+    if (rc != QUVI_OK)
+        goto quvi_fail;
 
     quvi_setopt(q, QUVIOPT_FORMAT, qc->format);
 
     rc = quvi_parse(q, s->filename, &m);
-    if (rc != QUVI_OK) {
-        av_log(s, AV_LOG_ERROR, "%s\n", quvi_strerror(q, rc));
-        ret = AVERROR_EXTERNAL;
-        goto err_quvi_close;
-    }
+    if (rc != QUVI_OK)
+        goto quvi_fail;
 
     rc = quvi_getprop(m, QUVIPROP_MEDIAURL, &media_url);
-    if (rc != QUVI_OK) {
-        av_log(s, AV_LOG_ERROR, "%s\n", quvi_strerror(q, rc));
-        ret = AVERROR_EXTERNAL;
-        goto err_quvi_cleanup;
-    }
+    if (rc != QUVI_OK)
+        goto quvi_fail;
 
-    if (!(qc->fmtctx = avformat_alloc_context())) {
-        ret = AVERROR(ENOMEM);
-        goto err_quvi_cleanup;
-    }
+    if (!(qc->fmtctx = avformat_alloc_context()))
+            goto quvi_fail;
 
-    if ((ret = ff_copy_whitelists(qc->fmtctx, s)) < 0) {
-        avformat_free_context(qc->fmtctx);
-        qc->fmtctx = NULL;
-        goto err_quvi_cleanup;
-    }
+    if ((ret = ff_copy_whitelists(qc->fmtctx, s)) < 0)
+        goto end;
 
     ret = avformat_open_input(&qc->fmtctx, media_url, NULL, NULL);
     if (ret < 0)
-        goto err_quvi_cleanup;
+        goto end;
 
     rc = quvi_getprop(m, QUVIPROP_PAGETITLE, &pagetitle);
     if (rc == QUVI_OK)
@@ -108,7 +95,7 @@ static int libquvi_read_header(AVFormatContext *s)
         AVStream *ist = qc->fmtctx->streams[i];
         if (!st) {
             ret = AVERROR(ENOMEM);
-            goto err_close_input;
+            goto end;
         }
         avpriv_set_pts_info(st, ist->pts_wrap_bits, ist->time_base.num, ist->time_base.den);
         avcodec_copy_context(st->codec, qc->fmtctx->streams[i]->codec);
@@ -116,11 +103,12 @@ static int libquvi_read_header(AVFormatContext *s)
 
     return 0;
 
-  err_close_input:
-    avformat_close_input(&qc->fmtctx);
-  err_quvi_cleanup:
+quvi_fail:
+    av_log(s, AV_LOG_ERROR, "%s\n", quvi_strerror(q, rc));
+    ret = AVERROR_EXTERNAL;
+
+end:
     quvi_parse_close(&m);
-  err_quvi_close:
     quvi_close(&q);
     return ret;
 }

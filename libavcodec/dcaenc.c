@@ -58,7 +58,6 @@ typedef struct DCAEncContext {
     int lfe_scale_factor;
     softfloat lfe_quant;
     int32_t lfe_peak_cb;
-    const int8_t *channel_order_tab;  ///< channel reordering table, lfe and non lfe
 
     int32_t history[512][MAX_CHANNELS]; /* This is a circular buffer */
     int32_t subband[SUBBAND_SAMPLES][DCAENC_SUBBANDS][MAX_CHANNELS];
@@ -134,12 +133,8 @@ static int encode_init(AVCodecContext *avctx)
         return AVERROR_PATCHWELCOME;
     }
 
-    if (c->lfe_channel) {
+    if (c->lfe_channel)
         c->fullband_channels--;
-        c->channel_order_tab = ff_dca_channel_reorder_lfe[c->channel_config];
-    } else {
-        c->channel_order_tab = ff_dca_channel_reorder_nolfe[c->channel_config];
-    }
 
     for (i = 0; i < 9; i++) {
         if (sample_rates[i] == avctx->sample_rate)
@@ -150,7 +145,7 @@ static int encode_init(AVCodecContext *avctx)
     c->samplerate_index = i;
 
     if (avctx->bit_rate < 32000 || avctx->bit_rate > 3840000) {
-        av_log(avctx, AV_LOG_ERROR, "Bit rate %"PRId64" not supported.", (int64_t)avctx->bit_rate);
+        av_log(avctx, AV_LOG_ERROR, "Bit rate %i not supported.", avctx->bit_rate);
         return AVERROR(EINVAL);
     }
     for (i = 0; ff_dca_bit_rates[i] < avctx->bit_rate; i++)
@@ -174,11 +169,10 @@ static int encode_init(AVCodecContext *avctx)
             cb_to_level[i] = (int32_t)(0x7fffffff * pow(10, -0.005 * i));
         }
 
-        for (k = 0; k < 32; k++) {
-            for (j = 0; j < 8; j++) {
-                lfe_fir_64i[64 * j + k] = (int32_t)(0xffffff800000ULL * ff_dca_lfe_fir_64[8 * k + j]);
-                lfe_fir_64i[64 * (7-j) + (63 - k)] = (int32_t)(0xffffff800000ULL * ff_dca_lfe_fir_64[8 * k + j]);
-            }
+        /* FIXME: probably incorrect */
+        for (i = 0; i < 256; i++) {
+            lfe_fir_64i[i] = (int32_t)(0x01ffffff * ff_dca_lfe_fir_64[i]);
+            lfe_fir_64i[511 - i] = (int32_t)(0x01ffffff * ff_dca_lfe_fir_64[i]);
         }
 
         for (i = 0; i < 512; i++) {
@@ -249,7 +243,6 @@ static void subband_transform(DCAEncContext *c, const int32_t *input)
         /* History is copied because it is also needed for PSY */
         int32_t hist[512];
         int hist_start = 0;
-        const int chi = c->channel_order_tab[ch];
 
         for (i = 0; i < 512; i++)
             hist[i] = c->history[i][ch];
@@ -286,7 +279,7 @@ static void subband_transform(DCAEncContext *c, const int32_t *input)
 
             /* Copy in 32 new samples from input */
             for (i = 0; i < 32; i++)
-                hist[i + hist_start] = input[(subs * 32 + i) * c->channels + chi];
+                hist[i + hist_start] = input[(subs * 32 + i) * c->channels + ch];
             hist_start = (hist_start + 32) & 511;
         }
     }
@@ -295,7 +288,6 @@ static void subband_transform(DCAEncContext *c, const int32_t *input)
 static void lfe_downsample(DCAEncContext *c, const int32_t *input)
 {
     /* FIXME: make 128x LFE downsampling possible */
-    const int lfech = ff_dca_lfe_index[c->channel_config];
     int i, j, lfes;
     int32_t hist[512];
     int32_t accum;
@@ -317,7 +309,7 @@ static void lfe_downsample(DCAEncContext *c, const int32_t *input)
 
         /* Copy in 64 new samples from input */
         for (i = 0; i < 64; i++)
-            hist[i + hist_start] = input[(lfes * 64 + i) * c->channels + lfech];
+            hist[i + hist_start] = input[(lfes * 64 + i) * c->channels + c->channels - 1];
 
         hist_start = (hist_start + 64) & 511;
     }
@@ -505,12 +497,10 @@ static void calc_masking(DCAEncContext *c, const int32_t *input)
 
     for (ssf = 0; ssf < SUBSUBFRAMES; ssf++)
         for (ch = 0; ch < c->fullband_channels; ch++) {
-            const int chi = c->channel_order_tab[ch];
-
             for (i = 0, k = 128 + 256 * ssf; k < 512; i++, k++)
                 data[i] = c->history[k][ch];
             for (k -= 512; i < 512; i++, k++)
-                data[i] = input[k * c->channels + chi];
+                data[i] = input[k * c->channels + ch];
             adjust_jnd(c->samplerate_index, data, c->masking_curve_cb[ssf]);
         }
     for (i = 0; i < 256; i++) {
@@ -642,11 +632,8 @@ static void shift_history(DCAEncContext *c, const int32_t *input)
     int k, ch;
 
     for (k = 0; k < 512; k++)
-        for (ch = 0; ch < c->channels; ch++) {
-            const int chi = c->channel_order_tab[ch];
-
-            c->history[k][ch] = input[k * c->channels + chi];
-        }
+        for (ch = 0; ch < c->channels; ch++)
+            c->history[k][ch] = input[k * c->channels + ch];
 }
 
 static int32_t quantize_value(int32_t value, softfloat quant)
@@ -860,7 +847,8 @@ static void put_subframe_samples(DCAEncContext *c, int ss, int band, int ch)
         int i;
         for (i = 0; i < 8; i++) {
             int bits = bit_consumption[c->abits[band][ch]] / 16;
-            put_sbits(&c->pb, bits, c->quantized[ss * 8 + i][band][ch]);
+            int32_t mask = (1 << bits) - 1;
+            put_bits(&c->pb, bits, c->quantized[ss * 8 + i][band][ch] & mask);
         }
     }
 }
@@ -929,7 +917,7 @@ static int encode_frame(AVCodecContext *avctx, AVPacket *avpkt,
     const int32_t *samples;
     int ret, i;
 
-    if ((ret = ff_alloc_packet2(avctx, avpkt, c->frame_size , 0)) < 0)
+    if ((ret = ff_alloc_packet2(avctx, avpkt, c->frame_size )) < 0)
         return ret;
 
     samples = (const int32_t *)frame->data[0];
@@ -950,10 +938,6 @@ static int encode_frame(AVCodecContext *avctx, AVPacket *avpkt,
     put_primary_audio_header(c);
     for (i = 0; i < SUBFRAMES; i++)
         put_subframe(c, i);
-
-
-    for (i = put_bits_count(&c->pb); i < 8*c->frame_size; i++)
-        put_bits(&c->pb, 1, 0);
 
     flush_put_bits(&c->pb);
 
@@ -977,7 +961,7 @@ AVCodec ff_dca_encoder = {
     .priv_data_size        = sizeof(DCAEncContext),
     .init                  = encode_init,
     .encode2               = encode_frame,
-    .capabilities          = AV_CODEC_CAP_EXPERIMENTAL,
+    .capabilities          = CODEC_CAP_EXPERIMENTAL,
     .sample_fmts           = (const enum AVSampleFormat[]){ AV_SAMPLE_FMT_S32,
                                                             AV_SAMPLE_FMT_NONE },
     .supported_samplerates = sample_rates,

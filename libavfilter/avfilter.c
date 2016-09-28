@@ -347,7 +347,9 @@ int ff_request_frame(AVFilterLink *link)
 
     if (link->closed)
         return AVERROR_EOF;
-    // TODO reindent
+    av_assert0(!link->frame_requested);
+    link->frame_requested = 1;
+    while (link->frame_requested) {
         if (link->srcpad->request_frame)
             ret = link->srcpad->request_frame(link);
         else if (link->src->inputs[0])
@@ -358,9 +360,14 @@ int ff_request_frame(AVFilterLink *link)
             ret = ff_filter_frame_framed(link, pbuf);
         }
         if (ret < 0) {
+            link->frame_requested = 0;
             if (ret == AVERROR_EOF)
                 link->closed = 1;
+        } else {
+            av_assert0(!link->frame_requested ||
+                       link->flags & FF_LINK_FLAG_REQUEST_LOOP);
         }
+    }
     return ret;
 }
 
@@ -494,9 +501,16 @@ AVFilter *avfilter_get_by_name(const char *name)
 int avfilter_register(AVFilter *filter)
 {
     AVFilter **f = last_filter;
+    int i;
 
     /* the filter must select generic or internal exclusively */
     av_assert0((filter->flags & AVFILTER_FLAG_SUPPORT_TIMELINE) != AVFILTER_FLAG_SUPPORT_TIMELINE);
+
+    for(i=0; filter->inputs && filter->inputs[i].name; i++) {
+        const AVFilterPad *input = &filter->inputs[i];
+        av_assert0(     !input->filter_frame
+                    || (!input->start_frame && !input->end_frame));
+    }
 
     filter->next = NULL;
 
@@ -655,6 +669,12 @@ AVFilterContext *ff_filter_alloc(const AVFilter *filter, const char *inst_name)
         if (!ret->outputs)
             goto err;
     }
+#if FF_API_FOO_COUNT
+FF_DISABLE_DEPRECATION_WARNINGS
+    ret->output_count = ret->nb_outputs;
+    ret->input_count  = ret->nb_inputs;
+FF_ENABLE_DEPRECATION_WARNINGS
+#endif
 
     return ret;
 
@@ -873,7 +893,7 @@ int avfilter_init_str(AVFilterContext *filter, const char *args)
             return AVERROR(EINVAL);
         }
 
-#if FF_API_OLD_FILTER_OPTS || FF_API_OLD_FILTER_OPTS_ERROR
+#if FF_API_OLD_FILTER_OPTS
             if (   !strcmp(filter->filter->name, "format")     ||
                    !strcmp(filter->filter->name, "noformat")   ||
                    !strcmp(filter->filter->name, "frei0r")     ||
@@ -933,30 +953,18 @@ int avfilter_init_str(AVFilterContext *filter, const char *args)
             while ((p = strchr(p, ':')))
                 *p++ = '|';
 
-#if FF_API_OLD_FILTER_OPTS
             if (deprecated)
                 av_log(filter, AV_LOG_WARNING, "This syntax is deprecated. Use "
                        "'|' to separate the list items.\n");
 
             av_log(filter, AV_LOG_DEBUG, "compat: called with args=[%s]\n", copy);
             ret = process_options(filter, &options, copy);
-#else
-            if (deprecated) {
-                av_log(filter, AV_LOG_ERROR, "This syntax is deprecated. Use "
-                       "'|' to separate the list items ('%s' instead of '%s')\n",
-                       copy, args);
-                ret = AVERROR(EINVAL);
-            } else {
-                ret = process_options(filter, &options, copy);
-            }
-#endif
             av_freep(&copy);
 
             if (ret < 0)
                 goto fail;
-        } else
 #endif
-        {
+        } else {
             ret = process_options(filter, &options, args);
             if (ret < 0)
                 goto fail;
@@ -1016,6 +1024,7 @@ static int ff_filter_frame_framed(AVFilterLink *link, AVFrame *frame)
     if (dst->needs_writable && !av_frame_is_writable(frame)) {
         av_log(link->dst, AV_LOG_DEBUG, "Copying data in avfilter.\n");
 
+        /* Maybe use ff_copy_buffer_ref instead? */
         switch (link->type) {
         case AVMEDIA_TYPE_VIDEO:
             out = ff_get_video_buffer(link, link->w, link->h);
@@ -1081,6 +1090,7 @@ static int ff_filter_frame_framed(AVFilterLink *link, AVFrame *frame)
     }
     ret = filter_frame(link, out);
     link->frame_count++;
+    link->frame_requested = 0;
     ff_update_link_current_pts(link, pts);
     return ret;
 
@@ -1097,6 +1107,7 @@ static int ff_filter_frame_needs_framing(AVFilterLink *link, AVFrame *frame)
     int nb_channels = av_frame_get_channels(frame);
     int ret = 0;
 
+    link->flags |= FF_LINK_FLAG_REQUEST_LOOP;
     /* Handle framing (min_samples, max_samples) */
     while (insamples) {
         if (!pbuf) {
@@ -1137,11 +1148,8 @@ int ff_filter_frame(AVFilterLink *link, AVFrame *frame)
 
     /* Consistency checks */
     if (link->type == AVMEDIA_TYPE_VIDEO) {
-        if (strcmp(link->dst->filter->name, "buffersink") &&
-            strcmp(link->dst->filter->name, "format") &&
-            strcmp(link->dst->filter->name, "idet") &&
-            strcmp(link->dst->filter->name, "null") &&
-            strcmp(link->dst->filter->name, "scale")) {
+        if (strcmp(link->dst->filter->name, "scale") &&
+            strcmp(link->dst->filter->name, "idet")) {
             av_assert1(frame->format                 == link->format);
             av_assert1(frame->width               == link->w);
             av_assert1(frame->height               == link->h);

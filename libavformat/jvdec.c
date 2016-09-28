@@ -196,7 +196,7 @@ static int read_packet(AVFormatContext *s, AVPacket *pkt)
                     return ret;
                 if (ret < size) {
                     memset(pkt->data + JV_PREAMBLE_SIZE + ret, 0,
-                           AV_INPUT_BUFFER_PADDING_SIZE);
+                           FF_INPUT_BUFFER_PADDING_SIZE);
                     pkt->flags |= AV_PKT_FLAG_CORRUPT;
                 }
                 pkt->size         = ret + JV_PREAMBLE_SIZE;

@@ -88,10 +88,13 @@ static void flac_lpc_32_c(int32_t *decoded, const int coeffs[32],
 av_cold void ff_flacdsp_init(FLACDSPContext *c, enum AVSampleFormat fmt, int channels,
                              int bps)
 {
-    c->lpc16        = flac_lpc_16_c;
-    c->lpc32        = flac_lpc_32_c;
-    c->lpc16_encode = flac_lpc_encode_c_16;
-    c->lpc32_encode = flac_lpc_encode_c_32;
+    if (bps > 16) {
+        c->lpc            = flac_lpc_32_c;
+        c->lpc_encode     = flac_lpc_encode_c_32;
+    } else {
+        c->lpc            = flac_lpc_16_c;
+        c->lpc_encode     = flac_lpc_encode_c_16;
+    }
 
     switch (fmt) {
     case AV_SAMPLE_FMT_S32:
@@ -123,10 +126,10 @@ av_cold void ff_flacdsp_init(FLACDSPContext *c, enum AVSampleFormat fmt, int cha
         break;
     }
 
-#if ARCH_ARM
+#if (ARCH_ARM)
         ff_flacdsp_init_arm(c, fmt, channels, bps);
 #endif
-#if ARCH_X86
+#if (ARCH_X86)
         ff_flacdsp_init_x86(c, fmt, channels, bps);
 #endif
 }

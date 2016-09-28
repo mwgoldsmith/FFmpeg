@@ -117,12 +117,10 @@ static int config_out_props(AVFilterLink *outlink)
     int i;
 
     tinterlace->vsub = desc->log2_chroma_h;
+    outlink->flags |= FF_LINK_FLAG_REQUEST_LOOP;
     outlink->w = inlink->w;
     outlink->h = tinterlace->mode == MODE_MERGE || tinterlace->mode == MODE_PAD ?
         inlink->h*2 : inlink->h;
-    if (tinterlace->mode == MODE_MERGE || tinterlace->mode == MODE_PAD)
-        outlink->sample_aspect_ratio = av_mul_q(inlink->sample_aspect_ratio,
-                                                av_make_q(2, 1));
 
     if (tinterlace->mode == MODE_PAD) {
         uint8_t black[4] = { 16, 128, 128, 16 };
@@ -268,7 +266,6 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *picref)
         out->height = outlink->h;
         out->interlaced_frame = 1;
         out->top_field_first = 1;
-        out->sample_aspect_ratio = av_mul_q(cur->sample_aspect_ratio, av_make_q(2, 1));
 
         /* write odd frame lines into the upper field of the new frame */
         copy_picture_field(tinterlace, out->data, out->linesize,
@@ -298,7 +295,6 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *picref)
             return AVERROR(ENOMEM);
         av_frame_copy_props(out, cur);
         out->height = outlink->h;
-        out->sample_aspect_ratio = av_mul_q(cur->sample_aspect_ratio, av_make_q(2, 1));
 
         field = (1 + tinterlace->frame) & 1 ? FIELD_UPPER : FIELD_LOWER;
         /* copy upper and lower fields */

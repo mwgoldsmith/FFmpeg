@@ -36,6 +36,6 @@ av_cold void ff_dct_init_x86(DCTContext *s)
 #endif
     if (EXTERNAL_SSE2(cpu_flags))
         s->dct32 = ff_dct32_float_sse2;
-    if (EXTERNAL_AVX_FAST(cpu_flags))
+    if (EXTERNAL_AVX(cpu_flags))
         s->dct32 = ff_dct32_float_avx;
 }

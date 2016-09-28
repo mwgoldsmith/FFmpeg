@@ -65,19 +65,20 @@ av_cold void ff_blockdsp_init(BlockDSPContext *c, AVCodecContext *avctx)
     c->fill_block_tab[0] = fill_block16_c;
     c->fill_block_tab[1] = fill_block8_c;
 
-#if ARCH_ALPHA
+#if (ARCH_ALPHA)
         ff_blockdsp_init_alpha(c, high_bit_depth);
 #endif
-#if ARCH_ARM
+#if (ARCH_ARM)
         ff_blockdsp_init_arm(c, high_bit_depth);
 #endif
-#if ARCH_PPC
+#if (ARCH_PPC)
         ff_blockdsp_init_ppc(c, high_bit_depth);
 #endif
-#if ARCH_X86
+#if (ARCH_X86)
+#endif
+#if FF_API_XVMC
         ff_blockdsp_init_x86(c, high_bit_depth, avctx);
-#endif
-#if ARCH_MIPS
-        ff_blockdsp_init_mips(c, high_bit_depth);
-#endif
+#else
+        ff_blockdsp_init_x86(c, high_bit_depth);
+#endif /* FF_API_XVMC */
 }

@@ -27,12 +27,12 @@
 #include "libavcodec/bytestream.h"
 #include "libavutil/avstring.h"
 #include "libavutil/base64.h"
-#include "libavutil/hmac.h"
 #include "libavutil/intfloat.h"
 #include "libavutil/lfg.h"
 #include "libavutil/md5.h"
 #include "libavutil/opt.h"
 #include "libavutil/random_seed.h"
+#include "libavutil/sha.h"
 #include "avformat.h"
 #include "internal.h"
 
@@ -49,8 +49,8 @@
 #endif
 
 #define APP_MAX_LENGTH 1024
-#define PLAYPATH_MAX_LENGTH 512
-#define TCURL_MAX_LENGTH 1024
+#define PLAYPATH_MAX_LENGTH 256
+#define TCURL_MAX_LENGTH 512
 #define FLASHVER_MAX_LENGTH 64
 #define RTMP_PKTDATA_DEFAULT_SIZE 4096
 #define RTMP_HEADER 11
@@ -956,22 +956,41 @@ static int gen_fcsubscribe_stream(URLContext *s, RTMPContext *rt,
 int ff_rtmp_calc_digest(const uint8_t *src, int len, int gap,
                         const uint8_t *key, int keylen, uint8_t *dst)
 {
-    AVHMAC *hmac;
+    struct AVSHA *sha;
+    uint8_t hmac_buf[64+32] = {0};
+    int i;
 
-    hmac = av_hmac_alloc(AV_HMAC_SHA256);
-    if (!hmac)
+    sha = av_sha_alloc();
+    if (!sha)
         return AVERROR(ENOMEM);
 
-    av_hmac_init(hmac, key, keylen);
-    if (gap <= 0) {
-        av_hmac_update(hmac, src, len);
-    } else { //skip 32 bytes used for storing digest
-        av_hmac_update(hmac, src, gap);
-        av_hmac_update(hmac, src + gap + 32, len - gap - 32);
+    if (keylen < 64) {
+        memcpy(hmac_buf, key, keylen);
+    } else {
+        av_sha_init(sha, 256);
+        av_sha_update(sha,key, keylen);
+        av_sha_final(sha, hmac_buf);
     }
-    av_hmac_final(hmac, dst, 32);
+    for (i = 0; i < 64; i++)
+        hmac_buf[i] ^= HMAC_IPAD_VAL;
 
-    av_hmac_free(hmac);
+    av_sha_init(sha, 256);
+    av_sha_update(sha, hmac_buf, 64);
+    if (gap <= 0) {
+        av_sha_update(sha, src, len);
+    } else { //skip 32 bytes used for storing digest
+        av_sha_update(sha, src, gap);
+        av_sha_update(sha, src + gap + 32, len - gap - 32);
+    }
+    av_sha_final(sha, hmac_buf + 64);
+
+    for (i = 0; i < 64; i++)
+        hmac_buf[i] ^= HMAC_IPAD_VAL ^ HMAC_OPAD_VAL; //reuse XORed key for opad
+    av_sha_init(sha, 256);
+    av_sha_update(sha, hmac_buf, 64+32);
+    av_sha_final(sha, dst);
+
+    av_free(sha);
 
     return 0;
 }
@@ -1217,7 +1236,8 @@ static int rtmp_handshake(URLContext *s, RTMPContext *rt)
     for (i = 9; i <= RTMP_HANDSHAKE_PACKET_SIZE; i++)
         tosend[i] = av_lfg_get(&rnd) >> 24;
 
-    if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+#if CONFIG_FFRTMPCRYPT_PROTOCOL
+    if (rt->encrypted) {
         /* When the client wants to use RTMPE, we have to change the command
          * byte to 0x06 which means to use encrypted data and we have to set
          * the flash version to at least 9.0.115.0. */
@@ -1232,7 +1252,7 @@ static int rtmp_handshake(URLContext *s, RTMPContext *rt)
         if ((ret = ff_rtmpe_gen_pub_key(rt->stream, tosend + 1)) < 0)
             return ret;
     }
-
+#endif
     client_pos = rtmp_handshake_imprint_with_digest(tosend + 1, rt->encrypted);
     if (client_pos < 0)
         return client_pos;
@@ -1295,7 +1315,8 @@ static int rtmp_handshake(URLContext *s, RTMPContext *rt)
         if (ret < 0)
             return ret;
 
-        if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+#if CONFIG_FFRTMPCRYPT_PROTOCOL
+        if (rt->encrypted) {
             /* Compute the shared secret key sent by the server and initialize
              * the RC4 encryption. */
             if ((ret = ff_rtmpe_compute_secret_key(rt->stream, serverdata + 1,
@@ -1305,6 +1326,7 @@ static int rtmp_handshake(URLContext *s, RTMPContext *rt)
             /* Encrypt the signature received by the server. */
             ff_rtmpe_encrypt_sig(rt->stream, signature, digest, serverdata[0]);
         }
+#endif
 
         if (memcmp(signature, clientdata + RTMP_HANDSHAKE_PACKET_SIZE - 32, 32)) {
             av_log(s, AV_LOG_ERROR, "Signature mismatch\n");
@@ -1325,25 +1347,30 @@ static int rtmp_handshake(URLContext *s, RTMPContext *rt)
         if (ret < 0)
             return ret;
 
-        if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+#if CONFIG_FFRTMPCRYPT_PROTOCOL
+        if (rt->encrypted) {
             /* Encrypt the signature to be send to the server. */
             ff_rtmpe_encrypt_sig(rt->stream, tosend +
                                  RTMP_HANDSHAKE_PACKET_SIZE - 32, digest,
                                  serverdata[0]);
         }
+#endif
 
         // write reply back to the server
         if ((ret = ffurl_write(rt->stream, tosend,
                                RTMP_HANDSHAKE_PACKET_SIZE)) < 0)
             return ret;
 
-        if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+#if CONFIG_FFRTMPCRYPT_PROTOCOL
+        if (rt->encrypted) {
             /* Set RC4 keys for encryption and update the keystreams. */
             if ((ret = ff_rtmpe_update_keystream(rt->stream)) < 0)
                 return ret;
         }
+#endif
     } else {
-        if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+#if CONFIG_FFRTMPCRYPT_PROTOCOL
+        if (rt->encrypted) {
             /* Compute the shared secret key sent by the server and initialize
              * the RC4 encryption. */
             if ((ret = ff_rtmpe_compute_secret_key(rt->stream, serverdata + 1,
@@ -1356,16 +1383,18 @@ static int rtmp_handshake(URLContext *s, RTMPContext *rt)
                                      serverdata[0]);
             }
         }
+#endif
 
         if ((ret = ffurl_write(rt->stream, serverdata + 1,
                                RTMP_HANDSHAKE_PACKET_SIZE)) < 0)
             return ret;
-
-        if (CONFIG_FFRTMPCRYPT_PROTOCOL && rt->encrypted) {
+#if CONFIG_FFRTMPCRYPT_PROTOCOL
+        if (rt->encrypted) {
             /* Set RC4 keys for encryption and update the keystreams. */
             if ((ret = ff_rtmpe_update_keystream(rt->stream)) < 0)
                 return ret;
         }
+#endif
     }
 
     return 0;
@@ -2218,7 +2247,7 @@ static int append_flv_data(RTMPContext *rt, RTMPPacket *pkt, int skip)
     bytestream2_put_byte(&pbc, ts >> 24);
     bytestream2_put_be24(&pbc, 0);
     bytestream2_put_buffer(&pbc, data, size);
-    bytestream2_put_be32(&pbc, size + 11);
+    bytestream2_put_be32(&pbc, 0);
 
     return 0;
 }
@@ -2296,7 +2325,7 @@ static int rtmp_parse_result(URLContext *s, RTMPContext *rt, RTMPPacket *pkt)
 
     switch (pkt->type) {
     case RTMP_PT_BYTES_READ:
-        av_log(s, AV_LOG_TRACE, "received bytes read report\n");
+        av_dlog(s, "received bytes read report\n");
         break;
     case RTMP_PT_CHUNK_SIZE:
         if ((ret = handle_chunk_size(s, pkt)) < 0)

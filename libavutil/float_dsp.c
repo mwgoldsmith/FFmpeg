@@ -128,15 +128,19 @@ av_cold void avpriv_float_dsp_init(AVFloatDSPContext *fdsp, int bit_exact)
     fdsp->butterflies_float = butterflies_float_c;
     fdsp->scalarproduct_float = avpriv_scalarproduct_float_c;
 
-#if ARCH_AARCH64
+#if (ARCH_AARCH64)
         ff_float_dsp_init_aarch64(fdsp);
-#elif ARCH_ARM
+#endif
+#if (ARCH_ARM)
         ff_float_dsp_init_arm(fdsp);
-#elif ARCH_PPC
+#endif
+#if (ARCH_PPC)
         ff_float_dsp_init_ppc(fdsp, bit_exact);
-#elif ARCH_X86
+#endif
+#if (ARCH_X86)
         ff_float_dsp_init_x86(fdsp);
-#elif ARCH_MIPS
+#endif
+#if (ARCH_MIPS)
         ff_float_dsp_init_mips(fdsp);
 #endif
 }
@@ -432,7 +436,7 @@ int main(int argc, char **argv)
     fill_double_array(&lfg, dbl_src1, LEN);
 
     avpriv_float_dsp_init(&fdsp, 1);
-    av_force_cpu_flags(0);
+    av_set_cpu_flags_mask(0);
     avpriv_float_dsp_init(&cdsp, 1);
 
     if (test_vector_fmul(&fdsp, &cdsp, src0, src1))

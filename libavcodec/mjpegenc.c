@@ -224,11 +224,9 @@ static int amv_encode_picture(AVCodecContext *avctx, AVPacket *pkt,
 
     av_pix_fmt_get_chroma_sub_sample(avctx->pix_fmt, &chroma_h_shift, &chroma_v_shift);
 
-#if FF_API_EMU_EDGE
     //CODEC_FLAG_EMU_EDGE have to be cleared
     if(s->avctx->flags & CODEC_FLAG_EMU_EDGE)
         return AVERROR(EINVAL);
-#endif
 
     if ((avctx->height & 15) && avctx->strict_std_compliance > FF_COMPLIANCE_UNOFFICIAL) {
         av_log(avctx, AV_LOG_ERROR,
@@ -254,13 +252,7 @@ static int amv_encode_picture(AVCodecContext *avctx, AVPacket *pkt,
 }
 
 #if CONFIG_MJPEG_ENCODER
-
-static const AVClass mjpeg_class = {
-    .class_name = "mjpeg encoder",
-    .item_name  = av_default_item_name,
-    .option     = ff_mpv_generic_options,
-    .version    = LIBAVUTIL_VERSION_INT,
-};
+FF_MPV_GENERIC_CLASS(mjpeg)
 
 AVCodec ff_mjpeg_encoder = {
     .name           = "mjpeg",
@@ -271,7 +263,7 @@ AVCodec ff_mjpeg_encoder = {
     .init           = ff_mpv_encode_init,
     .encode2        = ff_mpv_encode_picture,
     .close          = ff_mpv_encode_end,
-    .capabilities   = AV_CODEC_CAP_SLICE_THREADS | AV_CODEC_CAP_FRAME_THREADS | AV_CODEC_CAP_INTRA_ONLY,
+    .capabilities   = CODEC_CAP_SLICE_THREADS | CODEC_CAP_FRAME_THREADS | CODEC_CAP_INTRA_ONLY,
     .pix_fmts       = (const enum AVPixelFormat[]){
         AV_PIX_FMT_YUVJ420P, AV_PIX_FMT_YUVJ422P, AV_PIX_FMT_YUVJ444P, AV_PIX_FMT_NONE
     },
@@ -279,12 +271,7 @@ AVCodec ff_mjpeg_encoder = {
 };
 #endif
 #if CONFIG_AMV_ENCODER
-static const AVClass amv_class = {
-    .class_name = "amv encoder",
-    .item_name  = av_default_item_name,
-    .option     = ff_mpv_generic_options,
-    .version    = LIBAVUTIL_VERSION_INT,
-};
+FF_MPV_GENERIC_CLASS(amv)
 
 AVCodec ff_amv_encoder = {
     .name           = "amv",

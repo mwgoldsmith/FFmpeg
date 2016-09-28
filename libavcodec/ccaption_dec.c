@@ -21,7 +21,6 @@
 
 #include "avcodec.h"
 #include "ass.h"
-#include "libavutil/internal.h"
 #include "libavutil/opt.h"
 
 #define SCREEN_ROWS 15
@@ -339,10 +338,6 @@ static int reap_screen(CCaptionSubContext *ctx, int64_t pts)
         }
 
     }
-    if(screen->row_used && ctx->buffer.len >= 2 ) {
-        ctx->buffer.len -= 2;
-        ctx->buffer.str[ctx->buffer.len] = 0;
-    }
     ctx->startv_time = pts;
     ctx->end_time = pts;
     return ret;
@@ -452,9 +447,9 @@ static void handle_char(CCaptionSubContext *ctx, char hi, char lo, int64_t pts)
     ctx->prev_cmd[0] = 0;
     ctx->prev_cmd[1] = 0;
     if (lo)
-       ff_dlog(ctx, "(%c,%c)\n",hi,lo);
+       av_dlog(ctx, "(%c,%c)\n",hi,lo);
     else
-       ff_dlog(ctx, "(%c)\n",hi);
+       av_dlog(ctx, "(%c)\n",hi);
 }
 
 static int process_cc608(CCaptionSubContext *ctx, int64_t pts, uint8_t hi, uint8_t lo)
@@ -494,21 +489,21 @@ static int process_cc608(CCaptionSubContext *ctx, int64_t pts, uint8_t hi, uint8
         ret = handle_edm(ctx, pts);
     } else if ( COR3(hi, 0x14, 0x15, 0x1C) && lo == 0x2D ) {
     /* carriage return */
-        ff_dlog(ctx, "carriage return\n");
+        av_dlog(ctx, "carriage return\n");
         reap_screen(ctx, pts);
         roll_up(ctx);
         ctx->screen_changed = 1;
         ctx->cursor_column = 0;
     } else if ( COR3(hi, 0x14, 0x15, 0x1C) && lo == 0x2F ) {
     /* end of caption */
-        ff_dlog(ctx, "handle_eoc\n");
+        av_dlog(ctx, "handle_eoc\n");
         ret = handle_eoc(ctx, pts);
     } else if (hi>=0x20) {
     /* Standard characters (always in pairs) */
         handle_char(ctx, hi, lo, pts);
     } else {
     /* Ignoring all other non data code */
-        ff_dlog(ctx, "Unknown command 0x%hhx 0x%hhx\n", hi, lo);
+        av_dlog(ctx, "Unknown command 0x%hhx 0x%hhx\n", hi, lo);
     }
 
     /* set prev command */
@@ -554,8 +549,8 @@ static int decode(AVCodecContext *avctx, void *data, int *got_sub, AVPacket *avp
         {
             int start_time = av_rescale_q(ctx->start_time, avctx->time_base, (AVRational){ 1, 100 });
             int end_time = av_rescale_q(ctx->end_time, avctx->time_base, (AVRational){ 1, 100 });
-            ff_dlog(ctx, "cdp writing data (%s)\n",ctx->buffer.str);
-            ret = ff_ass_add_rect_bprint(sub, &ctx->buffer, start_time, end_time - start_time);
+            av_dlog(ctx, "cdp writing data (%s)\n",ctx->buffer.str);
+            ret = ff_ass_add_rect(sub, ctx->buffer.str, start_time, end_time - start_time , 0);
             if (ret < 0)
                 return ret;
             sub->pts = av_rescale_q(ctx->start_time, avctx->time_base, AV_TIME_BASE_Q);

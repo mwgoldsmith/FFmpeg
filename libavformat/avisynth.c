@@ -22,7 +22,6 @@
 #include "libavcodec/internal.h"
 #include "avformat.h"
 #include "internal.h"
-#include "config.h"
 
 /* Enable function pointer definitions for runtime loading. */
 #define AVSC_NO_DECLSPEC
@@ -37,8 +36,11 @@
 #else
   #include <dlfcn.h>
   #include "compat/avisynth/avxsynth_c.h"
-  #define AVISYNTH_NAME "libavxsynth"
-  #define AVISYNTH_LIB AVISYNTH_NAME SLIBSUF
+    #if defined (__APPLE__)
+      #define AVISYNTH_LIB "libavxsynth.dylib"
+    #else
+      #define AVISYNTH_LIB "libavxsynth.so"
+    #endif
 
   #define LoadLibrary(x) dlopen(x, RTLD_NOW | RTLD_LOCAL)
   #define GetProcAddress dlsym
@@ -237,12 +239,13 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
     st->codec->width      = avs->vi->width;
     st->codec->height     = avs->vi->height;
 
+    st->time_base         = (AVRational) { avs->vi->fps_denominator,
+                                           avs->vi->fps_numerator };
     st->avg_frame_rate    = (AVRational) { avs->vi->fps_numerator,
                                            avs->vi->fps_denominator };
     st->start_time        = 0;
     st->duration          = avs->vi->num_frames;
     st->nb_frames         = avs->vi->num_frames;
-    avpriv_set_pts_info(st, 32, avs->vi->fps_denominator, avs->vi->fps_numerator);
 
     switch (avs->vi->pixel_type) {
 #ifdef USING_AVISYNTH
@@ -310,8 +313,9 @@ static int avisynth_create_stream_audio(AVFormatContext *s, AVStream *st)
     st->codec->codec_type  = AVMEDIA_TYPE_AUDIO;
     st->codec->sample_rate = avs->vi->audio_samples_per_second;
     st->codec->channels    = avs->vi->nchannels;
+    st->time_base          = (AVRational) { 1,
+                                            avs->vi->audio_samples_per_second };
     st->duration           = avs->vi->num_audio_samples;
-    avpriv_set_pts_info(st, 64, 1, avs->vi->audio_samples_per_second);
 
     switch (avs->vi->sample_type) {
     case AVS_SAMPLE_INT8:

@@ -74,124 +74,77 @@ void avcodec_register_all(void)
     initialized = 1;
 
     /* hardware accelerators */
-#if CONFIG_HWACCELS
 #if CONFIG_H263_VAAPI_HWACCEL
-    REGISTER_HWACCEL(H263_VAAPI,        h263_vaapi);
+    REGISTER_HWACCEL(H263_VAAPI, h263_vaapi);
 #endif
 #if CONFIG_H263_VDPAU_HWACCEL
-    REGISTER_HWACCEL(H263_VDPAU,        h263_vdpau);
-#endif
-#if CONFIG_H263_VIDEOTOOLBOX_HWACCEL
-    REGISTER_HWACCEL(H263_VIDEOTOOLBOX, h263_videotoolbox);
-#endif
-#if CONFIG_H264_D3D11VA_HWACCEL
-    REGISTER_HWACCEL(H264_D3D11VA,      h264_d3d11va);
+    REGISTER_HWACCEL(H263_VDPAU, h263_vdpau);
 #endif
 #if CONFIG_H264_DXVA2_HWACCEL
-    REGISTER_HWACCEL(H264_DXVA2,        h264_dxva2);
+    REGISTER_HWACCEL(H264_DXVA2, h264_dxva2);
 #endif
 #if CONFIG_H264_MMAL_HWACCEL
-    REGISTER_HWACCEL(H264_MMAL,         h264_mmal);
+    REGISTER_HWACCEL(H264_MMAL, h264_mmal);
 #endif
 #if CONFIG_H264_QSV_HWACCEL
-    REGISTER_HWACCEL(H264_QSV,          h264_qsv);
+    REGISTER_HWACCEL(H264_QSV, h264_qsv);
 #endif
 #if CONFIG_H264_VAAPI_HWACCEL
-    REGISTER_HWACCEL(H264_VAAPI,        h264_vaapi);
+    REGISTER_HWACCEL(H264_VAAPI, h264_vaapi);
 #endif
 #if CONFIG_H264_VDA_HWACCEL
-    REGISTER_HWACCEL(H264_VDA,          h264_vda);
+    REGISTER_HWACCEL(H264_VDA, h264_vda);
 #endif
 #if CONFIG_H264_VDA_OLD_HWACCEL
-    REGISTER_HWACCEL(H264_VDA_OLD,      h264_vda_old);
+    REGISTER_HWACCEL(H264_VDA_OLD, h264_vda_old);
 #endif
 #if CONFIG_H264_VDPAU_HWACCEL
-    REGISTER_HWACCEL(H264_VDPAU,        h264_vdpau);
-#endif
-#if CONFIG_H264_VIDEOTOOLBOX_HWACCEL
-    REGISTER_HWACCEL(H264_VIDEOTOOLBOX, h264_videotoolbox);
-#endif
-#if CONFIG_HEVC_D3D11VA_HWACCEL
-    REGISTER_HWACCEL(HEVC_D3D11VA,      hevc_d3d11va);
+    REGISTER_HWACCEL(H264_VDPAU, h264_vdpau);
 #endif
 #if CONFIG_HEVC_DXVA2_HWACCEL
-    REGISTER_HWACCEL(HEVC_DXVA2,        hevc_dxva2);
-#endif
-#if CONFIG_HEVC_QSV_HWACCEL
-    REGISTER_HWACCEL(HEVC_QSV,          hevc_qsv);
-#endif
-#if CONFIG_HEVC_VAAPI_HWACCEL
-    REGISTER_HWACCEL(HEVC_VAAPI,        hevc_vaapi);
-#endif
-#if CONFIG_HEVC_VDPAU_HWACCEL
-    REGISTER_HWACCEL(HEVC_VDPAU,        hevc_vdpau);
+    REGISTER_HWACCEL(HEVC_DXVA2, hevc_dxva2);
 #endif
 #if CONFIG_MPEG1_XVMC_HWACCEL
-    REGISTER_HWACCEL(MPEG1_XVMC,        mpeg1_xvmc);
+    REGISTER_HWACCEL(MPEG1_XVMC, mpeg1_xvmc);
 #endif
 #if CONFIG_MPEG1_VDPAU_HWACCEL
-    REGISTER_HWACCEL(MPEG1_VDPAU,       mpeg1_vdpau);
-#endif
-#if CONFIG_MPEG1_VIDEOTOOLBOX_HWACCEL
-    REGISTER_HWACCEL(MPEG1_VIDEOTOOLBOX, mpeg1_videotoolbox);
+    REGISTER_HWACCEL(MPEG1_VDPAU, mpeg1_vdpau);
 #endif
 #if CONFIG_MPEG2_XVMC_HWACCEL
-    REGISTER_HWACCEL(MPEG2_XVMC,        mpeg2_xvmc);
-#endif
-#if CONFIG_MPEG2_D3D11VA_HWACCEL
-    REGISTER_HWACCEL(MPEG2_D3D11VA,     mpeg2_d3d11va);
+    REGISTER_HWACCEL(MPEG2_XVMC, mpeg2_xvmc);
 #endif
 #if CONFIG_MPEG2_DXVA2_HWACCEL
-    REGISTER_HWACCEL(MPEG2_DXVA2,       mpeg2_dxva2);
-#endif
-#if CONFIG_MPEG2_QSV_HWACCEL
-    REGISTER_HWACCEL(MPEG2_QSV,         mpeg2_qsv);
+    REGISTER_HWACCEL(MPEG2_DXVA2, mpeg2_dxva2);
 #endif
 #if CONFIG_MPEG2_VAAPI_HWACCEL
-    REGISTER_HWACCEL(MPEG2_VAAPI,       mpeg2_vaapi);
+    REGISTER_HWACCEL(MPEG2_VAAPI, mpeg2_vaapi);
 #endif
 #if CONFIG_MPEG2_VDPAU_HWACCEL
-    REGISTER_HWACCEL(MPEG2_VDPAU,       mpeg2_vdpau);
-#endif
-#if CONFIG_MPEG2_VIDEOTOOLBOX_HWACCEL
-    REGISTER_HWACCEL(MPEG2_VIDEOTOOLBOX, mpeg2_videotoolbox);
+    REGISTER_HWACCEL(MPEG2_VDPAU, mpeg2_vdpau);
 #endif
 #if CONFIG_MPEG4_VAAPI_HWACCEL
-    REGISTER_HWACCEL(MPEG4_VAAPI,       mpeg4_vaapi);
+    REGISTER_HWACCEL(MPEG4_VAAPI, mpeg4_vaapi);
 #endif
 #if CONFIG_MPEG4_VDPAU_HWACCEL
-    REGISTER_HWACCEL(MPEG4_VDPAU,       mpeg4_vdpau);
-#endif
-#if CONFIG_MPEG4_VIDEOTOOLBOX_HWACCEL
-    REGISTER_HWACCEL(MPEG4_VIDEOTOOLBOX, mpeg4_videotoolbox);
-#endif
-#if CONFIG_VC1_D3D11VA_HWACCEL
-    REGISTER_HWACCEL(VC1_D3D11VA,       vc1_d3d11va);
+    REGISTER_HWACCEL(MPEG4_VDPAU, mpeg4_vdpau);
 #endif
 #if CONFIG_VC1_DXVA2_HWACCEL
-    REGISTER_HWACCEL(VC1_DXVA2,         vc1_dxva2);
+    REGISTER_HWACCEL(VC1_DXVA2, vc1_dxva2);
 #endif
 #if CONFIG_VC1_VAAPI_HWACCEL
-    REGISTER_HWACCEL(VC1_VAAPI,         vc1_vaapi);
+    REGISTER_HWACCEL(VC1_VAAPI, vc1_vaapi);
 #endif
 #if CONFIG_VC1_VDPAU_HWACCEL
-    REGISTER_HWACCEL(VC1_VDPAU,         vc1_vdpau);
-#endif
-#if CONFIG_VC1_QSV_HWACCEL
-    REGISTER_HWACCEL(VC1_QSV,           vc1_qsv);
-#endif
-#if CONFIG_WMV3_D3D11VA_HWACCEL
-    REGISTER_HWACCEL(WMV3_D3D11VA,      wmv3_d3d11va);
+    REGISTER_HWACCEL(VC1_VDPAU, vc1_vdpau);
 #endif
 #if CONFIG_WMV3_DXVA2_HWACCEL
-    REGISTER_HWACCEL(WMV3_DXVA2,        wmv3_dxva2);
+    REGISTER_HWACCEL(WMV3_DXVA2, wmv3_dxva2);
 #endif
 #if CONFIG_WMV3_VAAPI_HWACCEL
-    REGISTER_HWACCEL(WMV3_VAAPI,        wmv3_vaapi);
+    REGISTER_HWACCEL(WMV3_VAAPI, wmv3_vaapi);
 #endif
 #if CONFIG_WMV3_VDPAU_HWACCEL
-    REGISTER_HWACCEL(WMV3_VDPAU,        wmv3_vdpau);
-#endif
+    REGISTER_HWACCEL(WMV3_VDPAU, wmv3_vdpau);
 #endif
 
     /* video codecs */
@@ -336,9 +289,6 @@ void avcodec_register_all(void)
 #if CONFIG_CYUV_DECODER
     REGISTER_DECODER(CYUV, cyuv);
 #endif
-#if CONFIG_DDS_DECODER
-    REGISTER_DECODER(DDS, dds);
-#endif
 #if CONFIG_DFA_DECODER
     REGISTER_DECODER(DFA, dfa);
 #endif
@@ -371,9 +321,6 @@ void avcodec_register_all(void)
 #endif
 #if CONFIG_DXTORY_DECODER
     REGISTER_DECODER(DXTORY, dxtory);
-#endif
-#if CONFIG_DXV_DECODER
-    REGISTER_DECODER(DXV, dxv);
 #endif
 #if CONFIG_EACMV_DECODER
     REGISTER_DECODER(EACMV, eacmv);
@@ -498,31 +445,17 @@ void avcodec_register_all(void)
 #if CONFIG_H264_VDA_DECODER
     REGISTER_DECODER(H264_VDA, h264_vda);
 #endif
-#if FF_API_VDPAU
 #if CONFIG_H264_VDPAU_DECODER
     REGISTER_DECODER(H264_VDPAU, h264_vdpau);
 #endif
-#endif
-#if CONFIG_HAP_ENCODER
-    REGISTER_ENCODER(HAP, hap);
-#endif
-#if CONFIG_HAP_DECODER
-    REGISTER_DECODER(HAP, hap);
-#endif
 #if CONFIG_HEVC_DECODER
-    REGISTER_DECODER(HEVC,              hevc);
-#endif
-#if CONFIG_HEVC_QSV_DECODER
-    REGISTER_DECODER(HEVC_QSV,          hevc_qsv);
+    REGISTER_DECODER(HEVC, hevc);
 #endif
 #if CONFIG_HNM4_VIDEO_DECODER
-    REGISTER_DECODER(HNM4_VIDEO,        hnm4_video);
-#endif
-#if CONFIG_HQ_HQA_DECODER
-    REGISTER_DECODER(HQ_HQA,            hq_hqa);
+    REGISTER_DECODER(HNM4_VIDEO, hnm4_video);
 #endif
 #if CONFIG_HQX_DECODER
-    REGISTER_DECODER(HQX,               hqx);
+    REGISTER_DECODER(HQX, hqx);
 #endif
 #if CONFIG_HUFFYUV_ENCODER
     REGISTER_ENCODER(HUFFYUV, huffyuv);
@@ -531,28 +464,28 @@ void avcodec_register_all(void)
     REGISTER_DECODER(HUFFYUV, huffyuv);
 #endif
 #if CONFIG_IDCIN_DECODER
-    REGISTER_DECODER(IDCIN,             idcin);
+    REGISTER_DECODER(IDCIN, idcin);
 #endif
 #if CONFIG_IFF_BYTERUN1_DECODER
-    REGISTER_DECODER(IFF_BYTERUN1,      iff_byterun1);
+    REGISTER_DECODER(IFF_BYTERUN1, iff_byterun1);
 #endif
 #if CONFIG_IFF_ILBM_DECODER
-    REGISTER_DECODER(IFF_ILBM,          iff_ilbm);
+    REGISTER_DECODER(IFF_ILBM, iff_ilbm);
 #endif
 #if CONFIG_INDEO2_DECODER
-    REGISTER_DECODER(INDEO2,            indeo2);
+    REGISTER_DECODER(INDEO2, indeo2);
 #endif
 #if CONFIG_INDEO3_DECODER
-    REGISTER_DECODER(INDEO3,            indeo3);
+    REGISTER_DECODER(INDEO3, indeo3);
 #endif
 #if CONFIG_INDEO4_DECODER
-    REGISTER_DECODER(INDEO4,            indeo4);
+    REGISTER_DECODER(INDEO4, indeo4);
 #endif
 #if CONFIG_INDEO5_DECODER
-    REGISTER_DECODER(INDEO5,            indeo5);
+    REGISTER_DECODER(INDEO5, indeo5);
 #endif
 #if CONFIG_INTERPLAY_VIDEO_DECODER
-    REGISTER_DECODER(INTERPLAY_VIDEO,   interplay_video);
+    REGISTER_DECODER(INTERPLAY_VIDEO, interplay_video);
 #endif
 #if CONFIG_JPEG2000_ENCODER
     REGISTER_ENCODER(JPEG2000, jpeg2000);
@@ -573,10 +506,10 @@ void avcodec_register_all(void)
     REGISTER_DECODER(KGV1, kgv1);
 #endif
 #if CONFIG_KMVC_DECODER
-    REGISTER_DECODER(KMVC,              kmvc);
+    REGISTER_DECODER(KMVC, kmvc);
 #endif
 #if CONFIG_LAGARITH_DECODER
-    REGISTER_DECODER(LAGARITH,          lagarith);
+    REGISTER_DECODER(LAGARITH, lagarith);
 #endif
 #if CONFIG_LJPEG_ENCODER
     REGISTER_ENCODER(LJPEG, ljpeg);
@@ -585,11 +518,11 @@ void avcodec_register_all(void)
     REGISTER_DECODER(LOCO, loco);
 #endif
 #if CONFIG_MDEC_DECODER
-    REGISTER_DECODER(MDEC,              mdec);
+    REGISTER_DECODER(MDEC, mdec);
 #endif
 #if CONFIG_MIMIC_DECODER
-    REGISTER_DECODER(MIMIC,             mimic);
-#endif  
+    REGISTER_DECODER(MIMIC, mimic);
+#endif
 #if CONFIG_MJPEG_ENCODER
     REGISTER_ENCODER(MJPEG, mjpeg);
 #endif
@@ -605,7 +538,7 @@ void avcodec_register_all(void)
 #if CONFIG_MOTIONPIXELS_DECODER
     REGISTER_DECODER(MOTIONPIXELS, motionpixels);
 #endif
-#if FF_API_XVMC  
+#if FF_API_XVMC
 #if CONFIG_MPEG_XVMC_DECODER
     REGISTER_DECODER(MPEG_XVMC, mpeg_xvmc);
 #endif
@@ -631,27 +564,20 @@ void avcodec_register_all(void)
 #if CONFIG_MPEG4_CRYSTALHD_DECODER
     REGISTER_DECODER(MPEG4_CRYSTALHD, mpeg4_crystalhd);
 #endif
-#if FF_API_VDPAU
 #if CONFIG_MPEG4_VDPAU_DECODER
     REGISTER_DECODER(MPEG4_VDPAU, mpeg4_vdpau);
-#endif
 #endif
 #if CONFIG_MPEGVIDEO_DECODER
     REGISTER_DECODER(MPEGVIDEO, mpegvideo);
 #endif
-#if FF_API_VDPAU
 #if CONFIG_MPEG_VDPAU_DECODER
     REGISTER_DECODER(MPEG_VDPAU, mpeg_vdpau);
 #endif
 #if CONFIG_MPEG1_VDPAU_DECODER
     REGISTER_DECODER(MPEG1_VDPAU, mpeg1_vdpau);
 #endif
-#endif
 #if CONFIG_MPEG2_CRYSTALHD_DECODER
     REGISTER_DECODER(MPEG2_CRYSTALHD, mpeg2_crystalhd);
-#endif
-#if CONFIG_MPEG2_QSV_DECODER
-    REGISTER_DECODER(MPEG2_QSV, mpeg2_qsv);
 #endif
 #if CONFIG_MSA1_DECODER
     REGISTER_DECODER(MSA1, msa1);
@@ -706,6 +632,12 @@ void avcodec_register_all(void)
 #endif
 #if CONFIG_NUV_DECODER
     REGISTER_DECODER(NUV, nuv);
+#endif
+#if CONFIG_NVENC_ENCODER
+    REGISTER_ENCODER(NVENC, nvenc);
+#endif
+#if CONFIG_NVENC_H265_ENCODER
+    REGISTER_ENCODER(NVENC_H265, nvenc_h265);
 #endif
 #if CONFIG_PAF_VIDEO_DECODER
     REGISTER_DECODER(PAF_VIDEO, paf_video);
@@ -977,16 +909,11 @@ void avcodec_register_all(void)
 #if CONFIG_VC1_CRYSTALHD_DECODER
     REGISTER_DECODER(VC1_CRYSTALHD, vc1_crystalhd);
 #endif
-#if FF_API_VDPAU  
 #if CONFIG_VC1_VDPAU_DECODER
     REGISTER_DECODER(VC1_VDPAU, vc1_vdpau);
 #endif
-#endif
 #if CONFIG_VC1IMAGE_DECODER
     REGISTER_DECODER(VC1IMAGE, vc1image);
-#endif
-#if CONFIG_VC1_QSV_DECODER
-    REGISTER_DECODER(VC1_QSV, vc1_qsv);
 #endif
 #if CONFIG_VCR1_DECODER
     REGISTER_DECODER(VCR1, vcr1);
@@ -1045,10 +972,8 @@ void avcodec_register_all(void)
 #if CONFIG_WMV3_CRYSTALHD_DECODER
     REGISTER_DECODER(WMV3_CRYSTALHD, wmv3_crystalhd);
 #endif
-#if FF_API_VDPAU
 #if CONFIG_WMV3_VDPAU_DECODER
     REGISTER_DECODER(WMV3_VDPAU, wmv3_vdpau);
-#endif
 #endif
 #if CONFIG_WMV3IMAGE_DECODER
     REGISTER_DECODER(WMV3IMAGE, wmv3image);
@@ -1123,9 +1048,6 @@ void avcodec_register_all(void)
 #endif
 #if CONFIG_AAC_DECODER
     REGISTER_DECODER(AAC, aac);
-#endif
-#if CONFIG_AAC_FIXED_DECODER
-    REGISTER_DECODER(AAC_FIXED, aac_fixed);
 #endif
 #if CONFIG_AAC_LATM_DECODER
     REGISTER_DECODER(AAC_LATM, aac_latm);
@@ -1407,7 +1329,6 @@ void avcodec_register_all(void)
     REGISTER_DECODER(WS_SND1, ws_snd1);
 #endif
 
-
     /* PCM codecs */
 #if CONFIG_PCM_ALAW_ENCODER
     REGISTER_ENCODER(PCM_ALAW, pcm_alaw);
@@ -1416,10 +1337,10 @@ void avcodec_register_all(void)
     REGISTER_DECODER(PCM_ALAW, pcm_alaw);
 #endif
 #if CONFIG_PCM_BLURAY_DECODER
-    REGISTER_DECODER(PCM_BLURAY,        pcm_bluray);
+    REGISTER_DECODER(PCM_BLURAY, pcm_bluray);
 #endif
 #if CONFIG_PCM_DVD_DECODER
-    REGISTER_DECODER(PCM_DVD,           pcm_dvd);
+    REGISTER_DECODER(PCM_DVD, pcm_dvd);
 #endif
 #if CONFIG_PCM_F32BE_ENCODER
     REGISTER_ENCODER(PCM_F32BE, pcm_f32be);
@@ -1446,7 +1367,7 @@ void avcodec_register_all(void)
     REGISTER_DECODER(PCM_F64LE, pcm_f64le);
 #endif
 #if CONFIG_PCM_LXF_DECODER
-    REGISTER_DECODER(PCM_LXF,           pcm_lxf);
+    REGISTER_DECODER(PCM_LXF, pcm_lxf);
 #endif
 #if CONFIG_PCM_MULAW_ENCODER
     REGISTER_ENCODER(PCM_MULAW, pcm_mulaw);
@@ -1575,7 +1496,7 @@ void avcodec_register_all(void)
     REGISTER_DECODER(PCM_U32LE, pcm_u32le);
 #endif
 #if CONFIG_PCM_ZORK_DECODER
-    REGISTER_DECODER(PCM_ZORK,          pcm_zork);
+    REGISTER_DECODER(PCM_ZORK, pcm_zork);
 #endif
 
     /* DPCM codecs */
@@ -1716,9 +1637,6 @@ void avcodec_register_all(void)
 #if CONFIG_ADPCM_THP_DECODER
     REGISTER_DECODER(ADPCM_THP, adpcm_thp);
 #endif
-#if CONFIG_ADPCM_THP_LE_DECODER
-    REGISTER_DECODER(ADPCM_THP_LE, adpcm_thp_le);
-#endif
 #if CONFIG_ADPCM_VIMA_DECODER
     REGISTER_DECODER(ADPCM_VIMA, adpcm_vima);
 #endif
@@ -1730,6 +1648,11 @@ void avcodec_register_all(void)
 #endif
 #if CONFIG_ADPCM_YAMAHA_DECODER
     REGISTER_DECODER(ADPCM_YAMAHA, adpcm_yamaha);
+#endif
+#if FF_API_VIMA_DECODER
+#if CONFIG_VIMA_DECODER
+    REGISTER_DECODER(VIMA, vima);
+#endif
 #endif
 
     /* subtitles */
@@ -1829,13 +1752,13 @@ void avcodec_register_all(void)
 
     /* external libraries */
 #if CONFIG_LIBCELT_DECODER
-    REGISTER_DECODER(LIBCELT,           libcelt);
+    REGISTER_DECODER(LIBCELT, libcelt);
 #endif
 #if CONFIG_LIBDCADEC_DECODER
-    REGISTER_DECODER(LIBDCADEC,         libdcadec)
+    REGISTER_DECODER(LIBDCADEC, libdcadec)
 #endif
 #if CONFIG_LIBFAAC_ENCODER
-    REGISTER_ENCODER(LIBFAAC,           libfaac);
+      REGISTER_ENCODER(LIBFAAC, libfaac);
 #endif
 #if CONFIG_LIBFDK_AAC_ENCODER
     REGISTER_ENCODER(LIBFDK_AAC, libfdk_aac);
@@ -1862,13 +1785,16 @@ void avcodec_register_all(void)
     REGISTER_DECODER(LIBILBC, libilbc);
 #endif
 #if CONFIG_LIBMP3LAME_ENCODER
-    REGISTER_ENCODER(LIBMP3LAME,        libmp3lame);
+    REGISTER_ENCODER(LIBMP3LAME, libmp3lame);
 #endif
 #if CONFIG_LIBOPENCORE_AMRNB_ENCODER
     REGISTER_ENCODER(LIBOPENCORE_AMRNB, libopencore_amrnb);
 #endif
 #if CONFIG_LIBOPENCORE_AMRNB_DECODER
     REGISTER_DECODER(LIBOPENCORE_AMRNB, libopencore_amrnb);
+#endif
+#if CONFIG_LIBOPENCORE_AMRWB_DECODER
+    REGISTER_DECODER(LIBOPENCORE_AMRWB, libopencore_amrwb);
 #endif
 #if CONFIG_LIBOPENJPEG_ENCODER
     REGISTER_ENCODER(LIBOPENJPEG, libopenjpeg);
@@ -1889,7 +1815,7 @@ void avcodec_register_all(void)
     REGISTER_DECODER(LIBSCHROEDINGER, libschroedinger);
 #endif
 #if CONFIG_LIBSHINE_ENCODER
-    REGISTER_ENCODER(LIBSHINE,          libshine);
+    REGISTER_ENCODER(LIBSHINE, libshine);
 #endif
 #if CONFIG_LIBSPEEX_ENCODER
     REGISTER_ENCODER(LIBSPEEX, libspeex);
@@ -1901,10 +1827,10 @@ void avcodec_register_all(void)
     REGISTER_DECODER(LIBSTAGEFRIGHT_H264, libstagefright_h264);
 #endif
 #if CONFIG_LIBTHEORA_ENCODER
-    REGISTER_ENCODER(LIBTHEORA,         libtheora);
+    REGISTER_ENCODER(LIBTHEORA, libtheora);
 #endif
 #if CONFIG_LIBTWOLAME_ENCODER
-    REGISTER_ENCODER(LIBTWOLAME,        libtwolame);
+    REGISTER_ENCODER(LIBTWOLAME, libtwolame);
 #endif
 #if CONFIG_LIBUTVIDEO_ENCODER
     REGISTER_ENCODER(LIBUTVIDEO, libutvideo);
@@ -1913,10 +1839,10 @@ void avcodec_register_all(void)
     REGISTER_DECODER(LIBUTVIDEO, libutvideo);
 #endif
 #if CONFIG_LIBVO_AACENC_ENCODER
-    REGISTER_ENCODER(LIBVO_AACENC,      libvo_aacenc);
+    REGISTER_ENCODER(LIBVO_AACENC, libvo_aacenc);
 #endif
 #if CONFIG_LIBVO_AMRWBENC_ENCODER
-    REGISTER_ENCODER(LIBVO_AMRWBENC,    libvo_amrwbenc);
+    REGISTER_ENCODER(LIBVO_AMRWBENC, libvo_amrwbenc);
 #endif
 #if CONFIG_LIBVORBIS_ENCODER
     REGISTER_ENCODER(LIBVORBIS, libvorbis);
@@ -1937,81 +1863,54 @@ void avcodec_register_all(void)
     REGISTER_DECODER(LIBVPX_VP9, libvpx_vp9);
 #endif
 #if CONFIG_LIBWAVPACK_ENCODER
-    REGISTER_ENCODER(LIBWAVPACK,        libwavpack);
-#endif
-#if CONFIG_LIBWEBP_ANIM_ENCODER
-    REGISTER_ENCODER(LIBWEBP_ANIM,      libwebp_anim);  /* preferred over libwebp */
+    REGISTER_ENCODER(LIBWAVPACK, libwavpack);
 #endif
 #if CONFIG_LIBWEBP_ENCODER
-    REGISTER_ENCODER(LIBWEBP,           libwebp);
-#endif
-#if CONFIG_LIBX262_ENCODER
-    REGISTER_ENCODER(LIBX262,           libx262);
+    REGISTER_ENCODER(LIBWEBP, libwebp);
 #endif
 #if CONFIG_LIBX264_ENCODER
-    REGISTER_ENCODER(LIBX264,           libx264);
+    REGISTER_ENCODER(LIBX264, libx264);
 #endif
 #if CONFIG_LIBX264RGB_ENCODER
-    REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
+    REGISTER_ENCODER(LIBX264RGB, libx264rgb);
 #endif
 #if CONFIG_LIBX265_ENCODER
-    REGISTER_ENCODER(LIBX265,           libx265);
+    REGISTER_ENCODER(LIBX265, libx265);
 #endif
 #if CONFIG_LIBXAVS_ENCODER
-    REGISTER_ENCODER(LIBXAVS,           libxavs);
+    REGISTER_ENCODER(LIBXAVS, libxavs);
 #endif
 #if CONFIG_LIBXVID_ENCODER
-    REGISTER_ENCODER(LIBXVID,           libxvid);
+    REGISTER_ENCODER(LIBXVID, libxvid);
 #endif
 #if CONFIG_LIBZVBI_TELETEXT_DECODER
-    REGISTER_DECODER(LIBZVBI_TELETEXT,  libzvbi_teletext);
+    REGISTER_DECODER(LIBZVBI_TELETEXT, libzvbi_teletext);
 #endif
 #if CONFIG_LIBAACPLUS_ENCODER
-    REGISTER_ENCODER(LIBAACPLUS,        libaacplus);
+    REGISTER_ENCODER(LIBAACPLUS, libaacplus);
 #endif
 
     /* text */
 #if CONFIG_BINTEXT_DECODER
-    REGISTER_DECODER(BINTEXT,           bintext);
+    REGISTER_DECODER(BINTEXT, bintext);
 #endif
 #if CONFIG_XBIN_DECODER
-    REGISTER_DECODER(XBIN,              xbin);
+    REGISTER_DECODER(XBIN, xbin);
 #endif
 #if CONFIG_IDF_DECODER
-    REGISTER_DECODER(IDF,               idf);
+    REGISTER_DECODER(IDF, idf);
 #endif
 
     /* external libraries, that shouldn't be used by default if one of the
-     * above is available */
-#if CONFIG_ENCODERS
+    * above is available */
 #if CONFIG_LIBOPENH264_ENCODER
-    REGISTER_ENCODER(LIBOPENH264,       libopenh264);
+    REGISTER_ENCODER(LIBOPENH264, libopenh264);
 #endif
 #if CONFIG_H264_QSV_ENCODER
-    REGISTER_ENCODER(H264_QSV,          h264_qsv);
-#endif
-#if CONFIG_NVENC_ENCODER
-    REGISTER_ENCODER(NVENC,             nvenc);
-#endif
-#if CONFIG_NVENC_H264_ENCODER
-    REGISTER_ENCODER(NVENC_H264,        nvenc_h264);
-#endif
-#if CONFIG_NVENC_HEVC_ENCODER
-    REGISTER_ENCODER(NVENC_HEVC,        nvenc_hevc);
-#endif
-#if CONFIG_NVENC_ENCODER
-    REGISTER_ENCODER(HEVC_QSV,          hevc_qsv);
-#endif
-#if CONFIG_LIBKVAZAAR_ENCODER
-    REGISTER_ENCODER(LIBKVAZAAR,        libkvazaar);
-#endif
-#if CONFIG_MPEG2_QSV_ENCODER
-    REGISTER_ENCODER(MPEG2_QSV,         mpeg2_qsv);
-#endif
+    REGISTER_ENCODER(H264_QSV, h264_qsv);
 #endif
 
     /* parsers */
-#if CONFIG_PARSERS
 #if CONFIG_AAC_PARSER
     REGISTER_PARSER(AAC, aac);
 #endif
@@ -2056,9 +1955,6 @@ void avcodec_register_all(void)
 #endif
 #if CONFIG_FLAC_PARSER
     REGISTER_PARSER(FLAC, flac);
-#endif
-#if CONFIG_G729_PARSER
-    REGISTER_PARSER(G729, g729);
 #endif
 #if CONFIG_GSM_PARSER
     REGISTER_PARSER(GSM, gsm);
@@ -2123,10 +2019,9 @@ void avcodec_register_all(void)
 #if CONFIG_VP9_PARSER
     REGISTER_PARSER(VP9, vp9);
 #endif
-#endif
 
     /* bitstream filters */
-#if CONFIG_BSFS
+
 #if CONFIG_AAC_ADTSTOASC_BSF
     REGISTER_BSF(AAC_ADTSTOASC, aac_adtstoasc);
 #endif
@@ -2138,9 +2033,6 @@ void avcodec_register_all(void)
 #endif
 #if CONFIG_H264_MP4TOANNEXB_BSF
     REGISTER_BSF(H264_MP4TOANNEXB, h264_mp4toannexb);
-#endif
-#if CONFIG_HEVC_MP4TOANNEXB_BSF
-    REGISTER_BSF(HEVC_MP4TOANNEXB, hevc_mp4toannexb);
 #endif
 #if CONFIG_IMX_DUMP_HEADER_BSF
     REGISTER_BSF(IMX_DUMP_HEADER, imx_dump_header);
@@ -2169,5 +2061,5 @@ void avcodec_register_all(void)
 #if CONFIG_TEXT2MOVSUB_BSF
     REGISTER_BSF(TEXT2MOVSUB, text2movsub);
 #endif
-#endif
+
 }

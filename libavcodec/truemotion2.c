@@ -177,7 +177,7 @@ static int tm2_build_huff_table(TM2Context *ctx, TM2Codes *code)
 
     if (!huff.nums || !huff.bits || !huff.lens) {
         res = AVERROR(ENOMEM);
-        goto out;
+        goto fail;
     }
 
     res = tm2_read_tree(ctx, 0, 0, &huff);
@@ -203,14 +203,13 @@ static int tm2_build_huff_table(TM2Context *ctx, TM2Codes *code)
             code->recode = av_malloc_array(code->length, sizeof(int));
             if (!code->recode) {
                 res = AVERROR(ENOMEM);
-                goto out;
+                goto fail;
             }
             for (i = 0; i < code->length; i++)
                 code->recode[i] = huff.nums[i];
         }
     }
-
-out:
+fail:
     /* free allocated memory */
     av_free(huff.nums);
     av_free(huff.bits);
@@ -1023,5 +1022,5 @@ AVCodec ff_truemotion2_decoder = {
     .init           = decode_init,
     .close          = decode_end,
     .decode         = decode_frame,
-    .capabilities   = AV_CODEC_CAP_DR1,
+    .capabilities   = CODEC_CAP_DR1,
 };

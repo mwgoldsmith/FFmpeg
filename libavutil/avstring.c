@@ -100,7 +100,7 @@ size_t av_strlcat(char *dst, const char *src, size_t size)
 
 size_t av_strlcatf(char *dst, size_t size, const char *fmt, ...)
 {
-    size_t len = strlen(dst);
+    int len = strlen(dst);
     va_list vl;
 
     va_start(vl, fmt);
@@ -317,6 +317,28 @@ int av_escape(char **dst, const char *src, const char *special_chars,
     }
 }
 
+int av_isdigit(int c)
+{
+    return c >= '0' && c <= '9';
+}
+
+int av_isgraph(int c)
+{
+    return c > 32 && c < 127;
+}
+
+int av_isspace(int c)
+{
+    return c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t' ||
+           c == '\v';
+}
+
+int av_isxdigit(int c)
+{
+    c = av_tolower(c);
+    return av_isdigit(c) || (c >= 'a' && c <= 'f');
+}
+
 int av_match_name(const char *name, const char *names)
 {
     const char *p;
@@ -386,7 +408,7 @@ int av_utf8_decode(int32_t *codep, const uint8_t **bufp, const uint8_t *buf_end,
         goto end;
     }
 
-    if (code >= 1U<<31) {
+    if (code >= 1<<31) {
         ret = AVERROR(EILSEQ);  /* out-of-range value */
         goto end;
     }
@@ -480,7 +502,7 @@ int main(void)
     printf("Testing av_append_path_component()\n");
     #define TEST_APPEND_PATH_COMPONENT(path, component, expected) \
         fullpath = av_append_path_component((path), (component)); \
-        printf("%s = %s\n", fullpath ? fullpath : "(null)", expected); \
+        printf("%s = %s\n", fullpath, expected); \
         av_free(fullpath);
     TEST_APPEND_PATH_COMPONENT(NULL, NULL, "(null)")
     TEST_APPEND_PATH_COMPONENT("path", NULL, "path");

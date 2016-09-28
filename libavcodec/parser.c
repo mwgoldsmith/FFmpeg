@@ -25,11 +25,10 @@
 
 #include "libavutil/avassert.h"
 #include "libavutil/atomic.h"
-#include "libavutil/internal.h"
 #include "libavutil/mem.h"
 
-#include "internal.h"
 #include "parser.h"
+#include "internal.h"
 
 static AVCodecParser *av_first_parser = NULL;
 
@@ -83,11 +82,7 @@ found:
             goto err_out;
     }
     s->key_frame            = -1;
-#if FF_API_CONVERGENCE_DURATION
-FF_DISABLE_DEPRECATION_WARNINGS
     s->convergence_duration = 0;
-FF_ENABLE_DEPRECATION_WARNINGS
-#endif
     s->dts_sync_point       = INT_MIN;
     s->dts_ref_dts_delta    = INT_MIN;
     s->pts_dts_delta        = INT_MIN;
@@ -139,7 +134,7 @@ int av_parser_parse2(AVCodecParserContext *s, AVCodecContext *avctx,
                      int64_t pts, int64_t dts, int64_t pos)
 {
     int index, i;
-    uint8_t dummy_buf[AV_INPUT_BUFFER_PADDING_SIZE];
+    uint8_t dummy_buf[FF_INPUT_BUFFER_PADDING_SIZE];
 
     if (!(s->flags & PARSER_FLAG_FETCHED_OFFSET)) {
         s->next_frame_offset =
@@ -193,8 +188,8 @@ int av_parser_change(AVCodecParserContext *s, AVCodecContext *avctx,
                      const uint8_t *buf, int buf_size, int keyframe)
 {
     if (s && s->parser->split) {
-        if (avctx->flags  & AV_CODEC_FLAG_GLOBAL_HEADER ||
-            avctx->flags2 & AV_CODEC_FLAG2_LOCAL_HEADER) {
+        if (avctx->flags  & CODEC_FLAG_GLOBAL_HEADER ||
+            avctx->flags2 & CODEC_FLAG2_LOCAL_HEADER) {
             int i = s->parser->split(avctx, buf, buf_size);
             buf      += i;
             buf_size -= i;
@@ -205,17 +200,17 @@ int av_parser_change(AVCodecParserContext *s, AVCodecContext *avctx,
     *poutbuf      = (uint8_t *) buf;
     *poutbuf_size = buf_size;
     if (avctx->extradata) {
-        if (keyframe && (avctx->flags2 & AV_CODEC_FLAG2_LOCAL_HEADER)) {
+        if (keyframe && (avctx->flags2 & CODEC_FLAG2_LOCAL_HEADER)) {
             int size = buf_size + avctx->extradata_size;
 
             *poutbuf_size = size;
-            *poutbuf      = av_malloc(size + AV_INPUT_BUFFER_PADDING_SIZE);
+            *poutbuf      = av_malloc(size + FF_INPUT_BUFFER_PADDING_SIZE);
             if (!*poutbuf)
                 return AVERROR(ENOMEM);
 
             memcpy(*poutbuf, avctx->extradata, avctx->extradata_size);
             memcpy(*poutbuf + avctx->extradata_size, buf,
-                   buf_size + AV_INPUT_BUFFER_PADDING_SIZE);
+                   buf_size + FF_INPUT_BUFFER_PADDING_SIZE);
             return 1;
         }
     }
@@ -237,9 +232,9 @@ int ff_combine_frame(ParseContext *pc, int next,
                      const uint8_t **buf, int *buf_size)
 {
     if (pc->overread) {
-        ff_dlog(NULL, "overread %d, state:%X next:%d index:%d o_index:%d\n",
+        av_dlog(NULL, "overread %d, state:%X next:%d index:%d o_index:%d\n",
                 pc->overread, pc->state, next, pc->index, pc->overread_index);
-        ff_dlog(NULL, "%X %X %X %X\n",
+        av_dlog(NULL, "%X %X %X %X\n",
                 (*buf)[0], (*buf)[1], (*buf)[2], (*buf)[3]);
     }
 
@@ -257,10 +252,9 @@ int ff_combine_frame(ParseContext *pc, int next,
     if (next == END_NOT_FOUND) {
         void *new_buffer = av_fast_realloc(pc->buffer, &pc->buffer_size,
                                            *buf_size + pc->index +
-                                           AV_INPUT_BUFFER_PADDING_SIZE);
+                                           FF_INPUT_BUFFER_PADDING_SIZE);
 
         if (!new_buffer) {
-            av_log(NULL, AV_LOG_ERROR, "Failed to reallocate parser buffer to %d\n", *buf_size + pc->index + AV_INPUT_BUFFER_PADDING_SIZE);
             pc->index = 0;
             return AVERROR(ENOMEM);
         }
@@ -277,17 +271,16 @@ int ff_combine_frame(ParseContext *pc, int next,
     if (pc->index) {
         void *new_buffer = av_fast_realloc(pc->buffer, &pc->buffer_size,
                                            next + pc->index +
-                                           AV_INPUT_BUFFER_PADDING_SIZE);
+                                           FF_INPUT_BUFFER_PADDING_SIZE);
         if (!new_buffer) {
-            av_log(NULL, AV_LOG_ERROR, "Failed to reallocate parser buffer to %d\n", next + pc->index + AV_INPUT_BUFFER_PADDING_SIZE);
             pc->overread_index =
             pc->index = 0;
             return AVERROR(ENOMEM);
         }
         pc->buffer = new_buffer;
-        if (next > -AV_INPUT_BUFFER_PADDING_SIZE)
+        if (next > -FF_INPUT_BUFFER_PADDING_SIZE)
             memcpy(&pc->buffer[pc->index], *buf,
-                   next + AV_INPUT_BUFFER_PADDING_SIZE);
+                   next + FF_INPUT_BUFFER_PADDING_SIZE);
         pc->index = 0;
         *buf      = pc->buffer;
     }
@@ -300,9 +293,9 @@ int ff_combine_frame(ParseContext *pc, int next,
     }
 
     if (pc->overread) {
-        ff_dlog(NULL, "overread %d, state:%X next:%d index:%d o_index:%d\n",
+        av_dlog(NULL, "overread %d, state:%X next:%d index:%d o_index:%d\n",
                 pc->overread, pc->state, next, pc->index, pc->overread_index);
-        ff_dlog(NULL, "%X %X %X %X\n",
+        av_dlog(NULL, "%X %X %X %X\n",
                 (*buf)[0], (*buf)[1], (*buf)[2], (*buf)[3]);
     }
 

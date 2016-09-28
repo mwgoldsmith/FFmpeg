@@ -33,7 +33,6 @@
 #include "ivi.h"
 #include "ivi_dsp.h"
 #include "indeo4data.h"
-#include "internal.h"
 
 #define IVI4_PIC_SIZE_ESC   7
 
@@ -141,7 +140,7 @@ static int decode_pic_hdr(IVI45DecContext *ctx, AVCodecContext *avctx)
 
     /* null frames don't contain anything else so we just return */
     if (ctx->frame_type >= IVI4_FRAMETYPE_NULL_FIRST) {
-        ff_dlog(avctx, "Null frame encountered!\n");
+        av_dlog(avctx, "Null frame encountered!\n");
         return 0;
     }
 
@@ -150,7 +149,7 @@ static int decode_pic_hdr(IVI45DecContext *ctx, AVCodecContext *avctx)
     /* we don't do that because Indeo 4 videos can be decoded anyway */
     if (get_bits1(&ctx->gb)) {
         skip_bits_long(&ctx->gb, 32);
-        ff_dlog(avctx, "Password-protected clip!\n");
+        av_dlog(avctx, "Password-protected clip!\n");
     }
 
     pic_size_indx = get_bits(&ctx->gb, 3);
@@ -245,7 +244,7 @@ static int decode_pic_hdr(IVI45DecContext *ctx, AVCodecContext *avctx)
 
     /* skip picture header extension if any */
     while (get_bits1(&ctx->gb)) {
-        ff_dlog(avctx, "Pic hdr extension encountered!\n");
+        av_dlog(avctx, "Pic hdr extension encountered!\n");
         skip_bits(&ctx->gb, 8);
     }
 
@@ -704,5 +703,5 @@ AVCodec ff_indeo4_decoder = {
     .init           = decode_init,
     .close          = ff_ivi_decode_close,
     .decode         = ff_ivi_decode_frame,
-    .capabilities   = AV_CODEC_CAP_DR1,
+    .capabilities   = CODEC_CAP_DR1,
 };

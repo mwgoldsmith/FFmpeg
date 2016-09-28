@@ -59,7 +59,6 @@ void av_force_cpu_flags(int arg){
                     AV_CPU_FLAG_SSE4     |
                     AV_CPU_FLAG_SSE42    |
                     AV_CPU_FLAG_AVX      |
-                    AV_CPU_FLAG_AVXSLOW  |
                     AV_CPU_FLAG_XOP      |
                     AV_CPU_FLAG_FMA3     |
                     AV_CPU_FLAG_FMA4     |
@@ -78,16 +77,18 @@ int av_get_cpu_flags(void)
     if (checked)
         return flags;
 
-#if ARCH_AARCH64
+#if (ARCH_AARCH64)
         flags = ff_get_cpu_flags_aarch64();
-#elif ARCH_ARM
+#endif
+#if (ARCH_ARM)
         flags = ff_get_cpu_flags_arm();
-#elif ARCH_PPC
+#endif
+#if (ARCH_PPC)
         flags = ff_get_cpu_flags_ppc();
-#elif ARCH_X86
+#endif
+#if (ARCH_X86)
         flags = ff_get_cpu_flags_x86();
 #endif
-
     checked = 1;
     return flags;
 }
@@ -113,12 +114,12 @@ int av_parse_cpu_flags(const char *s)
 #define CPUFLAG_SSE4     (AV_CPU_FLAG_SSE4     | CPUFLAG_SSSE3)
 #define CPUFLAG_SSE42    (AV_CPU_FLAG_SSE42    | CPUFLAG_SSE4)
 #define CPUFLAG_AVX      (AV_CPU_FLAG_AVX      | CPUFLAG_SSE42)
-#define CPUFLAG_AVXSLOW  (AV_CPU_FLAG_AVXSLOW  | CPUFLAG_AVX)
 #define CPUFLAG_XOP      (AV_CPU_FLAG_XOP      | CPUFLAG_AVX)
 #define CPUFLAG_FMA3     (AV_CPU_FLAG_FMA3     | CPUFLAG_AVX)
 #define CPUFLAG_FMA4     (AV_CPU_FLAG_FMA4     | CPUFLAG_AVX)
 #define CPUFLAG_AVX2     (AV_CPU_FLAG_AVX2     | CPUFLAG_AVX)
-#define CPUFLAG_BMI2     (AV_CPU_FLAG_BMI2     | AV_CPU_FLAG_BMI1)
+#define CPUFLAG_BMI1     (AV_CPU_FLAG_BMI1)
+#define CPUFLAG_BMI2     (AV_CPU_FLAG_BMI2     | CPUFLAG_BMI1)
     static const AVOption cpuflags_opts[] = {
         { "flags"   , NULL, 0, AV_OPT_TYPE_FLAGS, { .i64 = 0 }, INT64_MIN, INT64_MAX, .unit = "flags" },
 #if   ARCH_PPC
@@ -136,12 +137,11 @@ int av_parse_cpu_flags(const char *s)
         { "sse4.1"  , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_SSE4         },    .unit = "flags" },
         { "sse4.2"  , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_SSE42        },    .unit = "flags" },
         { "avx"     , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_AVX          },    .unit = "flags" },
-        { "avxslow" , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_AVXSLOW      },    .unit = "flags" },
         { "xop"     , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_XOP          },    .unit = "flags" },
         { "fma3"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_FMA3         },    .unit = "flags" },
         { "fma4"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_FMA4         },    .unit = "flags" },
         { "avx2"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_AVX2         },    .unit = "flags" },
-        { "bmi1"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_BMI1     },    .unit = "flags" },
+        { "bmi1"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_BMI1         },    .unit = "flags" },
         { "bmi2"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_BMI2         },    .unit = "flags" },
         { "3dnow"   , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_3DNOW        },    .unit = "flags" },
         { "3dnowext", NULL, 0, AV_OPT_TYPE_CONST, { .i64 = CPUFLAG_3DNOWEXT     },    .unit = "flags" },
@@ -196,7 +196,6 @@ int av_parse_cpu_caps(unsigned *flags, const char *s)
         { "sse4.1"  , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_SSE4     },    .unit = "flags" },
         { "sse4.2"  , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_SSE42    },    .unit = "flags" },
         { "avx"     , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_AVX      },    .unit = "flags" },
-        { "avxslow" , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_AVXSLOW  },    .unit = "flags" },
         { "xop"     , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_XOP      },    .unit = "flags" },
         { "fma3"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_FMA3     },    .unit = "flags" },
         { "fma4"    , NULL, 0, AV_OPT_TYPE_CONST, { .i64 = AV_CPU_FLAG_FMA4     },    .unit = "flags" },
@@ -325,7 +324,6 @@ static const struct {
     { AV_CPU_FLAG_SSE4,      "sse4.1"     },
     { AV_CPU_FLAG_SSE42,     "sse4.2"     },
     { AV_CPU_FLAG_AVX,       "avx"        },
-    { AV_CPU_FLAG_AVXSLOW,   "avxslow"    },
     { AV_CPU_FLAG_XOP,       "xop"        },
     { AV_CPU_FLAG_FMA3,      "fma3"       },
     { AV_CPU_FLAG_FMA4,      "fma4"       },

@@ -21,7 +21,7 @@
 
 %include "libavutil/x86/x86util.asm"
 
-SECTION .text
+SECTION_TEXT
 
 ;------------------------------------------------------------------------------
 ; void ff_int32_to_float_fmul_scalar(float *dst, const int32_t *src, float mul,

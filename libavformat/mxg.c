@@ -111,7 +111,7 @@ static int mxg_update_cache(AVFormatContext *s, unsigned int cache_size)
     soi_pos = mxg->soi_ptr - mxg->buffer;
     buffer = av_fast_realloc(mxg->buffer, &mxg->buffer_size,
                              current_pos + cache_size +
-                             AV_INPUT_BUFFER_PADDING_SIZE);
+                             FF_INPUT_BUFFER_PADDING_SIZE);
     if (!buffer)
         return AVERROR(ENOMEM);
     mxg->buffer = buffer;
@@ -171,13 +171,18 @@ static int mxg_read_packet(AVFormatContext *s, AVPacket *pkt)
 
                 pkt->pts = pkt->dts = mxg->dts;
                 pkt->stream_index = 0;
+#if FF_API_DESTRUCT_PACKET
+FF_DISABLE_DEPRECATION_WARNINGS
+                pkt->destruct = NULL;
+FF_ENABLE_DEPRECATION_WARNINGS
+#endif
                 pkt->buf  = NULL;
                 pkt->size = mxg->buffer_ptr - mxg->soi_ptr;
                 pkt->data = mxg->soi_ptr;
 
                 if (mxg->soi_ptr - mxg->buffer > mxg->cache_size) {
                     if (mxg->cache_size > 0) {
-                        memmove(mxg->buffer, mxg->buffer_ptr, mxg->cache_size);
+                        memcpy(mxg->buffer, mxg->buffer_ptr, mxg->cache_size);
                     }
 
                     mxg->buffer_ptr = mxg->buffer;
@@ -209,6 +214,11 @@ static int mxg_read_packet(AVFormatContext *s, AVPacket *pkt)
                     /* time (GMT) of first sample in usec since 1970, little-endian */
                     pkt->pts = pkt->dts = AV_RL64(startmarker_ptr + 8);
                     pkt->stream_index = 1;
+#if FF_API_DESTRUCT_PACKET
+FF_DISABLE_DEPRECATION_WARNINGS
+                    pkt->destruct = NULL;
+FF_ENABLE_DEPRECATION_WARNINGS
+#endif
                     pkt->buf  = NULL;
                     pkt->size = size - 14;
                     pkt->data = startmarker_ptr + 16;

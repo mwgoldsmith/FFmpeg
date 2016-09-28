@@ -387,11 +387,8 @@ static int aic_decode_frame(AVCodecContext *avctx, void *data, int *got_frame,
         return AVERROR_INVALIDDATA;
     }
 
-    ret = aic_decode_header(ctx, buf, buf_size);
-    if (ret < 0) {
-        av_log(avctx, AV_LOG_ERROR, "Invalid header\n");
+    if ((ret = aic_decode_header(ctx, buf, buf_size)) < 0)
         return ret;
-    }
 
     if ((ret = ff_get_buffer(avctx, ctx->frame, 0)) < 0)
         return ret;
@@ -403,17 +400,13 @@ static int aic_decode_frame(AVCodecContext *avctx, void *data, int *got_frame,
         for (x = 0; x < ctx->mb_width; x += ctx->slice_width) {
             slice_size = bytestream2_get_le16(&gb) * 4;
             if (slice_size + off > buf_size || !slice_size) {
-                av_log(avctx, AV_LOG_ERROR,
-                       "Incorrect slice size %d at %d.%d\n", slice_size, x, y);
+                av_log(avctx, AV_LOG_ERROR, "Incorrect slice size\n");
                 return AVERROR_INVALIDDATA;
             }
 
-            ret = aic_decode_slice(ctx, x, y, buf + off, slice_size);
-            if (ret < 0) {
-                av_log(avctx, AV_LOG_ERROR,
-                       "Error decoding slice at %d.%d\n", x, y);
+            if ((ret = aic_decode_slice(ctx, x, y,
+                                        buf + off, slice_size)) < 0)
                 return ret;
-            }
 
             off += slice_size;
         }
@@ -448,7 +441,7 @@ static av_cold int aic_decode_init(AVCodecContext *avctx)
     ctx->num_x_slices = (ctx->mb_width + 15) >> 4;
     ctx->slice_width  = 16;
     for (i = 1; i < 32; i++) {
-        if (!(ctx->mb_width % i) && (ctx->mb_width / i <= 32)) {
+        if (!(ctx->mb_width % i) && (ctx->mb_width / i < 32)) {
             ctx->slice_width  = ctx->mb_width / i;
             ctx->num_x_slices = i;
             break;
@@ -488,5 +481,5 @@ AVCodec ff_aic_decoder = {
     .init           = aic_decode_init,
     .close          = aic_decode_close,
     .decode         = aic_decode_frame,
-    .capabilities   = AV_CODEC_CAP_DR1,
+    .capabilities   = CODEC_CAP_DR1,
 };

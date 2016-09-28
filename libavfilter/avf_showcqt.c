@@ -24,6 +24,8 @@
 #include "libavutil/channel_layout.h"
 #include "libavutil/opt.h"
 #include "libavutil/xga_font_data.h"
+#include "libavutil/qsort.h"
+#include "libavutil/time.h"
 #include "libavutil/eval.h"
 #include "avfilter.h"
 #include "internal.h"
@@ -47,6 +49,7 @@
 #define SPECTOGRAM_HEIGHT ((VIDEO_HEIGHT-FONT_HEIGHT)/2)
 #define SPECTOGRAM_START (VIDEO_HEIGHT-SPECTOGRAM_HEIGHT)
 #define BASE_FREQ 20.051392800492
+#define COEFF_CLAMP 1.0e-4
 #define TLENGTH_MIN 0.001
 #define TLENGTH_DEFAULT "384/f*tc/(384/f+tc)"
 #define VOLUME_MIN 1e-10
@@ -56,20 +59,23 @@
     "r(1-ld(1)) + b(ld(1))"
 
 typedef struct {
-    FFTSample *values;
-    int start, len;
-} Coeffs;
+    FFTSample value;
+    int index;
+} SparseCoeff;
 
 typedef struct {
     const AVClass *class;
     AVFrame *outpicref;
     FFTContext *fft_context;
     FFTComplex *fft_data;
-    FFTComplex *fft_result;
+    FFTComplex *fft_result_left;
+    FFTComplex *fft_result_right;
     uint8_t *spectogram;
-    Coeffs coeffs[VIDEO_WIDTH];
+    SparseCoeff *coeff_sort;
+    SparseCoeff *coeffs[VIDEO_WIDTH];
     uint8_t *font_alpha;
     char *fontfile;     /* using freetype */
+    int coeffs_len[VIDEO_WIDTH];
     uint8_t fontcolor_value[VIDEO_WIDTH*3];  /* result of fontcolor option */
     int64_t frame_count;
     int spectogram_count;
@@ -87,7 +93,6 @@ typedef struct {
     float gamma2;       /* gamma of bargraph */
     int fps;            /* the required fps is so strict, so it's enough to be int, but 24000/1001 etc cannot be encoded */
     int count;          /* fps * count = transform rate */
-    int draw_text;
 } ShowCQTContext;
 
 #define OFFSET(x) offsetof(ShowCQTContext, x)
@@ -100,12 +105,11 @@ static const AVOption showcqt_options[] = {
     { "coeffclamp", "set coeffclamp", OFFSET(coeffclamp), AV_OPT_TYPE_FLOAT, { .dbl = 1 }, 0.1, 10, FLAGS },
     { "gamma", "set gamma", OFFSET(gamma), AV_OPT_TYPE_FLOAT, { .dbl = 3 }, 1, 7, FLAGS },
     { "gamma2", "set gamma of bargraph", OFFSET(gamma2), AV_OPT_TYPE_FLOAT, { .dbl = 1 }, 1, 7, FLAGS },
-    { "fullhd", "set full HD resolution", OFFSET(fullhd), AV_OPT_TYPE_BOOL, { .i64 = 1 }, 0, 1, FLAGS },
+    { "fullhd", "set full HD resolution", OFFSET(fullhd), AV_OPT_TYPE_INT, { .i64 = 1 }, 0, 1, FLAGS },
     { "fps", "set video fps", OFFSET(fps), AV_OPT_TYPE_INT, { .i64 = 25 }, 10, 100, FLAGS },
     { "count", "set number of transform per frame", OFFSET(count), AV_OPT_TYPE_INT, { .i64 = 6 }, 1, 30, FLAGS },
     { "fontfile", "set font file", OFFSET(fontfile), AV_OPT_TYPE_STRING, { .str = NULL }, CHAR_MIN, CHAR_MAX, FLAGS },
     { "fontcolor", "set font color", OFFSET(fontcolor), AV_OPT_TYPE_STRING, { .str = FONTCOLOR_DEFAULT }, CHAR_MIN, CHAR_MAX, FLAGS },
-    { "text", "draw text", OFFSET(draw_text), AV_OPT_TYPE_BOOL, { .i64 = 1 }, 0, 1, FLAGS },
     { NULL }
 };
 
@@ -119,9 +123,11 @@ static av_cold void uninit(AVFilterContext *ctx)
     av_fft_end(s->fft_context);
     s->fft_context = NULL;
     for (k = 0; k < VIDEO_WIDTH; k++)
-        av_freep(&s->coeffs[k].values);
+        av_freep(&s->coeffs[k]);
     av_freep(&s->fft_data);
-    av_freep(&s->fft_result);
+    av_freep(&s->fft_result_left);
+    av_freep(&s->fft_result_right);
+    av_freep(&s->coeff_sort);
     av_freep(&s->spectogram);
     av_freep(&s->font_alpha);
     av_frame_free(&s->outpicref);
@@ -299,6 +305,14 @@ static double b_func(void *p, double x)
     return (int)(x*255.0+0.5);
 }
 
+static inline int qsort_sparsecoeff(const SparseCoeff *a, const SparseCoeff *b)
+{
+    if (fabsf(a->value) >= fabsf(b->value))
+        return 1;
+    else
+        return -1;
+}
+
 static int config_output(AVFilterLink *outlink)
 {
     AVFilterContext *ctx = outlink->src;
@@ -311,10 +325,11 @@ static int config_output(AVFilterLink *outlink)
     static const char * const expr_fontcolor_func_names[] = { "midi", "r", "g", "b", NULL };
     static double (* const expr_funcs[])(void *, double) = { a_weighting, b_weighting, c_weighting, NULL };
     static double (* const expr_fontcolor_funcs[])(void *, double) = { midi, r_func, g_func, b_func, NULL };
-    int fft_len, k, x, ret;
+    int fft_len, k, x, y, ret;
     int num_coeffs = 0;
     int rate = inlink->sample_rate;
     double max_len = rate * (double) s->timeclamp;
+    int64_t start_time, end_time;
     int video_scale = s->fullhd ? 2 : 1;
     int video_width = (VIDEO_WIDTH/2) * video_scale;
     int video_height = (VIDEO_HEIGHT/2) * video_scale;
@@ -329,10 +344,12 @@ static int config_output(AVFilterLink *outlink)
     }
 
     s->fft_data         = av_malloc_array(fft_len, sizeof(*s->fft_data));
-    s->fft_result       = av_malloc_array(fft_len + 1, sizeof(*s->fft_result));
+    s->coeff_sort       = av_malloc_array(fft_len, sizeof(*s->coeff_sort));
+    s->fft_result_left  = av_malloc_array(fft_len, sizeof(*s->fft_result_left));
+    s->fft_result_right = av_malloc_array(fft_len, sizeof(*s->fft_result_right));
     s->fft_context      = av_fft_init(s->fft_bits, 0);
 
-    if (!s->fft_data || !s->fft_result || !s->fft_context)
+    if (!s->fft_data || !s->coeff_sort || !s->fft_result_left || !s->fft_result_right || !s->fft_context)
         return AVERROR(ENOMEM);
 
 #if CONFIG_LIBFREETYPE
@@ -343,6 +360,8 @@ static int config_output(AVFilterLink *outlink)
     s->font_alpha = NULL;
 #endif
 
+    av_log(ctx, AV_LOG_INFO, "Calculating spectral kernel, please wait\n");
+    start_time = av_gettime_relative();
     ret = av_expr_parse(&tlength_expr, s->tlength, expr_vars, NULL, NULL, NULL, NULL, 0, ctx);
     if (ret < 0)
         goto eval_error;
@@ -358,10 +377,22 @@ static int config_output(AVFilterLink *outlink)
         goto eval_error;
 
     for (k = 0; k < VIDEO_WIDTH; k++) {
+        int hlen = fft_len >> 1;
+        float total = 0;
+        float partial = 0;
         double freq = BASE_FREQ * exp2(k * (1.0/192.0));
-        double flen, center, tlength, volume;
-        int start, end;
+        double tlen, tlength, volume;
         double expr_vars_val[] = { s->timeclamp, s->timeclamp, freq, freq, freq, 0 };
+        /* a window function from Albert H. Nuttall,
+         * "Some Windows with Very Good Sidelobe Behavior"
+         * -93.32 dB peak sidelobe and 18 dB/octave asymptotic decay
+         * coefficient normalized to a0 = 1 */
+        double a0 = 0.355768;
+        double a1 = 0.487396/a0;
+        double a2 = 0.144232/a0;
+        double a3 = 0.012604/a0;
+        double sv_step, cv_step, sv, cv;
+        double sw_step, cw_step, sw, cw, w;
 
         tlength = av_expr_eval(tlength_expr, expr_vars_val, NULL);
         if (isnan(tlength)) {
@@ -394,31 +425,75 @@ static int config_output(AVFilterLink *outlink)
             fontcolor_value += 3;
         }
 
-        /* direct frequency domain windowing */
-        flen = 8.0 * fft_len / (tlength * rate);
-        center = freq * fft_len / rate;
-        start = FFMAX(0, ceil(center - 0.5 * flen));
-        end = FFMIN(fft_len, floor(center + 0.5 * flen));
-        s->coeffs[k].len = end - start + 1;
-        s->coeffs[k].start = start;
-        num_coeffs += s->coeffs[k].len;
-        s->coeffs[k].values = av_malloc_array(s->coeffs[k].len, sizeof(*s->coeffs[k].values));
-        if (!s->coeffs[k].values) {
-            ret = AVERROR(ENOMEM);
-            goto eval_error;
+        tlen = tlength * rate;
+        s->fft_data[0].re = 0;
+        s->fft_data[0].im = 0;
+        s->fft_data[hlen].re = (1.0 + a1 + a2 + a3) * (1.0/tlen) * volume * (1.0/fft_len);
+        s->fft_data[hlen].im = 0;
+        sv_step = sv = sin(2.0*M_PI*freq*(1.0/rate));
+        cv_step = cv = cos(2.0*M_PI*freq*(1.0/rate));
+        /* also optimizing window func */
+        sw_step = sw = sin(2.0*M_PI*(1.0/tlen));
+        cw_step = cw = cos(2.0*M_PI*(1.0/tlen));
+        for (x = 1; x < 0.5 * tlen; x++) {
+            double cv_tmp, cw_tmp;
+            double cw2, cw3, sw2;
+
+            cw2 = cw * cw - sw * sw;
+            sw2 = cw * sw + sw * cw;
+            cw3 = cw * cw2 - sw * sw2;
+            w = (1.0 + a1 * cw + a2 * cw2 + a3 * cw3) * (1.0/tlen) * volume * (1.0/fft_len);
+            s->fft_data[hlen + x].re = w * cv;
+            s->fft_data[hlen + x].im = w * sv;
+            s->fft_data[hlen - x].re = s->fft_data[hlen + x].re;
+            s->fft_data[hlen - x].im = -s->fft_data[hlen + x].im;
+
+            cv_tmp = cv * cv_step - sv * sv_step;
+            sv = sv * cv_step + cv * sv_step;
+            cv = cv_tmp;
+            cw_tmp = cw * cw_step - sw * sw_step;
+            sw = sw * cw_step + cw * sw_step;
+            cw = cw_tmp;
         }
-        for (x = start; x <= end; x++) {
-            int sign = (x & 1) ? (-1) : 1;
-            double u = 2.0 * M_PI * (x - center) * (1.0/flen);
-            /* nuttall window */
-            double w = 0.355768 + 0.487396 * cos(u) + 0.144232 * cos(2*u) + 0.012604 * cos(3*u);
-            s->coeffs[k].values[x-start] = sign * volume * (1.0/fft_len) * w;
+        for (; x < hlen; x++) {
+            s->fft_data[hlen + x].re = 0;
+            s->fft_data[hlen + x].im = 0;
+            s->fft_data[hlen - x].re = 0;
+            s->fft_data[hlen - x].im = 0;
+        }
+        av_fft_permute(s->fft_context, s->fft_data);
+        av_fft_calc(s->fft_context, s->fft_data);
+
+        for (x = 0; x < fft_len; x++) {
+            s->coeff_sort[x].index = x;
+            s->coeff_sort[x].value = s->fft_data[x].re;
+        }
+
+        AV_QSORT(s->coeff_sort, fft_len, SparseCoeff, qsort_sparsecoeff);
+        for (x = 0; x < fft_len; x++)
+            total += fabsf(s->coeff_sort[x].value);
+
+        for (x = 0; x < fft_len; x++) {
+            partial += fabsf(s->coeff_sort[x].value);
+            if (partial > total * s->coeffclamp * COEFF_CLAMP) {
+                s->coeffs_len[k] = fft_len - x;
+                num_coeffs += s->coeffs_len[k];
+                s->coeffs[k] = av_malloc_array(s->coeffs_len[k], sizeof(*s->coeffs[k]));
+                if (!s->coeffs[k]) {
+                    ret = AVERROR(ENOMEM);
+                    goto eval_error;
+                }
+                for (y = 0; y < s->coeffs_len[k]; y++)
+                    s->coeffs[k][y] = s->coeff_sort[x+y];
+                break;
+            }
         }
     }
     av_expr_free(fontcolor_expr);
     av_expr_free(volume_expr);
     av_expr_free(tlength_expr);
-    av_log(ctx, AV_LOG_INFO, "fft_len=%u, num_coeffs=%u\n", fft_len, num_coeffs);
+    end_time = av_gettime_relative();
+    av_log(ctx, AV_LOG_INFO, "Elapsed time %.6f s (fft_len=%u, num_coeffs=%u)\n", 1e-6 * (end_time-start_time), fft_len, num_coeffs);
 
     outlink->w = video_width;
     outlink->h = video_height;
@@ -466,72 +541,53 @@ static int plot_cqt(AVFilterLink *inlink)
     int font_height = (FONT_HEIGHT/2) * video_scale;
 
     /* real part contains left samples, imaginary part contains right samples */
-    memcpy(s->fft_result, s->fft_data, fft_len * sizeof(*s->fft_data));
-    av_fft_permute(s->fft_context, s->fft_result);
-    av_fft_calc(s->fft_context, s->fft_result);
-    s->fft_result[fft_len] = s->fft_result[0];
+    memcpy(s->fft_result_left, s->fft_data, fft_len * sizeof(*s->fft_data));
+    av_fft_permute(s->fft_context, s->fft_result_left);
+    av_fft_calc(s->fft_context, s->fft_result_left);
+
+    /* separate left and right, (and multiply by 2.0) */
+    s->fft_result_right[0].re = 2.0f * s->fft_result_left[0].im;
+    s->fft_result_right[0].im = 0;
+    s->fft_result_left[0].re = 2.0f * s->fft_result_left[0].re;
+    s->fft_result_left[0].im = 0;
+    for (x = 1; x <= fft_len >> 1; x++) {
+        FFTSample tmpy = s->fft_result_left[fft_len-x].im - s->fft_result_left[x].im;
+
+        s->fft_result_right[x].re = s->fft_result_left[x].im + s->fft_result_left[fft_len-x].im;
+        s->fft_result_right[x].im = s->fft_result_left[x].re - s->fft_result_left[fft_len-x].re;
+        s->fft_result_right[fft_len-x].re = s->fft_result_right[x].re;
+        s->fft_result_right[fft_len-x].im = -s->fft_result_right[x].im;
+
+        s->fft_result_left[x].re = s->fft_result_left[x].re + s->fft_result_left[fft_len-x].re;
+        s->fft_result_left[x].im = tmpy;
+        s->fft_result_left[fft_len-x].re = s->fft_result_left[x].re;
+        s->fft_result_left[fft_len-x].im = -s->fft_result_left[x].im;
+    }
 
     /* calculating cqt */
     for (x = 0; x < VIDEO_WIDTH; x++) {
         int u;
-        FFTComplex v = {0,0};
-        FFTComplex w = {0,0};
-        FFTComplex l, r;
+        float g = 1.0f / s->gamma;
+        float g2 = 1.0f / s->gamma2;
+        FFTComplex l = {0,0};
+        FFTComplex r = {0,0};
 
-        for (u = 0; u < s->coeffs[x].len; u++) {
-            FFTSample value = s->coeffs[x].values[u];
-            int index = s->coeffs[x].start + u;
-            v.re += value * s->fft_result[index].re;
-            v.im += value * s->fft_result[index].im;
-            w.re += value * s->fft_result[fft_len - index].re;
-            w.im += value * s->fft_result[fft_len - index].im;
+        for (u = 0; u < s->coeffs_len[x]; u++) {
+            FFTSample value = s->coeffs[x][u].value;
+            int index = s->coeffs[x][u].index;
+            l.re += value * s->fft_result_left[index].re;
+            l.im += value * s->fft_result_left[index].im;
+            r.re += value * s->fft_result_right[index].re;
+            r.im += value * s->fft_result_right[index].im;
         }
-
-        /* separate left and right, (and multiply by 2.0) */
-        l.re = v.re + w.re;
-        l.im = v.im - w.im;
-        r.re = w.im + v.im;
-        r.im = w.re - v.re;
         /* result is power, not amplitude */
         result[x][0] = l.re * l.re + l.im * l.im;
         result[x][2] = r.re * r.re + r.im * r.im;
         result[x][1] = 0.5f * (result[x][0] + result[x][2]);
-
-        if (s->gamma2 == 1.0f)
-            result[x][3] = result[x][1];
-        else if (s->gamma2 == 2.0f)
-            result[x][3] = sqrtf(result[x][1]);
-        else if (s->gamma2 == 3.0f)
-            result[x][3] = cbrtf(result[x][1]);
-        else if (s->gamma2 == 4.0f)
-            result[x][3] = sqrtf(sqrtf(result[x][1]));
-        else
-            result[x][3] = expf(logf(result[x][1]) * (1.0f / s->gamma2));
-
-        result[x][0] = FFMIN(1.0f, result[x][0]);
-        result[x][1] = FFMIN(1.0f, result[x][1]);
-        result[x][2] = FFMIN(1.0f, result[x][2]);
-        if (s->gamma == 1.0f) {
-            result[x][0] = 255.0f * result[x][0];
-            result[x][1] = 255.0f * result[x][1];
-            result[x][2] = 255.0f * result[x][2];
-        } else if (s->gamma == 2.0f) {
-            result[x][0] = 255.0f * sqrtf(result[x][0]);
-            result[x][1] = 255.0f * sqrtf(result[x][1]);
-            result[x][2] = 255.0f * sqrtf(result[x][2]);
-        } else if (s->gamma == 3.0f) {
-            result[x][0] = 255.0f * cbrtf(result[x][0]);
-            result[x][1] = 255.0f * cbrtf(result[x][1]);
-            result[x][2] = 255.0f * cbrtf(result[x][2]);
-        } else if (s->gamma == 4.0f) {
-            result[x][0] = 255.0f * sqrtf(sqrtf(result[x][0]));
-            result[x][1] = 255.0f * sqrtf(sqrtf(result[x][1]));
-            result[x][2] = 255.0f * sqrtf(sqrtf(result[x][2]));
-        } else {
-            result[x][0] = 255.0f * expf(logf(result[x][0]) * (1.0f / s->gamma));
-            result[x][1] = 255.0f * expf(logf(result[x][1]) * (1.0f / s->gamma));
-            result[x][2] = 255.0f * expf(logf(result[x][2]) * (1.0f / s->gamma));
-        }
+        result[x][3] = (g2 == 1.0f) ? result[x][1] : powf(result[x][1], g2);
+        result[x][0] = 255.0f * powf(FFMIN(1.0f,result[x][0]), g);
+        result[x][1] = 255.0f * powf(FFMIN(1.0f,result[x][1]), g);
+        result[x][2] = 255.0f * powf(FFMIN(1.0f,result[x][2]), g);
     }
 
     if (!s->fullhd) {
@@ -579,7 +635,7 @@ static int plot_cqt(AVFilterLink *inlink)
         }
 
         /* drawing font */
-        if (s->font_alpha && s->draw_text) {
+        if (s->font_alpha) {
             for (y = 0; y < font_height; y++) {
                 uint8_t *lineptr = data + (spectogram_height + y) * linesize;
                 uint8_t *spectogram_src = s->spectogram + s->spectogram_index * linesize;
@@ -592,7 +648,7 @@ static int plot_cqt(AVFilterLink *inlink)
                     fontcolor_value += 3;
                 }
             }
-        } else if (s->draw_text) {
+        } else {
             for (y = 0; y < font_height; y++) {
                 uint8_t *lineptr = data + (spectogram_height + y) * linesize;
                 memcpy(lineptr, s->spectogram + s->spectogram_index * linesize, video_width*3);
@@ -625,16 +681,6 @@ static int plot_cqt(AVFilterLink *inlink)
                             ux += video_scale;
                         }
                     }
-                }
-            }
-        } else {
-            for (y = 0; y < font_height; y++) {
-                uint8_t *lineptr = data + (spectogram_height + y) * linesize;
-                uint8_t *spectogram_src = s->spectogram + s->spectogram_index * linesize;
-                for (x = 0; x < video_width; x++) {
-                    lineptr[3*x] = spectogram_src[3*x];
-                    lineptr[3*x+1] = spectogram_src[3*x+1];
-                    lineptr[3*x+2] = spectogram_src[3*x+2];
                 }
             }
         }
@@ -677,7 +723,7 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *insamples)
                 s->fft_data[x] = s->fft_data[x+step];
             s->remaining_fill += step;
         }
-        return AVERROR_EOF;
+        return AVERROR(EOF);
     }
 
     remaining = insamples->nb_samples;

@@ -170,29 +170,29 @@ av_cold int ff_fft_init(FFTContext *s, int nbits, int inverse)
     }
 #else /* FFT_FIXED_32 */
 #if FFT_FLOAT
-#if ARCH_AARCH64
+#if (ARCH_AARCH64) 
       ff_fft_init_aarch64(s);
 #endif
-#if ARCH_ARM     
+#if (ARCH_ARM)    
       ff_fft_init_arm(s);
 #endif
-#if ARCH_PPC
+#if (ARCH_PPC)   
       ff_fft_init_ppc(s);
 #endif
-#if ARCH_X86   
+#if (ARCH_X86)    
       ff_fft_init_x86(s);
 #endif
-#if CONFIG_MDCT
+#if (CONFIG_MDCT)  
       s->mdct_calcw = s->mdct_calc;
 #endif
-#if HAVE_MIPSFPU
+#if (HAVE_MIPSFPU) 
       ff_fft_init_mips(s);
 #endif
 #else
-#if CONFIG_MDCT
+#if (CONFIG_MDCT)  
       s->mdct_calcw = ff_mdct_calcw_c;
 #endif
-#if ARCH_ARM
+#if (ARCH_ARM)     
       ff_fft_fixed_init_arm(s);
 #endif
 #endif

@@ -24,7 +24,6 @@
 
 #include "libavutil/internal.h"
 #include "libavutil/x86/asm.h"
-#include "libavcodec/mpegutils.h"
 #include "libavcodec/mpegvideo.h"
 #include "fdct.h"
 

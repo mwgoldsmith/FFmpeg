@@ -65,8 +65,11 @@ av_cold void ff_flacdsp_init_x86(FLACDSPContext *c, enum AVSampleFormat fmt, int
                 c->decorrelate[0] = ff_flac_decorrelate_indep4_16_sse2;
             else if (channels == 6)
                 c->decorrelate[0] = ff_flac_decorrelate_indep6_16_sse2;
-            else if (ARCH_X86_64 && channels == 8)
-                c->decorrelate[0] = ff_flac_decorrelate_indep8_16_sse2;
+#if ARCH_X86_64
+            else if(channels == 8) {
+              c->decorrelate[0] = ff_flac_decorrelate_indep8_16_sse2;
+            }
+#endif
             c->decorrelate[1] = ff_flac_decorrelate_ls_16_sse2;
             c->decorrelate[2] = ff_flac_decorrelate_rs_16_sse2;
             c->decorrelate[3] = ff_flac_decorrelate_ms_16_sse2;
@@ -77,38 +80,48 @@ av_cold void ff_flacdsp_init_x86(FLACDSPContext *c, enum AVSampleFormat fmt, int
                 c->decorrelate[0] = ff_flac_decorrelate_indep4_32_sse2;
             else if (channels == 6)
                 c->decorrelate[0] = ff_flac_decorrelate_indep6_32_sse2;
-            else if (ARCH_X86_64 && channels == 8)
+#if ARCH_X86_64
+            else if (channels == 8)
                 c->decorrelate[0] = ff_flac_decorrelate_indep8_32_sse2;
+#endif
             c->decorrelate[1] = ff_flac_decorrelate_ls_32_sse2;
             c->decorrelate[2] = ff_flac_decorrelate_rs_32_sse2;
             c->decorrelate[3] = ff_flac_decorrelate_ms_32_sse2;
         }
     }
     if (EXTERNAL_SSE4(cpu_flags)) {
-        c->lpc32 = ff_flac_lpc_32_sse4;
+        if (bps > 16)
+            c->lpc = ff_flac_lpc_32_sse4;
     }
     if (EXTERNAL_AVX(cpu_flags)) {
         if (fmt == AV_SAMPLE_FMT_S16) {
-            if (ARCH_X86_64 && channels == 8)
-                c->decorrelate[0] = ff_flac_decorrelate_indep8_16_avx;
+          if(channels == 8) {
+#if ARCH_X86_64
+            c->decorrelate[0] = ff_flac_decorrelate_indep8_16_avx;
+#endif
+          }
         } else if (fmt == AV_SAMPLE_FMT_S32) {
             if (channels == 4)
                 c->decorrelate[0] = ff_flac_decorrelate_indep4_32_avx;
             else if (channels == 6)
                 c->decorrelate[0] = ff_flac_decorrelate_indep6_32_avx;
-            else if (ARCH_X86_64 && channels == 8)
-                c->decorrelate[0] = ff_flac_decorrelate_indep8_32_avx;
+            else if(channels == 8) {
+#if ARCH_X86_64
+              c->decorrelate[0] = ff_flac_decorrelate_indep8_32_avx;
+#endif
+            }
         }
     }
     if (EXTERNAL_XOP(cpu_flags)) {
-        c->lpc32 = ff_flac_lpc_32_xop;
+        if (bps > 16)
+            c->lpc = ff_flac_lpc_32_xop;
     }
 #endif
 
 #if CONFIG_FLAC_ENCODER
     if (EXTERNAL_SSE4(cpu_flags)) {
-        if (CONFIG_GPL)
-            c->lpc16_encode = ff_flac_enc_lpc_16_sse4;
+        if (CONFIG_GPL && bps == 16)
+            c->lpc_encode = ff_flac_enc_lpc_16_sse4;
     }
 #endif
 #endif /* HAVE_YASM */

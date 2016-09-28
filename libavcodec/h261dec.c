@@ -592,8 +592,10 @@ static int h261_decode_frame(AVCodecContext *avctx, void *data,
     int ret;
     AVFrame *pict = data;
 
-    ff_dlog(avctx, "*****frame %d size=%d\n", avctx->frame_number, buf_size);
-    ff_dlog(avctx, "bytes=%x %x %x %x\n", buf[0], buf[1], buf[2], buf[3]);
+    av_dlog(avctx, "*****frame %d size=%d\n", avctx->frame_number, buf_size);
+    av_dlog(avctx, "bytes=%x %x %x %x\n", buf[0], buf[1], buf[2], buf[3]);
+    s->flags  = avctx->flags;
+    s->flags2 = avctx->flags2;
 
     h->gob_start_code_skipped = 0;
 
@@ -685,6 +687,6 @@ AVCodec ff_h261_decoder = {
     .init           = h261_decode_init,
     .close          = h261_decode_end,
     .decode         = h261_decode_frame,
-    .capabilities   = AV_CODEC_CAP_DR1,
+    .capabilities   = CODEC_CAP_DR1,
     .max_lowres     = 3,
 };

@@ -28,7 +28,6 @@
 
 #define LONG_BITSTREAM_READER
 
-#include "libavutil/internal.h"
 #include "avcodec.h"
 #include "get_bits.h"
 #include "idctdsp.h"
@@ -71,14 +70,14 @@ static int decode_frame_header(ProresContext *ctx, const uint8_t *buf,
     const uint8_t *ptr;
 
     hdr_size = AV_RB16(buf);
-    ff_dlog(avctx, "header size %d\n", hdr_size);
+    av_dlog(avctx, "header size %d\n", hdr_size);
     if (hdr_size > data_size) {
         av_log(avctx, AV_LOG_ERROR, "error, wrong header size\n");
         return AVERROR_INVALIDDATA;
     }
 
     version = AV_RB16(buf + 2);
-    ff_dlog(avctx, "%.4s version %d\n", buf+4, version);
+    av_dlog(avctx, "%.4s version %d\n", buf+4, version);
     if (version > 1) {
         av_log(avctx, AV_LOG_ERROR, "unsupported version: %d\n", version);
         return AVERROR_PATCHWELCOME;
@@ -101,7 +100,7 @@ static int decode_frame_header(ProresContext *ctx, const uint8_t *buf,
     }
     if (avctx->skip_alpha) ctx->alpha_info = 0;
 
-    ff_dlog(avctx, "frame type %d\n", ctx->frame_type);
+    av_dlog(avctx, "frame type %d\n", ctx->frame_type);
 
     if (ctx->frame_type == 0) {
         ctx->scan = ctx->progressive_scan; // permuted
@@ -119,7 +118,7 @@ static int decode_frame_header(ProresContext *ctx, const uint8_t *buf,
 
     ptr   = buf + 20;
     flags = buf[19];
-    ff_dlog(avctx, "flags %x\n", flags);
+    av_dlog(avctx, "flags %x\n", flags);
 
     if (flags & 2) {
         if(buf + data_size - ptr < 64) {
@@ -184,7 +183,6 @@ static int decode_picture_header(AVCodecContext *avctx, const uint8_t *buf, cons
 
     if (ctx->slice_count != slice_count || !ctx->slices) {
         av_freep(&ctx->slices);
-        ctx->slice_count = 0;
         ctx->slices = av_mallocz_array(slice_count, sizeof(*ctx->slices));
         if (!ctx->slices)
             return AVERROR(ENOMEM);
@@ -575,7 +573,7 @@ static int decode_slice_thread(AVCodecContext *avctx, void *arg, int jobnr, int 
     if (ret < 0)
         return ret;
 
-    if (!(avctx->flags & AV_CODEC_FLAG_GRAY)) {
+    if (!(avctx->flags & CODEC_FLAG_GRAY)) {
         ret = decode_slice_chroma(avctx, slice, (uint16_t*)dest_u, chroma_stride,
                                   buf + y_data_size, u_data_size,
                                   qmat_chroma_scaled, log2_chroma_blocks_per_mb);
@@ -687,5 +685,5 @@ AVCodec ff_prores_decoder = {
     .init           = decode_init,
     .close          = decode_close,
     .decode         = decode_frame,
-    .capabilities   = AV_CODEC_CAP_DR1 | AV_CODEC_CAP_SLICE_THREADS,
+    .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_SLICE_THREADS,
 };

@@ -340,7 +340,8 @@ AVFilterFormats *ff_all_formats(enum AVMediaType type)
     if (type == AVMEDIA_TYPE_VIDEO) {
         const AVPixFmtDescriptor *desc = NULL;
         while ((desc = av_pix_fmt_desc_next(desc))) {
-            ff_add_format(&ret, av_pix_fmt_desc_get_id(desc));
+            if (!(desc->flags & AV_PIX_FMT_FLAG_HWACCEL))
+                ff_add_format(&ret, av_pix_fmt_desc_get_id(desc));
         }
     } else if (type == AVMEDIA_TYPE_AUDIO) {
         enum AVSampleFormat fmt = 0;
@@ -636,19 +637,22 @@ int ff_parse_channel_layout(int64_t *ret, int *nret, const char *arg,
                             void *log_ctx)
 {
     char *tail;
-    int64_t chlayout;
+    int64_t chlayout, count;
 
+    if (nret) {
+        count = strtol(arg, &tail, 10);
+        if (*tail == 'c' && !tail[1] && count > 0 && count < 63) {
+            *nret = count;
+            *ret = 0;
+            return 0;
+        }
+    }
     chlayout = av_get_channel_layout(arg);
     if (chlayout == 0) {
         chlayout = strtol(arg, &tail, 10);
-        if (!(*tail == '\0' || *tail == 'c' && *(tail + 1) == '\0') || chlayout <= 0 || chlayout > 63) {
+        if (*tail || chlayout == 0) {
             av_log(log_ctx, AV_LOG_ERROR, "Invalid channel layout '%s'\n", arg);
             return AVERROR(EINVAL);
-        }
-        if (nret) {
-            *nret = chlayout;
-            *ret = 0;
-            return 0;
         }
     }
     *ret = chlayout;
@@ -665,39 +669,10 @@ int main(void)
 {
     const int64_t *cl;
     char buf[512];
-    int i;
-    const char *teststrings[] ={
-        "blah",
-        "1",
-        "2",
-        "-1",
-        "60",
-        "65",
-        "1c",
-        "2c",
-        "-1c",
-        "60c",
-        "65c",
-        "5.1",
-        "stereo",
-        "1+1+1+1",
-        "1c+1c+1c+1c",
-        "2c+1c",
-        "0x3",
-    };
 
     for (cl = avfilter_all_channel_layouts; *cl != -1; cl++) {
         av_get_channel_layout_string(buf, sizeof(buf), -1, *cl);
         printf("%s\n", buf);
-    }
-
-    for ( i = 0; i<FF_ARRAY_ELEMS(teststrings); i++) {
-        int64_t layout = -1;
-        int count = -1;
-        int ret;
-        ret = ff_parse_channel_layout(&layout, &count, teststrings[i], NULL);
-
-        printf ("%d = ff_parse_channel_layout(%016"PRIX64", %2d, %s);\n", ret ? -1 : 0, layout, count, teststrings[i]);
     }
 
     return 0;

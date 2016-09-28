@@ -21,7 +21,6 @@
 
 #include <string.h>
 
-#include "libavutil/avassert.h"
 #include "libavutil/avutil.h"
 #include "libavutil/colorspace.h"
 #include "libavutil/mem.h"
@@ -67,11 +66,7 @@ int ff_fill_line_with_color(uint8_t *line[4], int pixel_step[4], int w, uint8_t 
     uint8_t rgba_map[4] = {0};
     int i;
     const AVPixFmtDescriptor *pix_desc = av_pix_fmt_desc_get(pix_fmt);
-    int hsub;
-
-    av_assert0(pix_desc);
-
-    hsub = pix_desc->log2_chroma_w;
+    int hsub = pix_desc->log2_chroma_w;
 
     *is_packed_rgba = ff_fill_rgba_map(rgba_map, pix_fmt) >= 0;
 
@@ -165,22 +160,22 @@ int ff_draw_init(FFDrawContext *draw, enum AVPixelFormat format, unsigned flags)
     unsigned i, nb_planes = 0;
     int pixelstep[MAX_PLANES] = { 0 };
 
-    if (!desc || !desc->name)
+    if (!desc->name)
         return AVERROR(EINVAL);
     if (desc->flags & ~(AV_PIX_FMT_FLAG_PLANAR | AV_PIX_FMT_FLAG_RGB | AV_PIX_FMT_FLAG_PSEUDOPAL | AV_PIX_FMT_FLAG_ALPHA))
         return AVERROR(ENOSYS);
     for (i = 0; i < desc->nb_components; i++) {
         c = &desc->comp[i];
         /* for now, only 8-bits formats */
-        if (c->depth != 8)
+        if (c->depth_minus1 != 8 - 1)
             return AVERROR(ENOSYS);
         if (c->plane >= MAX_PLANES)
             return AVERROR(ENOSYS);
         /* strange interleaving */
         if (pixelstep[c->plane] != 0 &&
-            pixelstep[c->plane] != c->step)
+            pixelstep[c->plane] != c->step_minus1 + 1)
             return AVERROR(ENOSYS);
-        pixelstep[c->plane] = c->step;
+        pixelstep[c->plane] = c->step_minus1 + 1;
         if (pixelstep[c->plane] >= 8)
             return AVERROR(ENOSYS);
         nb_planes = FFMAX(nb_planes, c->plane + 1);
@@ -196,7 +191,7 @@ int ff_draw_init(FFDrawContext *draw, enum AVPixelFormat format, unsigned flags)
     draw->vsub[1] = draw->vsub[2] = draw->vsub_max = desc->log2_chroma_h;
     for (i = 0; i < ((desc->nb_components - 1) | 1); i++)
         draw->comp_mask[desc->comp[i].plane] |=
-            1 << desc->comp[i].offset;
+            1 << (desc->comp[i].offset_plus1 - 1);
     return 0;
 }
 

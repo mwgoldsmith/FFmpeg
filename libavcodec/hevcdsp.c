@@ -216,7 +216,7 @@ void ff_hevc_dsp_init(HEVCDSPContext *hevcdsp, int bit_depth)
     hevcdsp->sao_band_filter[1] =                                              \
     hevcdsp->sao_band_filter[2] =                                              \
     hevcdsp->sao_band_filter[3] =                                              \
-    hevcdsp->sao_band_filter[4] = FUNC(sao_band_filter, depth);                \
+    hevcdsp->sao_band_filter[4] = FUNC(sao_band_filter_0, depth);              \
     hevcdsp->sao_edge_filter[0] =                                              \
     hevcdsp->sao_edge_filter[1] =                                              \
     hevcdsp->sao_edge_filter[2] =                                              \
@@ -257,13 +257,10 @@ int i = 0;
         break;
     }
 
-#if ARCH_X86
-    ff_hevc_dspinit_x86(hevcdsp, bit_depth);
+#if (ARCH_X86)
+        ff_hevc_dsp_init_x86(hevcdsp, bit_depth);
 #endif
-#if ARCH_ARM
-    ff_hevcdsp_init_arm(hevcdsp, bit_depth);
-#endif
-#if ARCH_MIPS
-    ff_hevc_dsp_init_mips(hevcdsp, bit_depth);
+#if (ARCH_ARM)
+        ff_hevcdsp_init_arm(hevcdsp, bit_depth);
 #endif
 }

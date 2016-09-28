@@ -136,10 +136,9 @@ av_cold int ff_imdct15_init(IMDCT15Context **ps, int N)
 
     s->imdct_half = imdct15_half;
 
-#if ARCH_AARCH64
+#if (ARCH_AARCH64)
         ff_imdct15_init_aarch64(s);
 #endif
-
     *ps = s;
 
     return 0;

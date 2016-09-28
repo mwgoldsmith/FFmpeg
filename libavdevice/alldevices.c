@@ -46,33 +46,107 @@ void avdevice_register_all(void)
     initialized = 1;
 
     /* devices */
-    REGISTER_INOUTDEV(ALSA,             alsa);
-    REGISTER_INDEV   (AVFOUNDATION,     avfoundation);
-    REGISTER_INDEV   (BKTR,             bktr);
-    REGISTER_OUTDEV  (CACA,             caca);
-    REGISTER_INOUTDEV(DECKLINK,         decklink);
-    REGISTER_INDEV   (DSHOW,            dshow);
-    REGISTER_INDEV   (DV1394,           dv1394);
-    REGISTER_INOUTDEV(FBDEV,            fbdev);
-    REGISTER_INDEV   (GDIGRAB,          gdigrab);
-    REGISTER_INDEV   (IEC61883,         iec61883);
-    REGISTER_INDEV   (JACK,             jack);
-    REGISTER_INDEV   (LAVFI,            lavfi);
-    REGISTER_INDEV   (OPENAL,           openal);
-    REGISTER_OUTDEV  (OPENGL,           opengl);
-    REGISTER_INOUTDEV(OSS,              oss);
-    REGISTER_INOUTDEV(PULSE,            pulse);
-    REGISTER_INDEV   (QTKIT,            qtkit);
-    REGISTER_OUTDEV  (SDL,              sdl);
-    REGISTER_INOUTDEV(SNDIO,            sndio);
-    REGISTER_INOUTDEV(V4L2,             v4l2);
-//    REGISTER_INDEV   (V4L,              v4l
-    REGISTER_INDEV   (VFWCAP,           vfwcap);
-    REGISTER_INDEV   (X11GRAB,          x11grab);
-    REGISTER_INDEV   (X11GRAB_XCB,      x11grab_xcb);
-    REGISTER_OUTDEV  (XV,               xv);
+#if CONFIG_ALSA_INDEV
+    REGISTER_INDEV(ALSA, alsa)
+#endif
+#if CONFIG_ALSA_OUTDEV
+      REGISTER_OUTDEV(ALSA, alsa)
+#endif
+#if CONFIG_AVFOUNDATION_INDEV
+      REGISTER_INDEV(AVFOUNDATION, avfoundation)
+#endif
+#if CONFIG_BKTR_INDEV
+      REGISTER_INDEV(BKTR, bktr)
+#endif
+#if CONFIG_CACA_OUTDEV
+      REGISTER_OUTDEV(CACA, caca)
+#endif
+#if CONFIG_DECKLINK_INDEV
+      REGISTER_INDEV(DECKLINK, decklink)
+#endif
+#if CONFIG_DECKLINK_OUTDEV
+      REGISTER_OUTDEV(DECKLINK, decklink)
+#endif
+#if CONFIG_DSHOW_INDEV
+      REGISTER_INDEV(DSHOW, dshow)
+#endif
+#if CONFIG_DV1394_INDEV
+      REGISTER_INDEV(DV1394, dv1394)
+#endif
+#if CONFIG_FBDEV_INDEV
+      REGISTER_INDEV(FBDEV, fbdev)
+#endif
+#if CONFIG_FBDEV_OUTDEV
+      REGISTER_OUTDEV(FBDEV, fbdev)
+#endif
+#if CONFIG_GDIGRAB_INDEV
+      REGISTER_INDEV(GDIGRAB, gdigrab)
+#endif
+#if CONFIG_IEC61883_INDEV
+      REGISTER_INDEV(IEC61883, iec61883)
+#endif
+#if CONFIG_JACK_INDEV
+      REGISTER_INDEV(JACK, jack)
+#endif
+#if CONFIG_LAVFI_INDEV
+      REGISTER_INDEV(LAVFI, lavfi)
+#endif
+#if CONFIG_OPENAL_INDEV
+      REGISTER_INDEV(OPENAL, openal)
+#endif
+#if CONFIG_OPENGL_OUTDEV
+      REGISTER_OUTDEV(OPENGL, opengl)
+#endif
+#if CONFIG_OSS_INDEV
+      REGISTER_INDEV(OSS, oss)
+#endif
+#if CONFIG_OSS_OUTDEV
+      REGISTER_OUTDEV(OSS, oss)
+#endif
+#if CONFIG_PULSE_INDEV
+      REGISTER_INDEV(PULSE, pulse)
+#endif
+#if CONFIG_PULSE_OUTDEV
+      REGISTER_OUTDEV(PULSE, pulse)
+#endif
+#if CONFIG_QTKIT_INDEV
+      REGISTER_INDEV(QTKIT, qtkit)
+#endif
+#if CONFIG_SDL_OUTDEV
+      REGISTER_OUTDEV(SDL, sdl)
+#endif
+#if CONFIG_SNDIO_INDEV
+      REGISTER_INDEV(SNDIO, sndio)
+#endif
+#if CONFIG_SNDIO_OUTDEV
+      REGISTER_OUTDEV(SNDIO, sndio)
+#endif
+#if CONFIG_V4L2_INDEV
+      REGISTER_INDEV(V4L2, v4l2)
+#endif
+#if CONFIG_V4L2_OUTDEV
+      REGISTER_OUTDEV(V4L2, v4l2)
+#endif
+      //    REGISTER_INDEV   (V4L,              v4l
+#if CONFIG_VFWCAP_INDEV
+      REGISTER_INDEV(VFWCAP, vfwcap)
+#endif
+#if CONFIG_X11GRAB_INDEV
+      REGISTER_INDEV(X11GRAB, x11grab)
+#endif
+#if CONFIG_X11GRAB_XCB_INDEV
+      REGISTER_INDEV(X11GRAB_XCB, x11grab_xcb)
+#endif
+#if CONFIG_XV_OUTDEV
+      REGISTER_OUTDEV(XV, xv)
+#endif
 
-    /* external libraries */
-    REGISTER_INDEV   (LIBCDIO,          libcdio);
-    REGISTER_INDEV   (LIBDC1394,        libdc1394);
+      /* external libraries */
+#if CONFIG_LIBCDIO_INDEV
+      REGISTER_INDEV(LIBCDIO, libcdio)
+#endif
+#if CONFIG_LIBDC1394_INDEV
+      REGISTER_INDEV(LIBDC1394, libdc1394)
+#endif
+
 }

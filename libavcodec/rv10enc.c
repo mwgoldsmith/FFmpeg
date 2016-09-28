@@ -27,7 +27,6 @@
 
 #include "mpegvideo.h"
 #include "put_bits.h"
-#include "rv10.h"
 
 int ff_rv10_encode_picture_header(MpegEncContext *s, int picture_number)
 {
@@ -63,12 +62,7 @@ int ff_rv10_encode_picture_header(MpegEncContext *s, int picture_number)
     return 0;
 }
 
-static const AVClass rv10_class = {
-    .class_name = "rv10 encoder",
-    .item_name  = av_default_item_name,
-    .option     = ff_mpv_generic_options,
-    .version    = LIBAVUTIL_VERSION_INT,
-};
+FF_MPV_GENERIC_CLASS(rv10)
 
 AVCodec ff_rv10_encoder = {
     .name           = "rv10",

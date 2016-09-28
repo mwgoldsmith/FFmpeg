@@ -170,16 +170,13 @@ av_cold void ff_mpegvideoencdsp_init(MpegvideoEncDSPContext *c,
 
     c->draw_edges = draw_edges_8_c;
 
-#if ARCH_ARM
+#if (ARCH_ARM)
         ff_mpegvideoencdsp_init_arm(c, avctx);
 #endif
-#if ARCH_PPC
+#if (ARCH_PPC)
         ff_mpegvideoencdsp_init_ppc(c, avctx);
 #endif
-#if ARCH_X86
+#if (ARCH_X86)
         ff_mpegvideoencdsp_init_x86(c, avctx);
-#endif
-#if ARCH_MIPS
-        ff_mpegvideoencdsp_init_mips(c, avctx);
 #endif
 }

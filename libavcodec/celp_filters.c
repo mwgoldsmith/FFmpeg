@@ -214,7 +214,7 @@ void ff_celp_filter_init(CELPFContext *c)
     c->celp_lp_synthesis_filterf        = ff_celp_lp_synthesis_filterf;
     c->celp_lp_zero_synthesis_filterf   = ff_celp_lp_zero_synthesis_filterf;
 
-#if HAVE_MIPSFPU
+#if(HAVE_MIPSFPU)
         ff_celp_filter_init_mips(c);
 #endif
 }

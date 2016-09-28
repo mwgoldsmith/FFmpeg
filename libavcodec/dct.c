@@ -191,8 +191,6 @@ av_cold int ff_dct_init(DCTContext *s, int nbits, enum DCTTransformType inverse)
 
         s->costab = ff_cos_tabs[nbits + 2];
         s->csc2   = av_malloc_array(n / 2, sizeof(FFTSample));
-        if (!s->csc2)
-            return AVERROR(ENOMEM);
 
         if (ff_rdft_init(&s->rdft, nbits, inverse == DCT_III) < 0) {
             av_freep(&s->csc2);
@@ -211,10 +209,9 @@ av_cold int ff_dct_init(DCTContext *s, int nbits, enum DCTTransformType inverse)
     }
 
     s->dct32 = ff_dct32_float;
-#if ARCH_X86
+#if (ARCH_X86)
         ff_dct_init_x86(s);
 #endif
-
     return 0;
 }
 

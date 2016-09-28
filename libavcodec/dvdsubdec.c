@@ -227,7 +227,6 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
     int date;
     int i;
     int is_menu = 0;
-    uint32_t size;
 
     if (buf_size < 10)
         return -1;
@@ -242,21 +241,15 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
         cmd_pos = 2;
     }
 
-    size = READ_OFFSET(buf + (big_offsets ? 2 : 0));
     cmd_pos = READ_OFFSET(buf + cmd_pos);
 
-    if (cmd_pos < 0 || cmd_pos > buf_size - 2 - offset_size) {
-        if (cmd_pos > size) {
-            av_log(ctx, AV_LOG_ERROR, "Discarding invalid packet\n");
-            return 0;
-        }
+    if (cmd_pos < 0 || cmd_pos > buf_size - 2 - offset_size)
         return AVERROR(EAGAIN);
-    }
 
     while (cmd_pos > 0 && cmd_pos < buf_size - 2 - offset_size) {
         date = AV_RB16(buf + cmd_pos);
         next_cmd_pos = READ_OFFSET(buf + cmd_pos + 2);
-        ff_dlog(NULL, "cmd_pos=0x%04x next=0x%04x date=%d\n",
+        av_dlog(NULL, "cmd_pos=0x%04x next=0x%04x date=%d\n",
                 cmd_pos, next_cmd_pos, date);
         pos = cmd_pos + 2 + offset_size;
         offset1 = -1;
@@ -264,7 +257,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
         x1 = y1 = x2 = y2 = 0;
         while (pos < buf_size) {
             cmd = buf[pos++];
-            ff_dlog(NULL, "cmd=%02x\n", cmd);
+            av_dlog(NULL, "cmd=%02x\n", cmd);
             switch(cmd) {
             case 0x00:
                 /* menu subpicture */
@@ -297,7 +290,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
                 alpha[1] = buf[pos + 1] >> 4;
                 alpha[0] = buf[pos + 1] & 0x0f;
                 pos += 2;
-                ff_dlog(NULL, "alpha=%x%x%x%x\n", alpha[0],alpha[1],alpha[2],alpha[3]);
+            av_dlog(NULL, "alpha=%x%x%x%x\n", alpha[0],alpha[1],alpha[2],alpha[3]);
                 break;
             case 0x05:
             case 0x85:
@@ -309,7 +302,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
                 y2 = ((buf[pos + 4] & 0x0f) << 8) | buf[pos + 5];
                 if (cmd & 0x80)
                     is_8bit = 1;
-                ff_dlog(NULL, "x1=%d x2=%d y1=%d y2=%d\n", x1, x2, y1, y2);
+                av_dlog(NULL, "x1=%d x2=%d y1=%d y2=%d\n", x1, x2, y1, y2);
                 pos += 6;
                 break;
             case 0x06:
@@ -317,7 +310,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
                     goto fail;
                 offset1 = AV_RB16(buf + pos);
                 offset2 = AV_RB16(buf + pos + 2);
-                ff_dlog(NULL, "offset1=0x%04x offset2=0x%04x\n", offset1, offset2);
+                av_dlog(NULL, "offset1=0x%04x offset2=0x%04x\n", offset1, offset2);
                 pos += 4;
                 break;
             case 0x86:
@@ -325,7 +318,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
                     goto fail;
                 offset1 = AV_RB32(buf + pos);
                 offset2 = AV_RB32(buf + pos + 4);
-                ff_dlog(NULL, "offset1=0x%04x offset2=0x%04x\n", offset1, offset2);
+                av_dlog(NULL, "offset1=0x%04x offset2=0x%04x\n", offset1, offset2);
                 pos += 8;
                 break;
 
@@ -348,7 +341,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
             case 0xff:
                 goto the_end;
             default:
-                ff_dlog(NULL, "unrecognised subpicture command 0x%x\n", cmd);
+                av_dlog(NULL, "unrecognised subpicture command 0x%x\n", cmd);
                 goto the_end;
             }
         }
@@ -406,7 +399,7 @@ static int decode_dvd_subtitles(DVDSubContext *ctx, AVSubtitle *sub_header,
             }
         }
         if (next_cmd_pos < cmd_pos) {
-            av_log(ctx, AV_LOG_ERROR, "Invalid command offset\n");
+            av_log(NULL, AV_LOG_ERROR, "Invalid command offset\n");
             break;
         }
         if (next_cmd_pos == cmd_pos)
@@ -526,7 +519,6 @@ static int append_to_cached_buf(AVCodecContext *avctx,
     if (ctx->buf_size >= sizeof(ctx->buf) - buf_size) {
         av_log(avctx, AV_LOG_WARNING, "Attempt to reconstruct "
                "too large SPU packets aborted.\n");
-        ctx->buf_size = 0;
         return AVERROR_INVALIDDATA;
     }
     memcpy(ctx->buf + ctx->buf_size, buf, buf_size);
@@ -542,7 +534,6 @@ static int dvdsub_decode(AVCodecContext *avctx,
     const uint8_t *buf = avpkt->data;
     int buf_size = avpkt->size;
     AVSubtitle *sub = data;
-    int appended = 0;
     int is_menu;
 
     if (ctx->buf_size) {
@@ -553,13 +544,12 @@ static int dvdsub_decode(AVCodecContext *avctx,
         }
         buf = ctx->buf;
         buf_size = ctx->buf_size;
-        appended = 1;
     }
 
     is_menu = decode_dvd_subtitles(ctx, sub, buf, buf_size);
     if (is_menu == AVERROR(EAGAIN)) {
         *data_size = 0;
-        return appended ? 0 : append_to_cached_buf(avctx, buf, buf_size);
+        return append_to_cached_buf(avctx, buf, buf_size);
     }
 
     if (is_menu < 0) {
@@ -580,7 +570,7 @@ static int dvdsub_decode(AVCodecContext *avctx,
     char ppm_name[32];
 
     snprintf(ppm_name, sizeof(ppm_name), "/tmp/%05d.ppm", ctx->sub_id++);
-    ff_dlog(NULL, "start=%d ms end =%d ms\n",
+    av_dlog(NULL, "start=%d ms end =%d ms\n",
             sub->start_display_time,
             sub->end_display_time);
     ppm_save(ppm_name, sub->rects[0]->pict.data[0],
@@ -728,15 +718,10 @@ static av_cold int dvdsub_init(AVCodecContext *avctx)
     return 1;
 }
 
-static void dvdsub_flush(AVCodecContext *avctx)
+static av_cold int dvdsub_close(AVCodecContext *avctx)
 {
     DVDSubContext *ctx = avctx->priv_data;
     ctx->buf_size = 0;
-}
-
-static av_cold int dvdsub_close(AVCodecContext *avctx)
-{
-    dvdsub_flush(avctx);
     return 0;
 }
 
@@ -763,7 +748,6 @@ AVCodec ff_dvdsub_decoder = {
     .priv_data_size = sizeof(DVDSubContext),
     .init           = dvdsub_init,
     .decode         = dvdsub_decode,
-    .flush          = dvdsub_flush,
     .close          = dvdsub_close,
     .priv_class     = &dvdsub_class,
 };

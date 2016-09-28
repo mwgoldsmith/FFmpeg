@@ -31,7 +31,7 @@
 #include <stdint.h>
 
 #include "libavutil/avstring.h"
-#include "libavutil/eval.h"
+#include "libavutil/colorspace.h"
 #include "libavutil/mathematics.h"
 #include "libavutil/pixdesc.h"
 #include "libavutil/imgutils.h"
@@ -48,6 +48,7 @@
 #include "libswresample/swresample.h"
 
 #if CONFIG_AVFILTER
+# include "libavfilter/avcodec.h"
 # include "libavfilter/avfilter.h"
 # include "libavfilter/buffersink.h"
 # include "libavfilter/buffersrc.h"
@@ -64,17 +65,12 @@ const char program_name[] = "ffplay";
 const int program_birth_year = 2003;
 
 #define MAX_QUEUE_SIZE (15 * 1024 * 1024)
-#define MIN_FRAMES 25
-#define EXTERNAL_CLOCK_MIN_FRAMES 2
-#define EXTERNAL_CLOCK_MAX_FRAMES 10
+#define MIN_FRAMES 5
 
 /* Minimum SDL audio buffer size, in samples. */
 #define SDL_AUDIO_MIN_BUFFER_SIZE 512
 /* Calculate actual buffer size keeping in mind not cause too frequent audio callbacks */
 #define SDL_AUDIO_MAX_CALLBACKS_PER_SEC 30
-
-/* Step size for volume control */
-#define SDL_VOLUME_STEP (SDL_MIX_MAXVOLUME / 50)
 
 /* no AV sync correction is done if below the minimum AV sync threshold */
 #define AV_SYNC_THRESHOLD_MIN 0.04
@@ -105,7 +101,7 @@ const int program_birth_year = 2003;
 
 #define CURSOR_HIDE_DELAY 1000000
 
-static unsigned sws_flags = SWS_BICUBIC;
+static int64_t sws_flags = SWS_BICUBIC;
 
 typedef struct MyAVPacketList {
     AVPacket pkt;
@@ -226,9 +222,6 @@ typedef struct VideoState {
     Decoder viddec;
     Decoder subdec;
 
-    int viddec_width;
-    int viddec_height;
-
     int audio_stream;
 
     int av_sync_type;
@@ -249,8 +242,6 @@ typedef struct VideoState {
     unsigned int audio_buf1_size;
     int audio_buf_index; /* in bytes */
     int audio_write_buf_size;
-    int audio_volume;
-    int muted;
     struct AudioParams audio_src;
 #if CONFIG_AVFILTER
     struct AudioParams audio_filter_src;
@@ -286,11 +277,10 @@ typedef struct VideoState {
 #if !CONFIG_AVFILTER
     struct SwsContext *img_convert_ctx;
 #endif
-    struct SwsContext *sub_convert_ctx;
     SDL_Rect last_display_rect;
     int eof;
 
-    char *filename;
+    char filename[1024];
     int width, height, xleft, ytop;
     int step;
 
@@ -838,50 +828,229 @@ static void fill_border(int xleft, int ytop, int width, int height, int x, int y
 #define ALPHA_BLEND(a, oldp, newp, s)\
 ((((oldp << s) * (255 - (a))) + (newp * (a))) / (255 << s))
 
+#define RGBA_IN(r, g, b, a, s)\
+{\
+    unsigned int v = ((const uint32_t *)(s))[0];\
+    a = (v >> 24) & 0xff;\
+    r = (v >> 16) & 0xff;\
+    g = (v >> 8) & 0xff;\
+    b = v & 0xff;\
+}
+
+#define YUVA_IN(y, u, v, a, s, pal)\
+{\
+    unsigned int val = ((const uint32_t *)(pal))[*(const uint8_t*)(s)];\
+    a = (val >> 24) & 0xff;\
+    y = (val >> 16) & 0xff;\
+    u = (val >> 8) & 0xff;\
+    v = val & 0xff;\
+}
+
+#define YUVA_OUT(d, y, u, v, a)\
+{\
+    ((uint32_t *)(d))[0] = (a << 24) | (y << 16) | (u << 8) | v;\
+}
 
 
 #define BPP 1
 
 static void blend_subrect(AVPicture *dst, const AVSubtitleRect *rect, int imgw, int imgh)
 {
-    int x, y, Y, U, V, A;
+    int wrap, wrap3, width2, skip2;
+    int y, u, v, a, u1, v1, a1, w, h;
     uint8_t *lum, *cb, *cr;
+    const uint8_t *p;
+    const uint32_t *pal;
     int dstx, dsty, dstw, dsth;
-    const AVPicture *src = &rect->pict;
 
     dstw = av_clip(rect->w, 0, imgw);
     dsth = av_clip(rect->h, 0, imgh);
     dstx = av_clip(rect->x, 0, imgw - dstw);
     dsty = av_clip(rect->y, 0, imgh - dsth);
-    lum = dst->data[0] + dstx + dsty * dst->linesize[0];
-    cb  = dst->data[1] + dstx/2 + (dsty >> 1) * dst->linesize[1];
-    cr  = dst->data[2] + dstx/2 + (dsty >> 1) * dst->linesize[2];
+    lum = dst->data[0] + dsty * dst->linesize[0];
+    cb  = dst->data[1] + (dsty >> 1) * dst->linesize[1];
+    cr  = dst->data[2] + (dsty >> 1) * dst->linesize[2];
 
-    for (y = 0; y<dsth; y++) {
-        for (x = 0; x<dstw; x++) {
-            Y = src->data[0][x + y*src->linesize[0]];
-            A = src->data[3][x + y*src->linesize[3]];
-            lum[0] = ALPHA_BLEND(A, lum[0], Y, 0);
-            lum++;
-        }
-        lum += dst->linesize[0] - dstw;
-    }
+    width2 = ((dstw + 1) >> 1) + (dstx & ~dstw & 1);
+    skip2 = dstx >> 1;
+    wrap = dst->linesize[0];
+    wrap3 = rect->pict.linesize[0];
+    p = rect->pict.data[0];
+    pal = (const uint32_t *)rect->pict.data[1];  /* Now in YCrCb! */
 
-    for (y = 0; y<dsth/2; y++) {
-        for (x = 0; x<dstw/2; x++) {
-            U = src->data[1][x + y*src->linesize[1]];
-            V = src->data[2][x + y*src->linesize[2]];
-            A = src->data[3][2*x     +  2*y   *src->linesize[3]]
-              + src->data[3][2*x + 1 +  2*y   *src->linesize[3]]
-              + src->data[3][2*x + 1 + (2*y+1)*src->linesize[3]]
-              + src->data[3][2*x     + (2*y+1)*src->linesize[3]];
-            cb[0] = ALPHA_BLEND(A>>2, cb[0], U, 0);
-            cr[0] = ALPHA_BLEND(A>>2, cr[0], V, 0);
+    if (dsty & 1) {
+        lum += dstx;
+        cb += skip2;
+        cr += skip2;
+
+        if (dstx & 1) {
+            YUVA_IN(y, u, v, a, p, pal);
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            cb[0] = ALPHA_BLEND(a >> 2, cb[0], u, 0);
+            cr[0] = ALPHA_BLEND(a >> 2, cr[0], v, 0);
             cb++;
             cr++;
+            lum++;
+            p += BPP;
         }
-        cb += dst->linesize[1] - dstw/2;
-        cr += dst->linesize[2] - dstw/2;
+        for (w = dstw - (dstx & 1); w >= 2; w -= 2) {
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 = u;
+            v1 = v;
+            a1 = a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+
+            YUVA_IN(y, u, v, a, p + BPP, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[1] = ALPHA_BLEND(a, lum[1], y, 0);
+            cb[0] = ALPHA_BLEND(a1 >> 2, cb[0], u1, 1);
+            cr[0] = ALPHA_BLEND(a1 >> 2, cr[0], v1, 1);
+            cb++;
+            cr++;
+            p += 2 * BPP;
+            lum += 2;
+        }
+        if (w) {
+            YUVA_IN(y, u, v, a, p, pal);
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            cb[0] = ALPHA_BLEND(a >> 2, cb[0], u, 0);
+            cr[0] = ALPHA_BLEND(a >> 2, cr[0], v, 0);
+            p++;
+            lum++;
+        }
+        p += wrap3 - dstw * BPP;
+        lum += wrap - dstw - dstx;
+        cb += dst->linesize[1] - width2 - skip2;
+        cr += dst->linesize[2] - width2 - skip2;
+    }
+    for (h = dsth - (dsty & 1); h >= 2; h -= 2) {
+        lum += dstx;
+        cb += skip2;
+        cr += skip2;
+
+        if (dstx & 1) {
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 = u;
+            v1 = v;
+            a1 = a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            p += wrap3;
+            lum += wrap;
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            cb[0] = ALPHA_BLEND(a1 >> 2, cb[0], u1, 1);
+            cr[0] = ALPHA_BLEND(a1 >> 2, cr[0], v1, 1);
+            cb++;
+            cr++;
+            p += -wrap3 + BPP;
+            lum += -wrap + 1;
+        }
+        for (w = dstw - (dstx & 1); w >= 2; w -= 2) {
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 = u;
+            v1 = v;
+            a1 = a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+
+            YUVA_IN(y, u, v, a, p + BPP, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[1] = ALPHA_BLEND(a, lum[1], y, 0);
+            p += wrap3;
+            lum += wrap;
+
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+
+            YUVA_IN(y, u, v, a, p + BPP, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[1] = ALPHA_BLEND(a, lum[1], y, 0);
+
+            cb[0] = ALPHA_BLEND(a1 >> 2, cb[0], u1, 2);
+            cr[0] = ALPHA_BLEND(a1 >> 2, cr[0], v1, 2);
+
+            cb++;
+            cr++;
+            p += -wrap3 + 2 * BPP;
+            lum += -wrap + 2;
+        }
+        if (w) {
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 = u;
+            v1 = v;
+            a1 = a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            p += wrap3;
+            lum += wrap;
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            cb[0] = ALPHA_BLEND(a1 >> 2, cb[0], u1, 1);
+            cr[0] = ALPHA_BLEND(a1 >> 2, cr[0], v1, 1);
+            cb++;
+            cr++;
+            p += -wrap3 + BPP;
+            lum += -wrap + 1;
+        }
+        p += wrap3 + (wrap3 - dstw * BPP);
+        lum += wrap + (wrap - dstw - dstx);
+        cb += dst->linesize[1] - width2 - skip2;
+        cr += dst->linesize[2] - width2 - skip2;
+    }
+    /* handle odd height */
+    if (h) {
+        lum += dstx;
+        cb += skip2;
+        cr += skip2;
+
+        if (dstx & 1) {
+            YUVA_IN(y, u, v, a, p, pal);
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            cb[0] = ALPHA_BLEND(a >> 2, cb[0], u, 0);
+            cr[0] = ALPHA_BLEND(a >> 2, cr[0], v, 0);
+            cb++;
+            cr++;
+            lum++;
+            p += BPP;
+        }
+        for (w = dstw - (dstx & 1); w >= 2; w -= 2) {
+            YUVA_IN(y, u, v, a, p, pal);
+            u1 = u;
+            v1 = v;
+            a1 = a;
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+
+            YUVA_IN(y, u, v, a, p + BPP, pal);
+            u1 += u;
+            v1 += v;
+            a1 += a;
+            lum[1] = ALPHA_BLEND(a, lum[1], y, 0);
+            cb[0] = ALPHA_BLEND(a1 >> 2, cb[0], u, 1);
+            cr[0] = ALPHA_BLEND(a1 >> 2, cr[0], v, 1);
+            cb++;
+            cr++;
+            p += 2 * BPP;
+            lum += 2;
+        }
+        if (w) {
+            YUVA_IN(y, u, v, a, p, pal);
+            lum[0] = ALPHA_BLEND(a, lum[0], y, 0);
+            cb[0] = ALPHA_BLEND(a >> 2, cb[0], u, 0);
+            cr[0] = ALPHA_BLEND(a >> 2, cr[0], v, 0);
+        }
     }
 }
 
@@ -1136,8 +1305,6 @@ static void stream_close(VideoState *is)
 #if !CONFIG_AVFILTER
     sws_freeContext(is->img_convert_ctx);
 #endif
-    sws_freeContext(is->sub_convert_ctx);
-    av_free(is->filename);
     av_free(is);
 }
 
@@ -1307,11 +1474,11 @@ static double get_master_clock(VideoState *is)
 }
 
 static void check_external_clock_speed(VideoState *is) {
-   if (is->video_stream >= 0 && is->videoq.nb_packets <= EXTERNAL_CLOCK_MIN_FRAMES ||
-       is->audio_stream >= 0 && is->audioq.nb_packets <= EXTERNAL_CLOCK_MIN_FRAMES) {
+   if (is->video_stream >= 0 && is->videoq.nb_packets <= MIN_FRAMES / 2 ||
+       is->audio_stream >= 0 && is->audioq.nb_packets <= MIN_FRAMES / 2) {
        set_clock_speed(&is->extclk, FFMAX(EXTERNAL_CLOCK_SPEED_MIN, is->extclk.speed - EXTERNAL_CLOCK_SPEED_STEP));
-   } else if ((is->video_stream < 0 || is->videoq.nb_packets > EXTERNAL_CLOCK_MAX_FRAMES) &&
-              (is->audio_stream < 0 || is->audioq.nb_packets > EXTERNAL_CLOCK_MAX_FRAMES)) {
+   } else if ((is->video_stream < 0 || is->videoq.nb_packets > MIN_FRAMES * 2) &&
+              (is->audio_stream < 0 || is->audioq.nb_packets > MIN_FRAMES * 2)) {
        set_clock_speed(&is->extclk, FFMIN(EXTERNAL_CLOCK_SPEED_MAX, is->extclk.speed + EXTERNAL_CLOCK_SPEED_STEP));
    } else {
        double speed = is->extclk.speed;
@@ -1354,16 +1521,6 @@ static void toggle_pause(VideoState *is)
     is->step = 0;
 }
 
-static void toggle_mute(VideoState *is)
-{
-    is->muted = !is->muted;
-}
-
-static void update_volume(VideoState *is, int sign, int step)
-{
-    is->audio_volume = av_clip(is->audio_volume + sign * step, 0, SDL_MIX_MAXVOLUME);
-}
-
 static void step_to_next_frame(VideoState *is)
 {
     /* if the stream is paused unpause it, then step */
@@ -1374,7 +1531,7 @@ static void step_to_next_frame(VideoState *is)
 
 static double compute_target_delay(double delay, VideoState *is)
 {
-    double sync_threshold, diff = 0;
+    double sync_threshold, diff;
 
     /* update delay to follow master synchronisation source */
     if (get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER) {
@@ -1396,7 +1553,7 @@ static double compute_target_delay(double delay, VideoState *is)
         }
     }
 
-    av_log(NULL, AV_LOG_TRACE, "video: delay=%0.3f A-V=%f\n",
+    av_dlog(NULL, "video: delay=%0.3f A-V=%f\n",
             delay, -diff);
 
     return delay;
@@ -1693,18 +1850,7 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts, double 
         av_picture_copy(&pict, (AVPicture *)src_frame,
                         src_frame->format, vp->width, vp->height);
 #else
-        {
-            AVDictionaryEntry *e = av_dict_get(sws_dict, "sws_flags", NULL, 0);
-            if (e) {
-                const AVClass *class = sws_get_class();
-                const AVOption    *o = av_opt_find(&class, "sws_flags", NULL, 0,
-                                                   AV_OPT_SEARCH_FAKE_OBJ);
-                int ret = av_opt_eval_flags(&class, o, e->value, &sws_flags);
-                if (ret < 0)
-                    exit(1);
-            }
-        }
-
+        av_opt_get_int(sws_opts, "sws_flags", 0, &sws_flags);
         is->img_convert_ctx = sws_getCachedContext(is->img_convert_ctx,
             vp->width, vp->height, src_frame->format, vp->width, vp->height,
             AV_PIX_FMT_YUV420P, sws_flags, NULL, NULL, NULL);
@@ -1745,9 +1891,6 @@ static int get_video_frame(VideoState *is, AVFrame *frame)
             dpts = av_q2d(is->video_st->time_base) * frame->pts;
 
         frame->sample_aspect_ratio = av_guess_sample_aspect_ratio(is->ic, is->video_st, frame);
-
-        is->viddec_width  = frame->width;
-        is->viddec_height = frame->height;
 
         if (framedrop>0 || (framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER)) {
             if (frame->pts != AV_NOPTS_VALUE) {
@@ -1814,23 +1957,15 @@ fail:
 static int configure_video_filters(AVFilterGraph *graph, VideoState *is, const char *vfilters, AVFrame *frame)
 {
     static const enum AVPixelFormat pix_fmts[] = { AV_PIX_FMT_YUV420P, AV_PIX_FMT_NONE };
-    char sws_flags_str[512] = "";
+    char sws_flags_str[128];
     char buffersrc_args[256];
     int ret;
     AVFilterContext *filt_src = NULL, *filt_out = NULL, *last_filter = NULL;
     AVCodecContext *codec = is->video_st->codec;
     AVRational fr = av_guess_frame_rate(is->ic, is->video_st, NULL);
-    AVDictionaryEntry *e = NULL;
 
-    while ((e = av_dict_get(sws_dict, "", e, AV_DICT_IGNORE_SUFFIX))) {
-        if (!strcmp(e->key, "sws_flags")) {
-            av_strlcatf(sws_flags_str, sizeof(sws_flags_str), "%s=%s:", "flags", e->value);
-        } else
-            av_strlcatf(sws_flags_str, sizeof(sws_flags_str), "%s=%s:", e->key, e->value);
-    }
-    if (strlen(sws_flags_str))
-        sws_flags_str[strlen(sws_flags_str)-1] = '\0';
-
+    av_opt_get_int(sws_opts, "sws_flags", 0, &sws_flags);
+    snprintf(sws_flags_str, sizeof(sws_flags_str), "flags=%"PRId64, sws_flags);
     graph->scale_sws_opts = av_strdup(sws_flags_str);
 
     snprintf(buffersrc_args, sizeof(buffersrc_args),
@@ -1860,20 +1995,20 @@ static int configure_video_filters(AVFilterGraph *graph, VideoState *is, const c
 
 /* Note: this macro adds a filter before the lastly added filter, so the
  * processing order of the filters is in reverse */
-#define INSERT_FILT(name, arg) do {                                          \
-    AVFilterContext *filt_ctx;                                               \
-                                                                             \
-    ret = avfilter_graph_create_filter(&filt_ctx,                            \
-                                       avfilter_get_by_name(name),           \
-                                       "ffplay_" name, arg, NULL, graph);    \
-    if (ret < 0)                                                             \
-        goto fail;                                                           \
-                                                                             \
-    ret = avfilter_link(filt_ctx, 0, last_filter, 0);                        \
-    if (ret < 0)                                                             \
-        goto fail;                                                           \
-                                                                             \
-    last_filter = filt_ctx;                                                  \
+#define INSERT_FILT(name, arg) do {                                         \
+    AVFilterContext *filt_ctx;                                              \
+                                                                            \
+    ret = avfilter_graph_create_filter(&filt_ctx,                           \
+                                       avfilter_get_by_name(name),          \
+                                       "ffplay_" name, arg, NULL, graph);   \
+    if (ret < 0)                                                            \
+        goto fail;                                                          \
+                                                                            \
+    ret = avfilter_link(filt_ctx, 0, last_filter, 0);                       \
+    if (ret < 0)                                                            \
+        goto fail;                                                          \
+                                                                            \
+    last_filter = filt_ctx;                                                 \
 } while (0)
 
     /* SDL YUV code is not handling odd width/height for some driver
@@ -1881,19 +2016,20 @@ static int configure_video_filters(AVFilterGraph *graph, VideoState *is, const c
     INSERT_FILT("crop", "floor(in_w/2)*2:floor(in_h/2)*2");
 
     if (autorotate) {
-        double theta  = get_rotation(is->video_st);
-
-        if (fabs(theta - 90) < 1.0) {
-            INSERT_FILT("transpose", "clock");
-        } else if (fabs(theta - 180) < 1.0) {
-            INSERT_FILT("hflip", NULL);
-            INSERT_FILT("vflip", NULL);
-        } else if (fabs(theta - 270) < 1.0) {
-            INSERT_FILT("transpose", "cclock");
-        } else if (fabs(theta) > 1.0) {
-            char rotate_buf[64];
-            snprintf(rotate_buf, sizeof(rotate_buf), "%f*PI/180", theta);
-            INSERT_FILT("rotate", rotate_buf);
+        AVDictionaryEntry *rotate_tag = av_dict_get(is->video_st->metadata, "rotate", NULL, 0);
+        if (rotate_tag && *rotate_tag->value && strcmp(rotate_tag->value, "0")) {
+            if (!strcmp(rotate_tag->value, "90")) {
+                INSERT_FILT("transpose", "clock");
+            } else if (!strcmp(rotate_tag->value, "180")) {
+                INSERT_FILT("hflip", NULL);
+                INSERT_FILT("vflip", NULL);
+            } else if (!strcmp(rotate_tag->value, "270")) {
+                INSERT_FILT("transpose", "cclock");
+            } else {
+                char rotate_buf[64];
+                snprintf(rotate_buf, sizeof(rotate_buf), "%s*PI/180", rotate_tag->value);
+                INSERT_FILT("rotate", rotate_buf);
+            }
         }
     }
 
@@ -2095,19 +2231,13 @@ static int video_thread(void *arg)
     enum AVPixelFormat last_format = -2;
     int last_serial = -1;
     int last_vfilter_idx = 0;
-    if (!graph) {
-        av_frame_free(&frame);
+    if (!graph)
         return AVERROR(ENOMEM);
-    }
 
 #endif
 
-    if (!frame) {
-#if CONFIG_AVFILTER
-        avfilter_graph_free(&graph);
-#endif
+    if (!frame)
         return AVERROR(ENOMEM);
-    }
 
     for (;;) {
         ret = get_video_frame(is, frame);
@@ -2192,7 +2322,8 @@ static int subtitle_thread(void *arg)
     Frame *sp;
     int got_subtitle;
     double pts;
-    int i;
+    int i, j;
+    int r, g, b, y, u, v, a;
 
     for (;;) {
         if (!(sp = frame_queue_peek_writable(&is->subpq)))
@@ -2211,41 +2342,14 @@ static int subtitle_thread(void *arg)
 
             for (i = 0; i < sp->sub.num_rects; i++)
             {
-                int in_w = sp->sub.rects[i]->w;
-                int in_h = sp->sub.rects[i]->h;
-                int subw = is->subdec.avctx->width  ? is->subdec.avctx->width  : is->viddec_width;
-                int subh = is->subdec.avctx->height ? is->subdec.avctx->height : is->viddec_height;
-                int out_w = is->viddec_width  ? in_w * is->viddec_width  / subw : in_w;
-                int out_h = is->viddec_height ? in_h * is->viddec_height / subh : in_h;
-                AVPicture newpic;
-
-                //can not use avpicture_alloc as it is not compatible with avsubtitle_free()
-                av_image_fill_linesizes(newpic.linesize, AV_PIX_FMT_YUVA420P, out_w);
-                newpic.data[0] = av_malloc(newpic.linesize[0] * out_h);
-                newpic.data[3] = av_malloc(newpic.linesize[3] * out_h);
-                newpic.data[1] = av_malloc(newpic.linesize[1] * ((out_h+1)/2));
-                newpic.data[2] = av_malloc(newpic.linesize[2] * ((out_h+1)/2));
-
-                is->sub_convert_ctx = sws_getCachedContext(is->sub_convert_ctx,
-                    in_w, in_h, AV_PIX_FMT_PAL8, out_w, out_h,
-                    AV_PIX_FMT_YUVA420P, sws_flags, NULL, NULL, NULL);
-                if (!is->sub_convert_ctx || !newpic.data[0] || !newpic.data[3] ||
-                    !newpic.data[1] || !newpic.data[2]
-                ) {
-                    av_log(NULL, AV_LOG_FATAL, "Cannot initialize the sub conversion context\n");
-                    exit(1);
+                for (j = 0; j < sp->sub.rects[i]->nb_colors; j++)
+                {
+                    RGBA_IN(r, g, b, a, (uint32_t*)sp->sub.rects[i]->pict.data[1] + j);
+                    y = RGB_TO_Y_CCIR(r, g, b);
+                    u = RGB_TO_U_CCIR(r, g, b, 0);
+                    v = RGB_TO_V_CCIR(r, g, b, 0);
+                    YUVA_OUT((uint32_t*)sp->sub.rects[i]->pict.data[1] + j, y, u, v, a);
                 }
-                sws_scale(is->sub_convert_ctx,
-                          (void*)sp->sub.rects[i]->pict.data, sp->sub.rects[i]->pict.linesize,
-                          0, in_h, newpic.data, newpic.linesize);
-
-                av_free(sp->sub.rects[i]->pict.data[0]);
-                av_free(sp->sub.rects[i]->pict.data[1]);
-                sp->sub.rects[i]->pict = newpic;
-                sp->sub.rects[i]->w = out_w;
-                sp->sub.rects[i]->h = out_h;
-                sp->sub.rects[i]->x = sp->sub.rects[i]->x * out_w / in_w;
-                sp->sub.rects[i]->y = sp->sub.rects[i]->y * out_h / in_h;
             }
 
             /* now we can update the picture count */
@@ -2302,9 +2406,9 @@ static int synchronize_audio(VideoState *is, int nb_samples)
                     wanted_nb_samples = nb_samples + (int)(diff * is->audio_src.freq);
                     min_nb_samples = ((nb_samples * (100 - SAMPLE_CORRECTION_PERCENT_MAX) / 100));
                     max_nb_samples = ((nb_samples * (100 + SAMPLE_CORRECTION_PERCENT_MAX) / 100));
-                    wanted_nb_samples = av_clip(wanted_nb_samples, min_nb_samples, max_nb_samples);
+                    wanted_nb_samples = FFMIN(FFMAX(wanted_nb_samples, min_nb_samples), max_nb_samples);
                 }
-                av_log(NULL, AV_LOG_TRACE, "diff=%f adiff=%f sample_diff=%d apts=%0.3f %f\n",
+                av_dlog(NULL, "diff=%f adiff=%f sample_diff=%d apts=%0.3f %f\n",
                         diff, avg_diff, wanted_nb_samples - nb_samples,
                         is->audio_clock, is->audio_diff_threshold);
             }
@@ -2338,13 +2442,6 @@ static int audio_decode_frame(VideoState *is)
         return -1;
 
     do {
-#if defined(_WIN32)
-        while (frame_queue_nb_remaining(&is->sampq) == 0) {
-            if ((av_gettime_relative() - audio_callback_time) > 1000000LL * is->audio_hw_buf_size / is->audio_tgt.bytes_per_sec / 2)
-                return -1;
-            av_usleep (1000);
-        }
-#endif
         if (!(af = frame_queue_peek_readable(&is->sampq)))
             return -1;
         frame_queue_next(&is->sampq);
@@ -2463,13 +2560,7 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
         len1 = is->audio_buf_size - is->audio_buf_index;
         if (len1 > len)
             len1 = len;
-        if (!is->muted && is->audio_volume == SDL_MIX_MAXVOLUME)
-            memcpy(stream, (uint8_t *)is->audio_buf + is->audio_buf_index, len1);
-        else {
-            memset(stream, is->silence_buf[0], len1);
-            if (!is->muted)
-                SDL_MixAudio(stream, (uint8_t *)is->audio_buf + is->audio_buf_index, len1, is->audio_volume);
-        }
+        memcpy(stream, (uint8_t *)is->audio_buf + is->audio_buf_index, len1);
         len -= len1;
         stream += len1;
         is->audio_buf_index += len1;
@@ -2598,15 +2689,10 @@ static int stream_component_open(VideoState *is, int stream_index)
     }
     av_codec_set_lowres(avctx, stream_lowres);
 
-#if FF_API_EMU_EDGE
     if(stream_lowres) avctx->flags |= CODEC_FLAG_EMU_EDGE;
-#endif
-    if (fast)
-        avctx->flags2 |= AV_CODEC_FLAG2_FAST;
-#if FF_API_EMU_EDGE
-    if(codec->capabilities & AV_CODEC_CAP_DR1)
+    if (fast)   avctx->flags2 |= CODEC_FLAG2_FAST;
+    if(codec->capabilities & CODEC_CAP_DR1)
         avctx->flags |= CODEC_FLAG_EMU_EDGE;
-#endif
 
     opts = filter_codec_opts(codec_opts, avctx->codec_id, ic, ic->streams[stream_index], codec);
     if (!av_dict_get(opts, "threads", NULL, 0))
@@ -2678,9 +2764,6 @@ static int stream_component_open(VideoState *is, int stream_index)
     case AVMEDIA_TYPE_VIDEO:
         is->video_stream = stream_index;
         is->video_st = ic->streams[stream_index];
-
-        is->viddec_width  = avctx->width;
-        is->viddec_height = avctx->height;
 
         decoder_init(&is->viddec, avctx, &is->videoq, is->continue_read_thread);
         decoder_start(&is->viddec, video_thread, is);
@@ -3121,9 +3204,7 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat)
     is = av_mallocz(sizeof(VideoState));
     if (!is)
         return NULL;
-    is->filename = av_strdup(filename);
-    if (!is->filename)
-        goto fail;
+    av_strlcpy(is->filename, filename, sizeof(is->filename));
     is->iformat = iformat;
     is->ytop    = 0;
     is->xleft   = 0;
@@ -3146,8 +3227,6 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat)
     init_clock(&is->audclk, &is->audioq.serial);
     init_clock(&is->extclk, &is->extclk.serial);
     is->audio_clock_serial = -1;
-    is->audio_volume = SDL_MIX_MAXVOLUME;
-    is->muted = 0;
     is->av_sync_type = av_sync_type;
     is->read_tid     = SDL_CreateThread(read_thread, is);
     if (!is->read_tid) {
@@ -3336,17 +3415,6 @@ static void event_loop(VideoState *cur_stream)
             case SDLK_p:
             case SDLK_SPACE:
                 toggle_pause(cur_stream);
-                break;
-            case SDLK_m:
-                toggle_mute(cur_stream);
-                break;
-            case SDLK_KP_MULTIPLY:
-            case SDLK_0:
-                update_volume(cur_stream, 1, SDL_VOLUME_STEP);
-                break;
-            case SDLK_KP_DIVIDE:
-            case SDLK_9:
-                update_volume(cur_stream, -1, SDL_VOLUME_STEP);
                 break;
             case SDLK_s: // S: Step to next frame
                 step_to_next_frame(cur_stream);
@@ -3681,9 +3749,6 @@ void show_help_default(const char *opt, const char *arg)
            "q, ESC              quit\n"
            "f                   toggle full screen\n"
            "p, SPC              pause\n"
-           "m                   toggle mute\n"
-           "9, 0                decrease and increase volume respectively\n"
-           "/, *                decrease and increase volume respectively\n"
            "a                   cycle audio channel in the current program\n"
            "v                   cycle video channel\n"
            "t                   cycle subtitle channel in the current program\n"
@@ -3779,8 +3844,6 @@ int main(int argc, char **argv)
     SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
     SDL_EventState(SDL_SYSWMEVENT, SDL_IGNORE);
     SDL_EventState(SDL_USEREVENT, SDL_IGNORE);
-
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     if (av_lockmgr_register(lockmgr)) {
         av_log(NULL, AV_LOG_FATAL, "Could not initialize lock manager!\n");

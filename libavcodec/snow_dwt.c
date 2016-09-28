@@ -684,7 +684,7 @@ void ff_spatial_idwt_buffered_slice(SnowDWTContext *dsp, DWTCompose *cs,
         }
 }
 
-static void spatial_idwt_init(DWTCompose *cs, IDWTELEM *buffer, int width,
+static void ff_spatial_idwt_init(DWTCompose *cs, IDWTELEM *buffer, int width,
                                  int height, int stride, int type,
                                  int decomposition_count)
 {
@@ -703,7 +703,7 @@ static void spatial_idwt_init(DWTCompose *cs, IDWTELEM *buffer, int width,
     }
 }
 
-static void spatial_idwt_slice(DWTCompose *cs, IDWTELEM *buffer,
+static void ff_spatial_idwt_slice(DWTCompose *cs, IDWTELEM *buffer,
                                   IDWTELEM *temp, int width, int height,
                                   int stride, int type,
                                   int decomposition_count, int y)
@@ -733,10 +733,10 @@ void ff_spatial_idwt(IDWTELEM *buffer, IDWTELEM *temp, int width, int height,
 {
     DWTCompose cs[MAX_DECOMPOSITIONS];
     int y;
-    spatial_idwt_init(cs, buffer, width, height, stride, type,
+    ff_spatial_idwt_init(cs, buffer, width, height, stride, type,
                          decomposition_count);
     for (y = 0; y < height; y += 4)
-        spatial_idwt_slice(cs, buffer, temp, width, height, stride, type,
+        ff_spatial_idwt_slice(cs, buffer, temp, width, height, stride, type,
                               decomposition_count, y);
 }
 
@@ -853,9 +853,8 @@ av_cold void ff_dwt_init(SnowDWTContext *c)
     c->horizontal_compose97i = ff_snow_horizontal_compose97i;
     c->inner_add_yblock      = ff_snow_inner_add_yblock;
 
-#if HAVE_MMX
+    if (HAVE_MMX)
         ff_dwt_init_x86(c);
-#endif
 }
 
 

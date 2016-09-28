@@ -297,20 +297,17 @@ av_cold void ff_idctdsp_init(IDCTDSPContext *c, AVCodecContext *avctx)
     if (CONFIG_MPEG4_DECODER && avctx->idct_algo == FF_IDCT_XVID)
         ff_xvid_idct_init(c, avctx);
 
-#if ARCH_ALPHA
+#if (ARCH_ALPHA)
         ff_idctdsp_init_alpha(c, avctx, high_bit_depth);
 #endif
-#if ARCH_ARM
+#if (ARCH_ARM)
         ff_idctdsp_init_arm(c, avctx, high_bit_depth);
 #endif
-#if ARCH_PPC
+#if (ARCH_PPC)
         ff_idctdsp_init_ppc(c, avctx, high_bit_depth);
 #endif
-#if ARCH_X86
+#if (ARCH_X86)
         ff_idctdsp_init_x86(c, avctx, high_bit_depth);
-#endif
-#if ARCH_MIPS
-        ff_idctdsp_init_mips(c, avctx, high_bit_depth);
 #endif
 
     ff_put_pixels_clamped = c->put_pixels_clamped;

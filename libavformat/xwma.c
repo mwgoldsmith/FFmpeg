@@ -75,7 +75,7 @@ static int xwma_read_header(AVFormatContext *s)
     if (!st)
         return AVERROR(ENOMEM);
 
-    ret = ff_get_wav_header(s, pb, st->codec, size, 0);
+    ret = ff_get_wav_header(pb, st->codec, size, 0);
     if (ret < 0)
         return ret;
     st->need_parsing = AVSTREAM_PARSE_NONE;
@@ -172,7 +172,7 @@ static int xwma_read_header(AVFormatContext *s)
             /* Allocate some temporary storage to keep the dpds data around.
              * for processing later on.
              */
-            dpds_table = av_malloc_array(dpds_table_size, sizeof(uint32_t));
+            dpds_table = av_malloc(dpds_table_size * sizeof(uint32_t));
             if (!dpds_table) {
                 return AVERROR(ENOMEM);
             }

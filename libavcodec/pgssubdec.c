@@ -213,7 +213,7 @@ static int decode_rle(AVCodecContext *avctx, AVSubtitleRect *rect,
         return AVERROR_INVALIDDATA;
     }
 
-    ff_dlog(avctx, "Pixel Count = %d, Area = %d\n", pixel_count, rect->w * rect->h);
+    av_dlog(avctx, "Pixel Count = %d, Area = %d\n", pixel_count, rect->w * rect->h);
 
     return 0;
 }
@@ -357,7 +357,7 @@ static int parse_palette_segment(AVCodecContext *avctx,
         YUV_TO_RGB1(cb, cr);
         YUV_TO_RGB2(r, g, b, y);
 
-        ff_dlog(avctx, "Color %d := (%d,%d,%d,%d)\n", color_id, r, g, b, alpha);
+        av_dlog(avctx, "Color %d := (%d,%d,%d,%d)\n", color_id, r, g, b, alpha);
 
         /* Store color in palette */
         palette->clut[color_id] = RGBA(r,g,b,alpha);
@@ -390,7 +390,7 @@ static int parse_presentation_segment(AVCodecContext *avctx,
 
     ctx->presentation.pts = pts;
 
-    ff_dlog(avctx, "Video Dimensions %dx%d\n",
+    av_dlog(avctx, "Video Dimensions %dx%d\n",
             w, h);
     ret = ff_set_dimensions(avctx, w, h);
     if (ret < 0)
@@ -456,7 +456,7 @@ static int parse_presentation_segment(AVCodecContext *avctx,
             ctx->presentation.objects[i].crop_h = bytestream_get_be16(&buf);
         }
 
-        ff_dlog(avctx, "Subtitle Placement x=%d, y=%d\n",
+        av_dlog(avctx, "Subtitle Placement x=%d, y=%d\n",
                 ctx->presentation.objects[i].x, ctx->presentation.objects[i].y);
 
         if (ctx->presentation.objects[i].x > avctx->width ||
@@ -602,16 +602,16 @@ static int decode(AVCodecContext *avctx, void *data, int *data_size,
     int           segment_length;
     int i, ret;
 
-    ff_dlog(avctx, "PGS sub packet:\n");
+    av_dlog(avctx, "PGS sub packet:\n");
 
     for (i = 0; i < buf_size; i++) {
-        ff_dlog(avctx, "%02x ", buf[i]);
+        av_dlog(avctx, "%02x ", buf[i]);
         if (i % 16 == 15)
-            ff_dlog(avctx, "\n");
+            av_dlog(avctx, "\n");
     }
 
     if (i & 15)
-        ff_dlog(avctx, "\n");
+        av_dlog(avctx, "\n");
 
     *data_size = 0;
 
@@ -626,7 +626,7 @@ static int decode(AVCodecContext *avctx, void *data, int *data_size,
         segment_type   = bytestream_get_byte(&buf);
         segment_length = bytestream_get_be16(&buf);
 
-        ff_dlog(avctx, "Segment Length %d, Segment Type %x\n", segment_length, segment_type);
+        av_dlog(avctx, "Segment Length %d, Segment Type %x\n", segment_length, segment_type);
 
         if (segment_type != DISPLAY_SEGMENT && segment_length > buf_end - buf)
             break;
@@ -675,7 +675,7 @@ static int decode(AVCodecContext *avctx, void *data, int *data_size,
 #define OFFSET(x) offsetof(PGSSubContext, x)
 #define SD AV_OPT_FLAG_SUBTITLE_PARAM | AV_OPT_FLAG_DECODING_PARAM
 static const AVOption options[] = {
-    {"forced_subs_only", "Only show forced subtitles", OFFSET(forced_subs_only), AV_OPT_TYPE_BOOL, {.i64 = 0}, 0, 1, SD},
+    {"forced_subs_only", "Only show forced subtitles", OFFSET(forced_subs_only), AV_OPT_TYPE_INT, {.i64 = 0}, 0, 1, SD},
     { NULL },
 };
 

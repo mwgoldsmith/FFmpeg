@@ -174,13 +174,11 @@ static void rtsp_parse_range_npt(const char *p, int64_t *start, int64_t *end)
     *end = AV_NOPTS_VALUE;
 
     get_word_sep(buf, sizeof(buf), "-", &p);
-    if (av_parse_time(start, buf, 1) < 0)
-        return;
+    av_parse_time(start, buf, 1);
     if (*p == '-') {
         p++;
         get_word_sep(buf, sizeof(buf), "-", &p);
-        if (av_parse_time(end, buf, 1) < 0)
-            av_log(NULL, AV_LOG_DEBUG, "Failed to parse interval end specification '%s'\n", buf);
+        av_parse_time(end, buf, 1);
     }
 }
 
@@ -383,7 +381,7 @@ static void sdp_parse_line(AVFormatContext *s, SDPParseState *s1,
     struct sockaddr_storage sdp_ip;
     int ttl;
 
-    av_log(s, AV_LOG_TRACE, "sdp: %c='%s'\n", letter, buf);
+    av_dlog(s, "sdp: %c='%s'\n", letter, buf);
 
     p = buf;
     if (s1->skip_media && letter != 'm')
@@ -800,7 +798,7 @@ int ff_rtsp_open_transport_ctx(AVFormatContext *s, RTSPStream *rtsp_st)
     if (!st)
         s->ctx_flags |= AVFMTCTX_NOHEADER;
 
-    if (CONFIG_RTSP_MUXER && s->oformat && st) {
+    if (CONFIG_RTSP_MUXER && s->oformat) {
         int ret = ff_rtp_chain_mux_open((AVFormatContext **)&rtsp_st->transport_priv,
                                         s, st, rtsp_st->rtp_handle,
                                         RTSP_TCP_MAX_PACKET_SIZE,
@@ -812,7 +810,7 @@ int ff_rtsp_open_transport_ctx(AVFormatContext *s, RTSPStream *rtsp_st)
         st->time_base = ((AVFormatContext*)rtsp_st->transport_priv)->streams[0]->time_base;
     } else if (rt->transport == RTSP_TRANSPORT_RAW) {
         return 0; // Don't need to open any parser here
-    } else if (CONFIG_RTPDEC && rt->transport == RTSP_TRANSPORT_RDT && st)
+    } else if (CONFIG_RTPDEC && rt->transport == RTSP_TRANSPORT_RDT)
         rtsp_st->transport_priv = ff_rdt_parse_open(s, st->index,
                                             rtsp_st->dynamic_protocol_context,
                                             rtsp_st->dynamic_handler);
@@ -980,8 +978,6 @@ static void rtsp_parse_transport(RTSPMessageHeader *reply, const char *p)
             p++;
 
         reply->nb_transports++;
-        if (reply->nb_transports >= RTSP_MAX_TRANSPORTS)
-            break;
     }
 }
 
@@ -1113,7 +1109,7 @@ void ff_rtsp_skip_packet(AVFormatContext *s)
         return;
     len = AV_RB16(buf + 1);
 
-    av_log(s, AV_LOG_TRACE, "skipping RTP packet len=%d\n", len);
+    av_dlog(s, "skipping RTP packet len=%d\n", len);
 
     /* skip payload */
     while (len > 0) {
@@ -1136,7 +1132,6 @@ int ff_rtsp_read_reply(AVFormatContext *s, RTSPMessageHeader *reply,
     unsigned char ch;
     const char *p;
     int ret, content_length, line_count = 0, request = 0;
-    int first_line = 1;
     unsigned char *content = NULL;
 
 start:
@@ -1151,12 +1146,13 @@ start:
         q = buf;
         for (;;) {
             ret = ffurl_read_complete(rt->rtsp_hd, &ch, 1);
-            av_log(s, AV_LOG_TRACE, "ret=%d c=%02x [%c]\n", ret, ch, ch);
+            av_dlog(s, "ret=%d c=%02x [%c]\n", ret, ch, ch);
             if (ret != 1)
                 return AVERROR_EOF;
             if (ch == '\n')
                 break;
-            if (ch == '$' && first_line && q == buf) {
+            if (ch == '$') {
+                /* XXX: only parse it if first char on line ? */
                 if (return_on_interleaved_data) {
                     return 1;
                 } else
@@ -1167,9 +1163,8 @@ start:
             }
         }
         *q = '\0';
-        first_line = 0;
 
-        av_log(s, AV_LOG_TRACE, "line='%s'\n", buf);
+        av_dlog(s, "line='%s'\n", buf);
 
         /* test if last line */
         if (buf[0] == '\0')
@@ -1321,7 +1316,7 @@ static int rtsp_send_cmd_with_content_async(AVFormatContext *s,
         out_buf = base64buf;
     }
 
-    av_log(s, AV_LOG_TRACE, "Sending:\n%s--\n", buf);
+    av_dlog(s, "Sending:\n%s--\n", buf);
 
     ffurl_write(rt->rtsp_hd_out, out_buf, strlen(out_buf));
     if (send_content_length > 0 && send_content) {
@@ -2123,8 +2118,6 @@ redo:
     }
     if (len == AVERROR(EAGAIN) && first_queue_st &&
         rt->transport == RTSP_TRANSPORT_RTP) {
-        av_log(s, AV_LOG_WARNING,
-                "max delay reached. need to consume packet\n");
         rtsp_st = first_queue_st;
         ret = ff_rtp_parse_packet(rtsp_st->transport_priv, pkt, NULL, 0);
         goto end;

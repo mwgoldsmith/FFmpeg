@@ -86,15 +86,17 @@ av_cold void ff_vp56dsp_init(VP56DSPContext *s, enum AVCodecID codec)
         s->edge_filter_hor = vp6_edge_filter_hor;
         s->edge_filter_ver = vp6_edge_filter_ver;
 
-        if (CONFIG_VP6_DECODER) {
+#if (CONFIG_VP6_DECODER)
+        {
             s->vp6_filter_diag4 = ff_vp6_filter_diag4_c;
 
-#if ARCH_ARM
+#if (ARCH_ARM)
                 ff_vp6dsp_init_arm(s, codec);
 #endif
-#if ARCH_X86
+#if (ARCH_X86)
                 ff_vp6dsp_init_x86(s, codec);
 #endif
         }
+#endif
     }
 }
